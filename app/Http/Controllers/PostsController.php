@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Category;
 
 class PostsController extends Controller
 {
@@ -25,7 +26,9 @@ class PostsController extends Controller
      */
     public function create()
     {
-        //
+        $categories=Category::all();
+
+        return view('posts.create')->withCategories($categories);
     }
 
     /**

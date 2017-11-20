@@ -1,6 +1,7 @@
 @extends ('layouts.app')
 
 @section('content')
+
     <h1>Categories</h1>
     {{ Form::open(['action' => 'CategoriesController@store']) }}
     {{Form::label('name', 'Category name:')}}
