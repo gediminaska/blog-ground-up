@@ -39,7 +39,24 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required|min:5|max:60',
+            'body' => 'required|min:10|max:4000',
+            'slug' => 'required|min:3|unique:posts,slug',
+            'category_id' => 'required|numeric',
+            'user_id' =>'required|numeric'
+        ]);
+        $post = new Post;
+
+        $post->title=$request->title;
+        $post->body=$request->body;
+        $post->slug=$request->slug;
+        $post->category_id=$request->category_id;
+        $post->user_id=$request->user_id;
+
+        $post->save();
+
+        return view('welcome');
     }
 
     /**
