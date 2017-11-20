@@ -67,8 +67,13 @@ class CategoriesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+
+        $id = $request->id;
+        $category = Category::find($id);
+
+        $category->delete();
+        return redirect()->route('categories.index');
     }
 }

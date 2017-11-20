@@ -10,5 +10,10 @@
     {{Form::close()}}
         @foreach($categories as $category)
             <h3>{{$category->name}}</h3>
+                {{ Form::open(['action' => 'CategoriesController@destroy', 'method' => 'DELETE']) }}
+                {{ Form::hidden('id', $category->id) }}
+                {{ Form::submit('Delete') }}
+
+                {{Form::close()}}
         @endforeach
 @endsection
