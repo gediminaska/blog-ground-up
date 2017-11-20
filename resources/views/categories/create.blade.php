@@ -1,5 +1,12 @@
 @extends ('layouts.app')
 
 @section('content')
-    <h1>Create categories</h1>
+    <div class="row">
+        <div class="com-md-8">
+
+        </div>
+    </div>
+
+
+
 @endsection
