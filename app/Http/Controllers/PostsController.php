@@ -56,7 +56,7 @@ class PostsController extends Controller
 
         $post->save();
 
-        return view('welcome');
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -78,7 +78,12 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post=Post::find($id);
+        $categories=Category::all();
+        foreach ($categories as $category) {
+            $cats[$category->id]=$category->name;
+        }
+        return view('posts.edit')->withPost($post)->withCategories($cats);
     }
 
     /**
