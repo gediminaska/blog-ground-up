@@ -95,7 +95,35 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       $post=Post::find($id);
+
+       if($request->input('slug')==$post->slug){
+           $this->validate($request, [
+               'title' => 'required|min:5|max:60',
+               'body' => 'required|min:10|max:4000',
+               'category_id' => 'required|numeric',
+               'user_id' =>'required|numeric'
+           ]);
+       }
+       else{
+           $this->validate($request, [
+               'title' => 'required|min:5|max:60',
+               'body' => 'required|min:10|max:4000',
+               'slug' => 'required|min:3|unique:posts,slug',
+               'category_id' => 'required|numeric',
+               'user_id' =>'required|numeric'
+           ]);
+       }
+
+        $post->title=$request->title;
+        $post->body=$request->body;
+        $post->slug=$request->slug;
+        $post->category_id=$request->category_id;
+        $post->user_id=$request->user_id;
+
+        $post->save();
+
+        return redirect()->route('posts.index');
     }
 
     /**

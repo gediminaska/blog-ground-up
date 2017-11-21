@@ -2,7 +2,7 @@
 
 @section('content')
     <h1>Edit post</h1>
-    {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST']) }}
+    {{ Form::open(['route'=> ['posts.update', $post->id], 'method'=>'PUT']) }}
     {{ Form::label('title', 'Blog title:') }}
     {{ Form::text('title', $post->title, ['class'=>'form-control']) }}
     {{ Form::label('slug', 'Slug:') }}
