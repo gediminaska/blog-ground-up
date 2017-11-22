@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Tag;
+use App\Post;
 
 class TagsController extends Controller
 {
@@ -91,6 +92,8 @@ class TagsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $tag=Post::find($id);
+        $tag->posts()->detach();
+        $tag->delete();
     }
 }
