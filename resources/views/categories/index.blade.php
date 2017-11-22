@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h1 style="color">Categories</h1>
+    <h1>Categories</h1>
     {{ Form::open(['action' => 'CategoriesController@store']) }}
     {{Form::label('name', 'Category name:')}}
     {{Form::text('name', null, ['class' => 'form-control'])}}
