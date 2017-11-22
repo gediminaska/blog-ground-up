@@ -22,5 +22,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('posts', 'PostsController');
 
 Route::resource('categories', 'CategoriesController', ['only' => [
-    'index', 'store', 'show']]);
+    'index', 'store', 'show', 'update']]);
 Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );

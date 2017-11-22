@@ -71,11 +71,27 @@ class CategoriesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function update(Request $request, $id){
+
+        $this->validate($request, [
+            'name' => 'required|min:3|max:30'
+        ]);
+        $category=Category::find($id);
+        $category->name = $request->name;
+        $category->save();
+        return redirect()->route('categories.index');
+
+    }
+
     public function destroy(Request $request)
     {
 
         $id = $request->id;
         $category = Category::find($id);
+
+        foreach($category->posts as $post){
+            $post->delete();
+        }
 
         $category->delete();
         return redirect()->route('categories.index');
