@@ -55,9 +55,16 @@
                                 </a>
 
                                 <ul class="dropdown-menu">
+
+                                    <li>
+                                        {{ Html::linkRoute('categories.index', 'View categories') }}
+                                    </li>
+                                    <li>
+                                        {{ Html::linkRoute('posts.index', 'View all posts') }}
+                                    </li>
                                     <li>
                                         <a href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                           onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             Logout
                                         </a>
