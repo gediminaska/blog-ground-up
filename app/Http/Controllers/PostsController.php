@@ -68,7 +68,10 @@ class PostsController extends Controller
             $post->category_id = $request->category_id;
             $post->user_id = $request->user_id;
 
+
             $post->save();
+
+            $post->tags()->sync($request->tags, false);
 
             return redirect()->route('posts.index');
         }
@@ -145,6 +148,8 @@ class PostsController extends Controller
         $post->user_id=$request->user_id;
 
         $post->save();
+
+        $post->tags()->sync($request->tags, false);
 
         return redirect()->route('posts.index');
     }
