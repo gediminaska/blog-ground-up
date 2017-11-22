@@ -45,26 +45,35 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'title' => 'required|min:5|max:60',
-            'body' => 'required|min:10|max:4000',
-            'slug' => 'required|min:3|unique:posts,slug',
-            'category_id' => 'required|numeric',
-            'user_id' =>'required|numeric'
-        ]);
-        $post = new Post;
+        if ($request->submit_type=='New tag') {
+            $tag = new Tag;
+            $tag->name = $request->name;
+            $tag->save();
+            return redirect()->back();
+        }
 
-        $post->title=$request->title;
-        $post->body=$request->body;
-        $post->slug=$request->slug;
-        $post->category_id=$request->category_id;
-        $post->user_id=$request->user_id;
+        else {
+            $this->validate($request, [
+                'title' => 'required|min:5|max:60',
+                'body' => 'required|min:10|max:4000',
+                'slug' => 'required|min:3|unique:posts,slug',
+                'category_id' => 'required|numeric',
+                'user_id' => 'required|numeric'
+            ]);
+            $post = new Post;
 
-        $post->save();
+            $post->title = $request->title;
+            $post->body = $request->body;
+            $post->slug = $request->slug;
+            $post->category_id = $request->category_id;
+            $post->user_id = $request->user_id;
 
-        return redirect()->route('posts.index');
+            $post->save();
+
+            return redirect()->route('posts.index');
+        }
+
     }
-
     /**
      * Display the specified resource.
      *
@@ -87,10 +96,11 @@ class PostsController extends Controller
     {
         $post=Post::find($id);
         $categories=Category::all();
+        $tags=Tag::all();       $tags=Tag::all();
         foreach ($categories as $category) {
             $cats[$category->id]=$category->name;
         }
-        return view('posts.edit')->withPost($post)->withCategories($cats);
+        return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags);
     }
 
     /**
@@ -103,8 +113,14 @@ class PostsController extends Controller
     public function update(Request $request, $id)
     {
        $post=Post::find($id);
+        if ($request->submit_type=='New tag') {
+            $tag = new Tag;
+            $tag->name = $request->name;
+            $tag->save();
+            return redirect()->back();
+        }
 
-       if($request->input('slug')==$post->slug){
+        elseif($request->input('slug')==$post->slug){
            $this->validate($request, [
                'title' => 'required|min:5|max:60',
                'body' => 'required|min:10|max:4000',

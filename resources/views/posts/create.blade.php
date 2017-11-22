@@ -6,17 +6,22 @@
 
 @section('content')
     <h1>New post</h1>
+
     {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST']) }}
         {{ Form::label('title', 'Blog title:') }}
         {{ Form::text('title', null, ['class'=>'form-control']) }}
-    {{Form::label('tags', 'Tags:')}}
-    <select class="form-control select2-multi" name="tags[]" multiple="multiple">
-        @foreach($tags as $tag)
+        {{Form::label('tags', 'Tags:')}}
+        <select class="form-control select2-multi" name="tags[]" multiple="multiple">
+            @foreach($tags as $tag)
 
-            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
 
-        @endforeach
-    </select>
+            @endforeach
+        </select>
+
+                {{ Form::text('name') }}
+                {{ Form::submit('New tag', ['name'=>'submit_type']) }}
+    <br>
         {{ Form::label('slug', 'Slug:') }}
         {{ Form::text('slug', null, ['class'=>'form-control']) }}
         {{ Form::label('category_id', 'Category:') }}
@@ -31,7 +36,7 @@
         {{ Form::label('body','Post text:') }}
         {{ Form::textarea('body', null, ['class'=>'form-control']) }}
         {{ Form::hidden('user_id', Auth::id() )}}
-        {{ Form::submit('Create') }}
+        {{ Form::submit('Create', ['name'=>'submit_type']) }}
     {{ Form::close() }}
 @endsection
 

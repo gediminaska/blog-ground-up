@@ -23,4 +23,8 @@ Route::resource('posts', 'PostsController');
 
 Route::resource('categories', 'CategoriesController', ['only' => [
     'index', 'store', 'show', 'update']]);
+
+Route::resource('tags', 'TagsController', ['only' => [
+    'index', 'store', 'update']]);
+
 Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
