@@ -6,7 +6,7 @@
     <h2>Title: {{ $post->title }}</h2>
     <h4>{{ $post->body }}</h4>
     @foreach($post->tags as $tag)
-        <span>{{ $tag->name }}</span>
+        <span class="badge">{{ $tag->name }}</span>
     @endforeach
 
 @endsection
