@@ -9,7 +9,7 @@
     {{ Form::text('slug', $post->slug, ['class'=>'form-control']) }}
     {{ Form::label('category_id', 'Category:') }}
 
-    {{ Form::select('category_id', $categories, ['placehodder'=>$post->category_id, 'class'=>'form-control']) }}
+    {{ Form::select('category_id', $categories, $post->category_id, ['class'=>'form-control', 'style'=>'height: auto' ]) }}
     <br>
     {{ Form::label('body','Post text:') }}
     {{ Form::textarea('body', $post->body, ['class'=>'form-control']) }}

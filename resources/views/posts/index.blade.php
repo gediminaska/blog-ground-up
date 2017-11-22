@@ -7,6 +7,7 @@
             <div class="col-md-8">
                 <h3>{{$post->title}}</h3>
                 <h4>{{$post->body}}</h4>
+                <p><strong>Category:</strong>{{ $post->category_id }}</p>
             </div>
             <div class="col-md-4">
                 {{ Html::linkRoute('posts.show', 'View', [$post->id], ['class'=>'btn btn-secondary']) }}
@@ -17,4 +18,5 @@
             </div>
         </div>
     @endforeach
+    {{ $posts->links() }}
 @endsection
