@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use App\Category;
 use App\Tag;
+use Session;
 
 class PostsController extends Controller
 {
@@ -32,7 +33,7 @@ class PostsController extends Controller
     public function create()
     {
         $categories=Category::all();
-        $tags=Tag::all();
+        $tags=Tag::orderBy('name', 'asc')->get();
 
         return view('posts.create')->withCategories($categories)->withTags($tags);
     }
@@ -72,7 +73,7 @@ class PostsController extends Controller
             $post->save();
 
             $post->tags()->sync($request->tags, false);
-
+            Session::flash('success', 'The post has been saved!');
             return redirect()->route('posts.index');
         }
 
@@ -99,7 +100,7 @@ class PostsController extends Controller
     {
         $post=Post::find($id);
         $categories=Category::all();
-        $tags=Tag::all();       $tags=Tag::all();
+        $tags=Tag::orderBy('name', 'asc')->get();
         foreach ($categories as $category) {
             $cats[$category->id]=$category->name;
         }
@@ -120,6 +121,7 @@ class PostsController extends Controller
             $tag = new Tag;
             $tag->name = $request->name;
             $tag->save();
+            Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been created!');
             return redirect()->back();
         }
 
@@ -151,6 +153,8 @@ class PostsController extends Controller
 
         $post->tags()->sync($request->tags, false);
 
+        Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been updated!');
+
         return redirect()->route('posts.index');
     }
 
@@ -165,6 +169,7 @@ class PostsController extends Controller
         $post=Post::find($id);
         $post->tags()->detach();
         $post->delete();
+        Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
         return redirect()->route('posts.index');
 
     }
