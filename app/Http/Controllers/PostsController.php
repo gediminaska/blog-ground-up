@@ -104,7 +104,11 @@ class PostsController extends Controller
         foreach ($categories as $category) {
             $cats[$category->id]=$category->name;
         }
-        return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags);
+        $tags2 = array();
+        foreach ($tags as $tag){
+            $tags2[$tag->id] = $tag->name;
+        }
+        return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags2);
     }
 
     /**
@@ -118,10 +122,13 @@ class PostsController extends Controller
     {
        $post=Post::find($id);
         if ($request->submit_type=='New tag') {
+            $this->validate($request, [
+                'name' => 'required|min:5|max:30',
+                ]);
             $tag = new Tag;
             $tag->name = $request->name;
             $tag->save();
-            Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been created!');
+            Session::flash('success', 'New tag has been created!');
             return redirect()->back();
         }
 
@@ -151,7 +158,7 @@ class PostsController extends Controller
 
         $post->save();
 
-        $post->tags()->sync($request->tags, false);
+        $post->tags()->sync($request->tags);
 
         Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been updated!');
 

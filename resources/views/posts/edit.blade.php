@@ -6,17 +6,11 @@
 
 @section('content')
     <h1>Edit post</h1>
-    {{ Form::open(['route'=> ['posts.update', $post->id], 'method'=>'PUT']) }}
+    {!! Form::model($post, ['route' => ['posts.update', $post->id], 'method' => 'PUT']) !!}
     {{ Form::label('title', 'Blog title:') }}
     {{ Form::text('title', $post->title, ['class'=>'form-control']) }}
     {{Form::label('tags', 'Tags:')}}
-    <select class="form-control select2-multi" name="tags[]" multiple="multiple">
-        @foreach($tags as $tag)
-
-            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
-
-        @endforeach
-    </select>
+    {{ Form::select('tags[]', $tags, null, ['class' => 'form-control select2-multi', 'multiple' => 'multiple']) }}
 
     {{ Form::text('name') }}
     {{ Form::submit('New tag', ['name'=>'submit_type']) }}
