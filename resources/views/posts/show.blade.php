@@ -9,4 +9,9 @@
         <span class="badge">{{ $tag->name }}</span>
     @endforeach
 
+    <h3>Comments:</h3>
+    @foreach($post->comments as $comment)
+        <strong>{{ $comment->user->name }}</strong>
+        <p>{{ $comment->body }}</p>
+    @endforeach
 @endsection

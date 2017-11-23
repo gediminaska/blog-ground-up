@@ -3,14 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Tag;
-use App\Post;
 
-class TagsController extends Controller
+class CommentsController extends Controller
 {
-    public function __construct(){
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -39,18 +34,7 @@ class TagsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required|min:2|max:20'
-        ]);
-
-        $tag = new Tag;
-
-        $tag->name = $request->name;
-
-        $tag->save();
-
-        return back();
-
+        //
     }
 
     /**
@@ -95,8 +79,6 @@ class TagsController extends Controller
      */
     public function destroy($id)
     {
-        $tag=Post::find($id);
-        $tag->posts()->detach();
-        $tag->delete();
+        //
     }
 }
