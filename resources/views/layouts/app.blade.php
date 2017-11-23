@@ -81,11 +81,7 @@
                 </div>
             </div>
         </nav>
-        @if(Session::has('success'))
-            <div class="alert alert-success" role ="alert">
-                <strong>Success: </strong>{{ Session::get('success') }}
-            </div>
-        @endif
+       @include('partials._messages')
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 @yield('content')
