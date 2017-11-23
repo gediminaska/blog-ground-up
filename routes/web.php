@@ -30,3 +30,9 @@ Route::resource('tags', 'TagsController', ['only' => [
 Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
 
 Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
+
+Route::get('blog/{slug}', ['as' => 'blog.show', 'uses' => 'BlogController@show']);
+
+Route::get('blog', ['as' => 'blog.index', 'uses' => 'BlogController@index']);
+
+

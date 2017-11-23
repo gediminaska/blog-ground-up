@@ -175,7 +175,11 @@ class PostsController extends Controller
     {
         $post=Post::find($id);
         $post->tags()->detach();
+        foreach($post->comments as $comment){
+            $comment->delete();
+        }
         $post->delete();
+
         Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
         return redirect()->route('posts.index');
 
