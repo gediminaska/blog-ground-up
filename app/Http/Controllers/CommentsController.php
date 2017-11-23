@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Comment;
+use Session;
 
 class CommentsController extends Controller
 {
@@ -34,7 +36,20 @@ class CommentsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'body' => 'required|min:2|max:500',
+            'user_name' => 'required|max:100'
+        ]);
+
+        $comment = new Comment;
+
+        $comment->post_id = $request->post_id;
+        $comment->user_name = $request->user_name;
+        $comment->body = $request->body;
+
+        $comment->save();
+        Session::flash('success', 'The comment has been saved!');
+        return redirect()->back();
     }
 
     /**

@@ -28,3 +28,5 @@ Route::resource('tags', 'TagsController', ['only' => [
     'index', 'store', 'update']]);
 
 Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
+
+Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
