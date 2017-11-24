@@ -2,7 +2,7 @@
 
 @section('content')
     <h1>Posts</h1>
-    @foreach($posts as $post)
+    @foreach(Auth::user()->posts as $post)
         <div class="row">
             <div class="col-md-8">
                 <span style="font-weight: bold; font-size: xx-large">{{$post->title}}</span>
@@ -12,12 +12,12 @@
             </div>
             <div class="col-md-4">
                 {{ Html::linkRoute('posts.show', 'View', [$post->id], ['class'=>'btn btn-secondary']) }}
-                {{ Html::linkRoute('posts.edit', 'Edit', [$post->id], ['class'=>'btn btn-primary']) }}
+                {{ Html::linkRoute('posts.edit', 'Edit', [$post->id], ['class'=>'btn btn-secondary']) }}
                 {{ Form::open(['route'=> ['posts.destroy', $post->id], 'method'=>'DELETE']) }}
-                {{ Form::submit('Delete', ['class'=>'btn btn-danger btn-sm']) }}
+                {{ Form::submit('Delete', ['class'=>'button', 'style'=>'color: #721c24']) }}
                 {{ Form::close() }}
             </div>
         </div>
     @endforeach
-    {{ $posts->links() }}
+
 @endsection

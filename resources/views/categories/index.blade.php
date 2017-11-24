@@ -14,17 +14,15 @@
             {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
 
             {{ Form::text('name', $category->name,['class' => 'form-control', 'style'=>'width:auto; float:left']) }}
-            {{ Form::submit('Update name', ['class'=>'btn btn-success', 'style'=>'float:left']) }}
+            {{ Form::submit('Update name', ['class'=>'button', 'style'=>'float:left']) }}
             {{ Form::close() }}
             <br>
             <br>
                 {{ Form::open(['action' => 'CategoriesController@destroy', 'method' => 'DELETE']) }}
                 {{ Form::hidden('id', $category->id) }}
-                {{ Form::submit('Delete category and all posts', ['class'=>'btn btn-danger']) }}
+                {{ Form::submit('Delete category and all posts', ['class'=>'button', 'style'=>'color: #721c24']) }}
 
                 {{Form::close()}}
-
-
             <hr>
         @endforeach
 @endsection
