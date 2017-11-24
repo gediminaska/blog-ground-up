@@ -7,11 +7,13 @@ use App\Post;
 use App\Category;
 use App\Tag;
 use Session;
+use Auth;
 
 class PostsController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
+
     }
     /**
      * Display a listing of the resource.
@@ -87,7 +89,10 @@ class PostsController extends Controller
     public function show($id)
     {
         $post=Post::find($id);
+        if (Auth::user()->id == $post->id) {
         return view('posts.show')->withPost($post);
+        }
+        else{return redirect()->route('posts.index');}
     }
 
     /**
@@ -98,17 +103,21 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        $post=Post::find($id);
-        $categories=Category::all();
-        $tags=Tag::orderBy('name', 'asc')->get();
-        foreach ($categories as $category) {
-            $cats[$category->id]=$category->name;
+
+        $post = Post::find($id);
+        if (Auth::user()->id == $post->id) {
+            $categories = Category::all();
+            $tags = Tag::orderBy('name', 'asc')->get();
+            foreach ($categories as $category) {
+                $cats[$category->id] = $category->name;
+            }
+            $tags2 = array();
+            foreach ($tags as $tag) {
+                $tags2[$tag->id] = $tag->name;
+            }
+            return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags2);
         }
-        $tags2 = array();
-        foreach ($tags as $tag){
-            $tags2[$tag->id] = $tag->name;
-        }
-        return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags2);
+        else{return redirect()->route('posts.index');}
     }
 
     /**
