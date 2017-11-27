@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Post;
 use App\Category;
 use App\Tag;
+use Imagine\Gd\Image;
 use Session;
 use Auth;
-use Carbon;
+
+
+
 
 class PostsController extends Controller
 {
@@ -71,6 +74,9 @@ class PostsController extends Controller
             $post->slug = $request->slug;
             $post->category_id = $request->category_id;
             $post->user_id = $request->user_id;
+            $image=$request->file('file');
+            Input::make($image)->resize(800, 400)->save('images/1111');
+
 
 
             $post->save();

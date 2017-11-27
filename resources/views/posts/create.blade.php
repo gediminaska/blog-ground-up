@@ -35,6 +35,7 @@
         </select>
         {{ Form::label('body','Post text:') }}
         {{ Form::textarea('body', null, ['class'=>'form-control']) }}
+        {{ Form::file('file') }}
         {{ Form::hidden('user_id', Auth::id() )}}
         {{ Form::submit('Create', ['name'=>'submit_type']) }}
     {{ Form::close() }}
