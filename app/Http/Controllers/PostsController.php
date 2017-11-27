@@ -25,9 +25,9 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts=Post::orderBy('id', 'desc')->paginate(5);
+
         $categories=Category::all();
-        return view('posts.index')->withPosts($posts)->withCategories($categories);
+        return view('posts.index')->withCategories($categories);
     }
 
     /**
@@ -74,11 +74,11 @@ class PostsController extends Controller
             $post->category_id = $request->category_id;
             $post->user_id = $request->user_id;
 
-            if($request->hasFile('file')){
-                $image = $request->file('file');
+            if($request->hasFile('image')){
+                $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
                 $location = public_path('images/' . $filename);
-                Image::make($image)->fit(800, 400)->save($location);
+                Image::make($image)->resize(800, null)->save($location);
 
                 $post->image = $filename;
             }
@@ -176,6 +176,15 @@ class PostsController extends Controller
         $post->slug=$request->slug;
         $post->category_id=$request->category_id;
         $post->user_id=$request->user_id;
+
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(800, null)->save($location);
+
+            $post->image = $filename;
+        }
 
         $post->save();
 

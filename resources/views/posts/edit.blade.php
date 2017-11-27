@@ -6,7 +6,7 @@
 
 @section('content')
     <h1>Edit post</h1>
-    {!! Form::model($post, ['route' => ['posts.update', $post->id], 'method' => 'PUT']) !!}
+    {!! Form::model($post, ['route' => ['posts.update', $post->id], 'method' => 'PUT', 'files' => true]) !!}
     {{ Form::label('title', 'Blog title:') }}
     {{ Form::text('title', $post->title, ['class'=>'form-control']) }}
     {{Form::label('tags', 'Tags:')}}
@@ -23,6 +23,7 @@
     <br>
     {{ Form::label('body','Post text:') }}
     {{ Form::textarea('body', $post->body, ['class'=>'form-control']) }}
+    {{ Form::file('image') }}
     {{ Form::hidden('user_id', Auth::id() )}}
     {{ Form::submit('Update', ['name'=>'submit_type']) }}
     {{ Form::close() }}

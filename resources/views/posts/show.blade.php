@@ -9,15 +9,6 @@
     @foreach($post->tags as $tag)
         <span class="badge">{{ $tag->name }}</span>
     @endforeach
-    <h3>Add a comment:</h3>
-    {{ Form::open(['action'=>'CommentsController@store']) }}
-    {{ Form::label('user_name', 'Your name:') }}
-    {{ Form::text('user_name', $post->user->name, ['class'=>'form-control']) }}
-    {{ Form::label('body', 'Comment text:') }}
-    {{ Form::textarea('body', null, ['class'=>'form-control']) }}
-    {{ Form::submit('Post comment') }}
-    {{ Form::hidden('post_id', $post->id) }}
-    {{ Form::close() }}
 
     @if(count($post->comments)>0)
         <h3>Comments:</h3>
@@ -26,5 +17,8 @@
     @foreach($post->comments as $comment)
         <strong>{{ $comment->user_name }}</strong>
         <p>{{ $comment->body }}</p>
+        {{ Form::open(['route'=> ['comments.delete', $comment->id], 'method'=>'DELETE'])}}
+        {{ Form::submit('Delete comment') }}
+        {{ Form:: close() }}
     @endforeach
 @endsection
