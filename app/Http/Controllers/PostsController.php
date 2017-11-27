@@ -6,10 +6,9 @@ use Illuminate\Http\Request;
 use App\Post;
 use App\Category;
 use App\Tag;
-use Imagine\Gd\Image;
+use Image;
 use Session;
 use Auth;
-
 
 
 
@@ -74,9 +73,15 @@ class PostsController extends Controller
             $post->slug = $request->slug;
             $post->category_id = $request->category_id;
             $post->user_id = $request->user_id;
-            $image=$request->file('file');
-            Input::make($image)->resize(800, 400)->save('images/1111');
 
+            if($request->hasFile('file')){
+                $image = $request->file('file');
+                $filename = time() . '.' . $image->getClientOriginalExtension();
+                $location = public_path('images/' . $filename);
+                Image::make($image)->fit(800, 400)->save($location);
+
+                $post->image = $filename;
+            }
 
 
             $post->save();
