@@ -8,6 +8,7 @@ use App\Category;
 use App\Tag;
 use Session;
 use Auth;
+use Carbon;
 
 class PostsController extends Controller
 {
@@ -89,7 +90,7 @@ class PostsController extends Controller
     public function show($id)
     {
         $post=Post::find($id);
-        if (Auth::user()->id == $post->id) {
+        if (Auth::user()->id == $post->user->id) {
         return view('posts.show')->withPost($post);
         }
         else{return redirect()->route('posts.index');}
@@ -105,7 +106,7 @@ class PostsController extends Controller
     {
 
         $post = Post::find($id);
-        if (Auth::user()->id == $post->id) {
+        if (Auth::user()->id == $post->user->id) {
             $categories = Category::all();
             $tags = Tag::orderBy('name', 'asc')->get();
             foreach ($categories as $category) {

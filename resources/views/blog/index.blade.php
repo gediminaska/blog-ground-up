@@ -3,18 +3,15 @@
 @section('content')
     <h1>Posts</h1>
     @foreach($posts as $post)
-        <div class="row">
-            <div class="col-md-8">
-                <span style="font-weight: bold; font-size: xx-large">{{$post->title}}</span>
-                <small> Has {{ count($post->comments) }} comments </small>
-                <h4>{{$post->body}}</h4>
-                <p><strong>Category:</strong>{{ $post->category->name }}</p>
-            </div>
-            <div class="col-md-4">
-                {{ Html::linkRoute('blog.show', 'View', [$post->slug], ['class'=>'btn btn-secondary']) }}
 
-            </div>
-        </div>
+                {{Html::linkRoute('blog.show', $post->title, $post->slug, ['style'=>'font-weight: bold; font-size: x-large; color:inherit'])}}
+                <small>Published  {{ $post->created_at->diffForHumans() }}, by {{ $post->user->name }}, {{ count($post->comments) }} comments </small>
+                <h4>{{substr($post->body,0, 600)}} {{strlen($post->body)>600 ? "..." : ""}}</h4>
+
+                <p><strong>Category:</strong>{{ $post->category->name }}</p>
+                {{Html::linkRoute('blog.show', 'Show post', $post->slug, ['class'=>'btn btn-primary btn-block', 'style'=>'background-color:#eee; color:inherit; border-color:#eee'])}}
+                <br>
     @endforeach
     {{ $posts->links() }}
+
 @endsection

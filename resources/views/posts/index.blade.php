@@ -1,7 +1,7 @@
 @extends ('layouts.app')
 
 @section('content')
-    <h1>Posts</h1>
+    <h1>Your posts</h1>
     @foreach(Auth::user()->posts as $post)
         <div class="row">
             <div class="col-md-8">
