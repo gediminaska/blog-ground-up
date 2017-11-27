@@ -3,7 +3,7 @@
 @section('content')
 
 
-    {{ Html::linkRoute('blog.index', 'Go to blog', [],['class'=>'jumbotron btn btn-block', 'style'=>'font-size: 52px; font-weight:bold']) }}
+    {{ Html::linkRoute('blog.index', 'Go to blog', [],['class'=>'jumbotron btn btn-block', 'style'=>'font-size: 52px; font-weight:bold; background-color: rgb(192, 214, 228)']) }}
 
     <h2 style="font-weight: bold">Recent posts</h2>
     @foreach($posts as $post)
@@ -19,9 +19,9 @@
     <h4 style="font-weight: bold">New users</h4>
     @foreach($users as $user)
         <h5>{{ $user->name }}</h5>
-        <h6>Joined {{ $user->created_at->diffForHumans() }}</h6>
-        <h6>Email:  {{ $user->email }}</h6>
-        <h6>Posts created: {{ count($user->posts) }}</h6>
+        <h6 style="margin-bottom:0px; margin-top:6px">Joined {{ $user->created_at->diffForHumans() }}</h6>
+        <h6 style="margin-bottom:0px; margin-top:6px">Email:  {{ $user->email }}</h6>
+        <h6 style="margin-bottom:0px; margin-top:6px">Posts created: {{ count($user->posts) }}</h6>
         <hr>
     @endforeach
 

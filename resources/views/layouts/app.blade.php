@@ -26,7 +26,7 @@
             <div class="col-md-3" style="padding-left: 50px">
                 @yield('panel-left')
             </div>
-            <div class="col-md-6" style="margin: 30px">
+            <div class="col-md-6">
                 @yield('content')
             </div>
             <div class="col-md-3" style="padding-left: 50px">

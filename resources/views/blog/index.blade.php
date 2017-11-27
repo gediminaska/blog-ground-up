@@ -11,9 +11,9 @@
                 <small>Published  {{ $post->created_at->diffForHumans() }}, by {{ $post->user->name }}, {{ count($post->comments) }} comments </small>
                 <p><strong>Category:</strong>{{ $post->category->name }}</p>
                 <img src="{{ $post->image==null ? asset('images/no-image-landscape.png') : asset('images/' . $post->image) }}" height="100px" width="auto" style="float: left; margin-right:20px;">
-                <h4>{{substr($post->body,0, 700)}} {{strlen($post->body)>700 ? "..." : ""}}</h4>
+                <h4 style="text-align: justify">{{substr($post->body,0, 700)}} {{strlen($post->body)>700 ? "..." : ""}}</h4>
                 <br>
-                {{Html::linkRoute('blog.show', 'Show post', $post->slug, ['class'=>'btn btn-primary btn-block', 'style'=>'background-color:#eee; color:inherit; border-color:#eee; float:left'])}}
+                {{Html::linkRoute('blog.show', 'Show post', $post->slug, ['class'=>'btn btn-primary btn-block', 'style'=>'background-color:#eee; color:inherit; border-color:rgb(200, 238, 255); float:left'])}}
                 <br>
         <hr>
     @endforeach

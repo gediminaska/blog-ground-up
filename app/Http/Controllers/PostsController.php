@@ -78,7 +78,9 @@ class PostsController extends Controller
                 $image = $request->file('image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
                 $location = public_path('images/' . $filename);
-                Image::make($image)->resize(800, null)->save($location);
+                Image::make($image)->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($location);
 
                 $post->image = $filename;
             }
@@ -88,7 +90,7 @@ class PostsController extends Controller
 
             $post->tags()->sync($request->tags, false);
             Session::flash('success', 'The post has been saved!');
-            return redirect()->route('posts.index');
+            return redirect()->route('blog.index');
         }
 
     }
@@ -181,7 +183,9 @@ class PostsController extends Controller
             $image = $request->file('image');
             $filename = time() . '.' . $image->getClientOriginalExtension();
             $location = public_path('images/' . $filename);
-            Image::make($image)->resize(800, null)->save($location);
+            Image::make($image)->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($location);
 
             $post->image = $filename;
         }

@@ -7,7 +7,7 @@
             <div class="col-md-8">
                 <span style="font-weight: bold; font-size: xx-large">{{$post->title}}</span>
                 <small> Has {{ count($post->comments) }} comments </small>
-                <h4>{{$post->body}}</h4>
+                <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
                 <p><strong>Category:</strong>{{ $post->category->name }}</p>
             </div>
             <div class="col-md-4">
