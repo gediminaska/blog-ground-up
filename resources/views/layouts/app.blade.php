@@ -22,14 +22,14 @@
     <div id="app">
         @include('partials._navbar')
         @include('partials._messages')
-        <div class="row">
-            <div class="col-md-3" style="padding-left: 50px">
+        <div class="columns">
+            <div class="column is-one-quarter" style="padding-left: 50px">
                 @yield('panel-left')
             </div>
-            <div class="col-md-6" style="padding: 40px">
+            <div class="column" style="padding: 40px">
                 @yield('content')
             </div>
-            <div class="col-md-3" style="padding: 40px">
+            <div class="column is-one-quarter" style="padding: 40px">
                 @yield('panel-right')
             </div>
         </div>
