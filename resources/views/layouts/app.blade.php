@@ -16,12 +16,15 @@
 
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css">
+
     @yield('stylesheets')
 </head>
 <body>
     <div id="app">
         @include('partials._navbar')
         @include('partials._messages')
+
         <div class="columns">
             <div class="column is-one-quarter left-panel">
                 @yield('panel-left')
@@ -68,6 +71,12 @@
             }
 
         });
+
+        Vue.use(Buefy.default);
+        var App = new Vue({
+            el: '#app',
+            data: {}})
+
     </script>
 
 </body>
