@@ -1,7 +1,12 @@
 @extends ('layouts.app')
 
 @section('content')
-    {{ Html::linkRoute('blog.index', 'Back to blog', [], ['class'=>'button is-info is-outlined', 'style'=>'min-width: 200px ']) }}
+    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ route('blog.index') }}">
+    <span class="icon">
+      <i class="fa fa-arrow-left"></i>
+    </span>
+        <span>Back to blog</span>
+    </a>
     <h2 class="title is-2">{{ $post->title }}</h2>
     <img src="{{ asset('images/' . $post->image) }}" style="display:block; margin: 0 auto; max-width: 80%">
     <h4 style="margin-top: 30px; text-align: justify">{{ $post->body }}</h4>
@@ -10,8 +15,9 @@
         <span class="tag is-dark">{{ $tag->name }}</span>
     @endforeach
     <br>
-    <hr>
+
     @if(count($post->comments)>0)
+        <hr>
         <span class="fa fa-comments-o fa-2x"></span><span class="title is-4"> Comments:</span><br>
     @endif
 
