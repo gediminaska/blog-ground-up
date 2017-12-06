@@ -3,8 +3,8 @@
 
 @section('content')
     <div class="columns">
-        <div class="column is-one-third is-offset-one-third">
-            <h1 class="title ">Login</h1>
+        <div class="column card login-box">
+            <h1 class="title card-header is-4">Login</h1>
 
             <form class="form-horizontal" role="form" method="POST" action="{{ route('login') }}">
                 {{ csrf_field() }}

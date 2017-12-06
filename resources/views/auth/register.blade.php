@@ -77,13 +77,11 @@
 
 @section('content')
     <div class="columns">
-        <div class="column is-half is-offset-one-quarter">
-            <div class="card ">
-                <header class="card-header">
-                    <p class="card-header-title">
+        <div class="column">
+            <div class="card login-box">
+                <div class="card-header title is-4">
                         Register
-                    </p>
-                </header>
+                </div>
                 <div class="card-content">
                     <form class="form-horizontal" role="form" method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}
@@ -133,8 +131,8 @@
                                 <div class="control-label">
                                     <!-- spacer -->
                                 </div>
-                                <div class="control is-fullwidth">
-                                    <button class="button is-primary">Register</button>
+                                <div class="control">
+                                    <button class="button is-primary is-fullwidth m-t-10">Register</button>
                                 </div>
                             </div>
 

@@ -29,7 +29,7 @@
             <div class="column is-one-quarter left-panel">
                 @yield('panel-left')
             </div>
-            <div class="column" style="margin: 10px">
+            <div class="column page-content" >
                 @yield('content')
             </div>
             <div class="column is-one-quarter right-panel" style="padding: 40px">

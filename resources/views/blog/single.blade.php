@@ -10,23 +10,27 @@
         <span class="tag is-dark">{{ $tag->name }}</span>
     @endforeach
     <br>
-    <br>
+    <hr>
     @if(count($post->comments)>0)
-        <h3 class="title is-5">Comments:</h3>
+        <span class="fa fa-comments-o fa-2x"></span><span class="title is-4"> Comments:</span><br>
     @endif
 
     @foreach($post->comments as $comment)
         <strong>{{ $comment->user_name }}</strong>
         <p>{{ $comment->body }}</p>
     @endforeach
-    <h3 class="title is-5">Add a comment:</h3>
-    {{ Form::open(['action'=>'CommentsController@store']) }}
-    {{ Form::label('user_name', 'Your name:') }}
-    {{ Form::text('user_name', $post->user->name, ['class'=>'control input', 'style'=>'max-width:500px']) }}
-    {{ Form::label('body', 'Comment text:') }}
-    {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px']) }}
-    {{ Form::submit('Post comment', ['class'=>'button is-success','style'=>'margin-top:10px']) }}
-    {{ Form::hidden('post_id', $post->id) }}
-    {{ Form::close() }}
+    <hr>
+
+        <h3 class="title is-4">Add a comment:</h3>
+        {{ Form::open(['action'=>'CommentsController@store']) }}
+        {{ Form::label('user_name', 'Your name:', ['class'=>'label']) }}
+        {{ Form::text('user_name', $post->user->name, ['class'=>'control input', 'style'=>'max-width:500px']) }}
+        {{ Form::label('body', 'Comment text:', ['class'=>'label m-t-10']) }}
+        {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0']) }}
+        {{ Form::submit('Post comment', ['class'=>'button is-success','style'=>'margin-top:10px']) }}
+        {{ Form::hidden('post_id', $post->id) }}
+        {{ Form::close() }}
+
+
 
 @endsection
