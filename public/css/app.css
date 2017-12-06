@@ -16851,6 +16851,16 @@ label.panel-block:hover {
   padding: 0px 20px 20px 0px;
 }
 
+.left-panel {
+  background-color: whitesmoke;
+  padding-left: 40px;
+}
+
+.right-panel {
+  background-color: whitesmoke;
+  padding-right: 40px;
+}
+
 .m-t-5 {
   margin-top: 5px !important;
 }

@@ -1,66 +1,3 @@
-{{--<nav class="navbar is-light">--}}
-    {{--<div class="container">--}}
-        {{--<div class="navbar-header">--}}
-
-            {{--<!-- Collapsed Hamburger -->--}}
-            {{--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse" aria-expanded="false">--}}
-                {{--<span class="sr-only">Toggle Navigation</span>--}}
-                {{--<span class="icon-bar"></span>--}}
-                {{--<span class="icon-bar"></span>--}}
-                {{--<span class="icon-bar"></span>--}}
-            {{--</button>--}}
-
-            {{--<!-- Branding Image -->--}}
-            {{--<a class="navbar-brand" href="{{ url('/') }}">--}}
-                {{--{{ config('app.name', 'Laravel') }}--}}
-            {{--</a>--}}
-        {{--</div>--}}
-
-        {{--<div class="collapse navbar-collapse" id="app-navbar-collapse">--}}
-            {{--<!-- Left Side Of Navbar -->--}}
-            {{--<ul class="nav navbar-nav">--}}
-                {{--&nbsp;--}}
-            {{--</ul>--}}
-
-            {{--<!-- Right Side Of Navbar -->--}}
-            {{--<ul class="nav navbar-nav navbar-right">--}}
-                {{--<!-- Authentication Links -->--}}
-                {{--@guest--}}
-                    {{--<li><a href="{{ route('login') }}">Login</a></li>--}}
-                    {{--<li><a href="{{ route('register') }}">Register</a></li>--}}
-                    {{--@else--}}
-                        {{--<li class="dropdown">--}}
-                            {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true">--}}
-                                {{--{{ Auth::user()->name }} <span class="caret"></span>--}}
-                            {{--</a>--}}
-
-                            {{--<ul class="dropdown-menu">--}}
-
-                                {{--<li>--}}
-                                    {{--{{ Html::linkRoute('categories.index', 'View categories') }}--}}
-                                {{--</li>--}}
-                                {{--<li>--}}
-                                    {{--{{ Html::linkRoute('posts.index', 'View all posts') }}--}}
-                                {{--</li>--}}
-                                {{--<li>--}}
-                                    {{--<a href="{{ route('logout') }}"--}}
-                                       {{--onclick="event.preventDefault();--}}
-                                                     {{--document.getElementById('logout-form').submit();">--}}
-                                        {{--Logout--}}
-                                    {{--</a>--}}
-
-                                    {{--<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">--}}
-                                        {{--{{ csrf_field() }}--}}
-                                    {{--</form>--}}
-                                {{--</li>--}}
-                            {{--</ul>--}}
-                        {{--</li>--}}
-                        {{--@endguest--}}
-            {{--</ul>--}}
-        {{--</div>--}}
-    {{--</div>--}}
-{{--</nav>--}}
-
 <nav class="navbar is-light">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -106,39 +43,34 @@
                         {{--Components--}}
                     {{--</a>--}}
                 {{--</div>--}}
-            </div>
+
         </div>
 
-
-
-        <div class="navbar-end">
-
-
-                @guest
-                <div class="navbar-item">
-                    <div class="field is-grouped">
-                        <p class="control">
-                            <a class="button" href="{{ route('register') }}">
-                          <span class="icon">
-                            <i class="fa fa-user-plus"></i>
-                          </span>
-                                <span>
-                            Register
-                          </span>
-                            </a>
-                        </p>
-                        <p class="control">
-                            <a class="button is-primary" href="{{ route('login') }}">
-                          <span class="icon">
-                            <i class="fa fa-sign-in"></i>
-                          </span>
-                                <span>Login</span>
-                            </a>
-                        </p>
-                    </div>
-
-                    @else
-                        <div class="navbar-item has-dropdown is-hoverable">
+        @guest
+            <div class="navbar-item">
+                <div class="field is-grouped">
+                    <p class="control">
+                        <a class="button" href="{{ route('register') }}">
+                      <span class="icon">
+                        <i class="fa fa-user-plus"></i>
+                      </span>
+                            <span>
+                        Register
+                      </span>
+                        </a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-primary" href="{{ route('login') }}">
+                      <span class="icon">
+                        <i class="fa fa-sign-in"></i>
+                      </span>
+                            <span>Login</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        @else
+            <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link has-dropdown is-hoverable">
                     Hi, {{ Auth::user()->name }}
                 </a>
@@ -156,15 +88,14 @@
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="{{ route('logout') }}"
                        onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                            document.getElementById('logout-form').submit();">
                             Logout
-                        </a>
                     </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
                 </div>
-
-                        @endguest
-                </div>
-
-        </div>
+            </div>
+        @endguest
     </div>
 </nav>

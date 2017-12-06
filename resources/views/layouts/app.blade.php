@@ -23,13 +23,13 @@
         @include('partials._navbar')
         @include('partials._messages')
         <div class="columns">
-            <div class="column is-one-quarter" style="padding-left: 50px">
+            <div class="column is-one-quarter left-panel">
                 @yield('panel-left')
             </div>
-            <div class="column" style="padding: 40px">
+            <div class="column" style="margin: 10px">
                 @yield('content')
             </div>
-            <div class="column is-one-quarter" style="padding: 40px">
+            <div class="column is-one-quarter right-panel" style="padding: 40px">
                 @yield('panel-right')
             </div>
         </div>
@@ -42,7 +42,33 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
+            // Get all "navbar-burger" elements
+            var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if ($navbarBurgers.length > 0) {
+
+                // Add a click event on each of them
+                $navbarBurgers.forEach(function ($el) {
+                    $el.addEventListener('click', function () {
+
+                        // Get the target from the "data-target" attribute
+                        var target = $el.dataset.target;
+                        var $target = document.getElementById(target);
+
+                        // Toggle the class on both the "navbar-burger" and the "navbar-menu"
+                        $el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+
+        });
+    </script>
 
 </body>
 </html>
