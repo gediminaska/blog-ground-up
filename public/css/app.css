@@ -16871,10 +16871,9 @@ html {
   background-color: whitesmoke;
 }
 
-.page-content {
+.page-content-middle {
   background-color: white;
-  padding: 40px;
-  min-width: 600px;
+  margin: 40px;
 }
 
 .m-t-5 {

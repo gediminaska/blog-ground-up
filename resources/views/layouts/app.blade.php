@@ -14,9 +14,13 @@
         <!--Bootstrap -->
 
 
-
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css">
+
+    <link rel="stylesheet" href="{{ asset('css/font-awesome.css') }}">
+
+
+
 
     @yield('stylesheets')
 </head>
@@ -29,7 +33,7 @@
             <div class="column is-one-quarter left-panel">
                 @yield('panel-left')
             </div>
-            <div class="column page-content" >
+            <div class="column page-content-middle" >
                 @yield('content')
             </div>
             <div class="column is-one-quarter right-panel" style="padding: 40px">
