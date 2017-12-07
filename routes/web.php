@@ -31,6 +31,7 @@ Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@s
 Route::delete('comments/{id}', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);
 
 Route::get('blog/{slug}', ['as' => 'blog.show', 'uses' => 'BlogController@show']);
+Route::get('blog/category/{category_id}', ['as' => 'blog.category', 'uses' => 'BlogController@category']);
 
 Route::get('blog', ['as' => 'blog.index', 'uses' => 'BlogController@index']);
 
