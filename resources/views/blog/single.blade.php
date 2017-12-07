@@ -1,7 +1,7 @@
 @extends ('layouts.app')
 
 @section('content')
-    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ route('blog.index') }}">
+    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ URL::previous() }}">
     <span class="icon">
       <i class="fa fa-arrow-left"></i>
     </span>

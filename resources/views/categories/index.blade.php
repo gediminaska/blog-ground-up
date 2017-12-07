@@ -6,6 +6,8 @@
     {{ Form::open(['action' => 'CategoriesController@store']) }}
     {{Form::label('name', 'Category name:')}}
     {{Form::text('name', null, ['class' => 'form-control'])}}
+    {{Form::label('icon', 'Font awesome icon name')}}
+    {{Form::text('icon', null, ['class' => 'form-control'])}}
     {{ Form::submit('Create') }}
 
     {{Form::close()}}
@@ -14,6 +16,7 @@
             {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
 
             {{ Form::text('name', $category->name,['class' => 'form-control', 'style'=>'width:auto; float:left']) }}
+            {{ Form::text('icon', $category->icon,['class' => 'form-control', 'style'=>'width:auto; float:left']) }}
             {{ Form::submit('Update name', ['class'=>'button', 'style'=>'float:left']) }}
             {{ Form::close() }}
             <br>

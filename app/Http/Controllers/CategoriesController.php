@@ -41,12 +41,14 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|min:3|max:30'
+            'name' => 'required|min:3|max:30',
+            'icon' => 'max:20'
         ]);
 
         $category = new Category;
 
         $category->name = $request->name;
+        $category->icon = $request->icon;
         $category->save();
         Session::flash('success', 'The category has been saved!');
 
@@ -75,10 +77,12 @@ class CategoriesController extends Controller
     public function update(Request $request, $id){
 
         $this->validate($request, [
-            'name' => 'required|min:3|max:30'
+            'name' => 'required|min:3|max:30',
+             'icon' => 'max:20'
         ]);
         $category=Category::find($id);
         $category->name = $request->name;
+        $category->icon = $request->icon;
         $category->save();
         Session::flash('success', 'The category has been updated!');
         return redirect()->route('categories.index');
