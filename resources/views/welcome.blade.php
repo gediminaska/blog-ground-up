@@ -29,7 +29,7 @@
                 <b-tab-item label="Users">
                     <br>
                     @foreach($users as $user)
-                        <span class="fa fa-user-o"> </span><strong> {{ $user->name }}</strong>
+                        <span class="far fa-user"> </span><strong> {{ $user->name }}</strong>
                         <h6 style="margin-bottom:0px; margin-top:6px">Joined {{ $user->created_at->diffForHumans() }}</h6>
                         <h6 style="margin-bottom:0px; margin-top:6px">Email:  {{ $user->email }}</h6>
                         <h6 style="margin-bottom:0px; margin-top:6px">Posts created: {{ count($user->posts) }}</h6>
@@ -41,7 +41,7 @@
                     <br>
                     @foreach($comments as $comment)
                         <h5>{{Html::linkRoute('blog.show', 'In post "' . $comment->post->title . '", ' . $comment->created_at->diffForHumans(), $comment->post->slug, ['style'=>'color:inherit'])}}</h5>
-                        <span class="fa fa-comment-o"></span><span><strong> {{ $comment->user_name }}: </strong>{{ substr($comment->body, 0, 100) . (strlen($comment->body)>100 ? '...' : '') }}</span>
+                        <span class="far fa-comment"></span><span><strong> {{ $comment->user_name }}: </strong>{{ substr($comment->body, 0, 100) . (strlen($comment->body)>100 ? '...' : '') }}</span>
                         <hr>
                     @endforeach
                 </b-tab-item>
