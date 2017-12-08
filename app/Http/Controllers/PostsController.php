@@ -60,8 +60,8 @@ class PostsController extends Controller
 
         else {
             $this->validate($request, [
-                'title' => 'required|min:5|max:60',
-                'body' => 'required|min:10|max:4000',
+                'title' => 'required|min:3|max:60',
+                'body' => 'required|min:5|max:4000',
                 'slug' => 'required|min:3|unique:posts,slug',
                 'category_id' => 'required|numeric',
                 'user_id' => 'required|numeric'
@@ -122,14 +122,11 @@ class PostsController extends Controller
         if (Auth::user()->id == $post->user->id) {
             $categories = Category::all();
             $tags = Tag::orderBy('name', 'asc')->get();
-            foreach ($categories as $category) {
-                $cats[$category->id] = $category->name;
-            }
             $tags2 = array();
             foreach ($tags as $tag) {
                 $tags2[$tag->id] = $tag->name;
             }
-            return view('posts.edit')->withPost($post)->withCategories($cats)->withTags($tags2);
+            return view('posts.edit')->withPost($post)->withCategories($categories)->withTags($tags2);
         }
         else{return redirect()->route('posts.index');}
     }
@@ -146,7 +143,7 @@ class PostsController extends Controller
        $post=Post::find($id);
         if ($request->submit_type=='New tag') {
             $this->validate($request, [
-                'name' => 'required|min:5|max:30',
+                'name' => 'required|min:3|max:30',
                 ]);
             $tag = new Tag;
             $tag->name = $request->name;
@@ -157,8 +154,8 @@ class PostsController extends Controller
 
         elseif($request->input('slug')==$post->slug){
            $this->validate($request, [
-               'title' => 'required|min:5|max:60',
-               'body' => 'required|min:10|max:4000',
+               'title' => 'required|min:3|max:60',
+               'body' => 'required|min:5|max:4000',
                'category_id' => 'required|numeric',
                'user_id' =>'required|numeric'
            ]);

@@ -5,6 +5,12 @@
 @endsection
 
 @section('content')
+    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ URL::previous() }}">
+    <span class="icon">
+      <i class="fas fa-chevron-circle-left"></i>
+    </span>
+        <span>Go back</span>
+    </a>
     <h1 class="title is-3">New post</h1>
 
     {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'files' => true]) }}
