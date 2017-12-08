@@ -15,15 +15,13 @@ Route::get('/', 'WelcomeController@index')->name('welcome');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::resource('posts', 'PostsController');
 
 Route::resource('categories', 'CategoriesController', ['only' => [
     'index', 'store', 'show', 'update']]);
 
 Route::resource('tags', 'TagsController', ['only' => [
-    'index', 'store', 'update']]);
+     'store', 'destroy']]);
 
 Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
 

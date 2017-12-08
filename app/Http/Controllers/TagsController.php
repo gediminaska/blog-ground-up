@@ -18,7 +18,7 @@ class TagsController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**

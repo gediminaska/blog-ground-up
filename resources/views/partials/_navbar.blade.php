@@ -80,7 +80,7 @@
                         Overview
                     </a>
                     <a class="navbar-item" href="{{ route('posts.index') }}">
-                       View all posts
+                       My posts
                     </a>
                     <a class="navbar-item" href="{{ route('categories.index') }}">
                         View categories

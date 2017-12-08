@@ -14,7 +14,7 @@
 
     <h2 class="title is-2">Recent posts</h2>
     @foreach($posts as $post)
-        <h3 class="title is-5">{{ Html::linkRoute('blog.show', $post->title, $post->slug, ['style'=>'color:inherit']) }}</h3> <h3 class="subtitle is-7">posted {{ $post->created_at->diffForHumans() }}</h3>
+        <h3 class="title is-5">{{ Html::linkRoute('blog.show', $post->title, $post->slug, ['style'=>'color:inherit']) }}</h3> <h3 class="subtitle is-7">posted {{ $post->created_at->diffForHumans() }} by {{$post->user->name}}</h3>
         <h4>{{ substr($post->body, 0, 200) . (strlen($post->body)>200 ? '...' : '') }}</h4>
         <hr>
     @endforeach

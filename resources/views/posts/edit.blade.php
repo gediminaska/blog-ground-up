@@ -52,7 +52,7 @@
         </a>
     </div>
     <div class="column is-half">
-        {{ Form::submit('Edit', ['name'=>'submit_type', 'class'=>'button is-fullwidth is-success']) }}
+        {{ Form::submit('Edit', ['name'=>'submit_type', 'class'=>'button is-fullwidth is-primary']) }}
         {{ Form::close() }}
 
     </div>

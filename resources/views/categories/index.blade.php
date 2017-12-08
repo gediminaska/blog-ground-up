@@ -17,7 +17,7 @@
         </div>
         <div class="column is-one-third">
             <div class="control-label">
-                <label class="label">Icon:</label>
+                <label class="label"><a href="https://fontawesome.com/icons?d=gallery&m=free">Fontawesome </a>icon:</label>
             </div>
                 <input name="icon" class="input{{ $errors->has('icon') ? ' is-danger' : '' }}" type="text" required>
                 @include('partials._form-errors', ['field' => 'icon', 'type' => 'horizontal'])
@@ -29,7 +29,7 @@
     </div>
     <hr>
     @foreach($categories as $category)
-        <a href="{{ route('categories.show', $category->id) }}"><i class="{{ $category->icon }} fa-2x m-r-10" style="color: black"></i><span class="title is-3">{{ $category->name }}</span><br><div class="subtitle is-6">has {{count($category->posts)}} posts</div></a>
+        <a href="{{ route('categories.show', $category->id) }}"><i class="{{ $category->icon }} fa-2x m-r-10 m-b-10" style="color: black"></i><span class="title is-3">{{ $category->name }} </span><span class="subtitle is-6">has {{count($category->posts)}} posts</span></a>
         {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
         <div class="columns">
 
