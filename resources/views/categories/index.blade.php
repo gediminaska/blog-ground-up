@@ -2,30 +2,69 @@
 
 @section('content')
 
-    <h1>Categories</h1>
+    <h1 class="title is-3">Categories</h1>
     {{ Form::open(['action' => 'CategoriesController@store']) }}
-    {{Form::label('name', 'Category name:')}}
-    {{Form::text('name', null, ['class' => 'form-control'])}}
-    {{Form::label('icon', 'Font awesome icon name')}}
-    {{Form::text('icon', null, ['class' => 'form-control'])}}
-    {{ Form::submit('Create') }}
+    <div class="columns">
 
-    {{Form::close()}}
-        @foreach($categories as $category)
-            <h3>{{ Html::linkRoute('categories.show', "'" . $category->name . "' , with " . count($category->posts) . " posts.", [$category->id], ['style'=>'text-decoration:none']) }}</h3>
-            {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
+        <div class="column is-one-third">
+            <div class="control-label">
+                <label class="label">Name:</label>
+            </div>
+            <div class="control">
+                <input name="name" class="input{{ $errors->has('name') ? ' is-danger' : '' }}" type="text" required>
+                @include('partials._form-errors', ['field' => 'name', 'type' => 'horizontal'])
+            </div>
+        </div>
+        <div class="column is-one-third">
+            <div class="control-label">
+                <label class="label">Icon:</label>
+            </div>
+                <input name="icon" class="input{{ $errors->has('icon') ? ' is-danger' : '' }}" type="text" required>
+                @include('partials._form-errors', ['field' => 'icon', 'type' => 'horizontal'])
+        </div>
+        <div class="column is-one-third">
+            <button class="button is-success m-t-25 is-fullwidth" type="submit"><i class="fas fa-plus-circle" > </i>Create new category</button>
+        </div>
+        {{Form::close()}}
+    </div>
+    <hr>
+    @foreach($categories as $category)
+        <h3>{{ Html::linkRoute('categories.show', "'" . $category->name . "' , with " . count($category->posts) . " posts.", [$category->id], ['class'=>'title is-5']) }}</h3>
+        {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
+        <div class="columns">
 
-            {{ Form::text('name', $category->name,['class' => 'form-control', 'style'=>'width:auto; float:left']) }}
-            {{ Form::text('icon', $category->icon,['class' => 'form-control', 'style'=>'width:auto; float:left']) }}
-            {{ Form::submit('Update name', ['class'=>'button', 'style'=>'float:left']) }}
+            <div class="column is-one-quarter">
+                <div class="control-label">
+                    <label class="label">Name:</label>
+                </div>
+
+                <div class="control">
+                    <input name="name" value={{ $category->name }} class="input{{ $errors->has('name') ? ' is-danger' : '' }}" type="text" required>
+                    @include('partials._form-errors', ['field' => 'name', 'type' => 'horizontal'])
+                </div>
+            </div>
+
+            <div class="column is-one-quarter">
+                <div class="control-label">
+                    <label class="label">Icon:</label>
+                </div>
+
+                <input name="icon" value={{ $category->icon }} class="input{{ $errors->has('icon') ? ' is-danger' : '' }}" type="text" required>
+                @include('partials._form-errors', ['field' => 'icon', 'type' => 'horizontal'])
+            </div>
+
+            <div class="column is-one-quarter">
+                <button class="button is-primary m-t-25 is-fullwidth" type="submit"><i class="fas fa-edit m-r-10" > </i>Update</button>
             {{ Form::close() }}
-            <br>
-            <br>
+            </div>
+
+            <div class="column in-one-quarter">
                 {{ Form::open(['action' => 'CategoriesController@destroy', 'method' => 'DELETE']) }}
                 {{ Form::hidden('id', $category->id) }}
-                {{ Form::submit('Delete category and all posts', ['class'=>'button', 'style'=>'color: #721c24']) }}
-
+                <button class="button is-danger m-t-25 is-fullwidth" type="submit"><i class="far fa-trash-alt m-r-10" > </i>Delete with posts</button>
                 {{Form::close()}}
-            <hr>
-        @endforeach
+            </div>
+        </div>
+        <hr>
+    @endforeach
 @endsection
