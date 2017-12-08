@@ -3,9 +3,10 @@
 @section('content')
 
     <a class="button is-info is-outlined" style="min-width: 200px" href="{{ route('posts.index') }}">
-    <span class="icon">
-      <i class="fas fa-chevron-circle-left"></i>
-    </span>
+        <span class="icon">
+          <i class="fas fa-chevron-circle-left"></i>
+        </span>
+
         <span>Go back</span>
     </a>
     <h2 class="title is-2">{{ $post->title }}</h2>
