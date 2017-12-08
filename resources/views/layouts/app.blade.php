@@ -17,7 +17,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css">
 
-    <link rel="stylesheet" href="{{ asset('css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome-all.css') }}">
 
 
 
@@ -71,11 +71,6 @@
             }
 
         });
-
-        Vue.use(Buefy.default);
-        var App = new Vue({
-            el: '#app',
-            data: {}})
 
     </script>
 

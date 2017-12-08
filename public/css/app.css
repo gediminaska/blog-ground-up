@@ -16846,7 +16846,7 @@ label.panel-block:hover {
 
 .index-thumbnail {
   float: left;
-  max-width: 350px;
+  max-width: 100%;
   max-height: 150px;
   padding: 0px 20px 20px 0px;
 }

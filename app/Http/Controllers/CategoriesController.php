@@ -42,7 +42,7 @@ class CategoriesController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
-            'icon' => 'max:20'
+            'icon' => 'max:30'
         ]);
 
         $category = new Category;
@@ -78,7 +78,7 @@ class CategoriesController extends Controller
 
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
-             'icon' => 'max:20'
+             'icon' => 'max:30'
         ]);
         $category=Category::find($id);
         $category->name = $request->name;

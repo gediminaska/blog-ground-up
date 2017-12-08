@@ -52,7 +52,7 @@
                     <p class="control">
                         <a class="button" href="{{ route('register') }}">
                       <span class="icon">
-                        <i class="fa fa-user-plus"></i>
+                        <i class="fas fa-user-plus"></i>
                       </span>
                             <span>
                         Register
@@ -62,7 +62,7 @@
                     <p class="control">
                         <a class="button is-primary" href="{{ route('login') }}">
                       <span class="icon">
-                        <i class="fa fa-sign-in"></i>
+                        <i class="fas fa-sign-in-alt"></i>
                       </span>
                             <span>Login</span>
                         </a>

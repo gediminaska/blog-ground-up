@@ -3,7 +3,7 @@
 @section('content')
     <a class="button is-info is-outlined" style="min-width: 200px" href="{{ URL::previous() }}">
     <span class="icon">
-      <i class="fa fa-arrow-left"></i>
+      <i class="fas fa-chevron-circle-left"></i>
     </span>
         <span>Back to blog</span>
     </a>
@@ -18,7 +18,7 @@
 
     @if(count($post->comments)>0)
         <hr>
-        <span class="fa fa-comments-o fa-2x"></span><span class="title is-4"> Comments:</span><br>
+        <span class="far fa-comments fa-2x"></span><span class="title is-4"> Comments:</span><br>
     @endif
 
     @foreach($post->comments as $comment)

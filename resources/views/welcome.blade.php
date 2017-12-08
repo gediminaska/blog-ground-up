@@ -4,7 +4,7 @@
     <p class="field">
         <a href="{{ route('blog.index') }}" class="button is-large is-primary is-fullwidth" style="padding: 40px">
             <span class="icon is-large">
-                <i class="fa fa-rss"></i>
+                <i class="fab fa-blogger"></i>
             </span>
             <span>
                 Go to Blog
