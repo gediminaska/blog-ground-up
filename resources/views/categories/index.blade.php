@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h1 class="title is-3">Categories</h1>
+    <h1 class="title is-2">Categories</h1>
     {{ Form::open(['action' => 'CategoriesController@store']) }}
     <div class="columns">
 
@@ -29,7 +29,7 @@
     </div>
     <hr>
     @foreach($categories as $category)
-        <h3>{{ Html::linkRoute('categories.show', "'" . $category->name . "' , with " . count($category->posts) . " posts.", [$category->id], ['class'=>'title is-5']) }}</h3>
+        <a href="{{ route('categories.show', $category->id) }}"><i class="{{ $category->icon }} fa-2x m-r-10" style="color: black"></i><span class="title is-3">{{ $category->name }}</span><br><div class="subtitle is-6">has {{count($category->posts)}} posts</div></a>
         {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
         <div class="columns">
 
@@ -49,7 +49,7 @@
                     <label class="label">Icon:</label>
                 </div>
 
-                <input name="icon" value={{ $category->icon }} class="input{{ $errors->has('icon') ? ' is-danger' : '' }}" type="text" required>
+                <input name="icon" value="{{ $category->icon }}" class="input{{ $errors->has('icon') ? ' is-danger' : '' }}" type="text" required>
                 @include('partials._form-errors', ['field' => 'icon', 'type' => 'horizontal'])
             </div>
 
