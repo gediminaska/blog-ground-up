@@ -25,9 +25,12 @@
     @yield('stylesheets')
 </head>
 <body>
-    <div id="app">
+
         @include('partials._navbar')
-        @include('partials._messages')
+        <div id="app-2">
+            @include('partials._messages')
+        </div>
+
 
         <div class="columns">
             <div class="column is-one-quarter left-panel">
@@ -37,10 +40,13 @@
                 @yield('content')
             </div>
             <div class="column is-one-quarter right-panel" style="padding: 40px">
-                @yield('panel-right')
+                <div id="app">
+                    @yield('panel-right')
+                </div>
             </div>
+
         </div>
-    </div>
+
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>

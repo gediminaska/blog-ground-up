@@ -47,3 +47,5 @@
     {{ $posts->links() }}
 
 @endsection
+
+

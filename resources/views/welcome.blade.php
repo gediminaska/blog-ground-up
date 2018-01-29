@@ -1,6 +1,8 @@
+
 @extends('layouts.app')
 
 @section('content')
+
     <p class="field">
         <a href="{{ route('blog.index') }}" class="button is-large is-primary is-fullwidth" style="padding: 40px">
             <span class="icon is-large">
@@ -60,5 +62,7 @@
                 }
             }
         }
+
     </script>
+
 @endsection

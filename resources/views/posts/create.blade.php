@@ -5,18 +5,21 @@
 @endsection
 
 @section('content')
-    <b-field>
-        <b-input type="text" placeholder="Post Title" size="is-large" v-model="title" name="title">
-        </b-input>
-    </b-field>
 
-    <slug-widget url="{{url('/')}}" subdirectory="blog" :title="title" @slug-changed="updateSlug"></slug-widget>
-    <input type="hidden" v-model="slug" name="slug" />
+
     <h1 class="title is-3">New post</h1>
 
     {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'files' => true]) }}
 
+    <div id="app-3">
+        <b-field>
+            <b-input type="text" placeholder="Post Title" size="is-large" v-model="title" name="title">
+            </b-input>
+        </b-field>
 
+        <slug-widget url="{{url('/')}}" subdirectory="/blog" :title="title" @slug-changed="updateSlug"></slug-widget>
+        <input type="hidden" v-model="slug" name="slug" />
+    </div>
     <div class="columns" style="margin-bottom: 0px">
         <div class="column is-half">
             {{Form::label('tags', 'Tags:')}}
@@ -33,14 +36,12 @@
             {{ Form::text('name', null ,['class'=>'input']) }}
         </div>
         <div class="column m-t-25">
-            {{ Form::submit('Create', ['name'=>'submit_type', 'class'=>'button is-success is-fullwidth']) }}
+            {{ Form::submit('New tag', ['name'=>'submit_type', 'class'=>'button is-success is-fullwidth']) }}
         </div>
     </div>
-
-
         {{ Form::label('category_id', 'Category:') }}
 <br>
-        <div class="select" style="min-width: ">
+        <div class="select">
             <select name="category_id" id="category_id">
                     @foreach($categories as $category)
 
@@ -60,8 +61,8 @@
 
 @section('scripts')
     <script>
-        var app = new Vue({
-            el: '#app',
+        var app3 = new Vue({
+            el: '#app-3',
             data: {
                 title: '',
                 slug: ''
