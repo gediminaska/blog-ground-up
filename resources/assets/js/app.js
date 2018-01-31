@@ -12,7 +12,10 @@ Vue.component('slugWidget', require('./components/slugWidget.vue'));
 
 var app = new Vue({
   el: '#app',
-  data: {}
+  data: {
+      autoPassword: true,
+      password_options: 'keep'
+  }
 });
 
 var app2 = new Vue({

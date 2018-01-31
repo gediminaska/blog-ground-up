@@ -85,6 +85,9 @@
                     <a class="navbar-item" href="{{ route('categories.index') }}">
                         View categories
                     </a>
+                    <a class="navbar-item" href="{{ route('manage.dashboard') }}">
+                        Manage
+                    </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="{{ route('logout') }}"
                        onclick="event.preventDefault();

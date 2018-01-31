@@ -12,6 +12,7 @@
 
 //Bulma
 @import "node_modules/bulma/bulma";
+//@import "/node_modules/bulma/bulma";
 
 //Buefy
 @import "node_modules/buefy/src/scss/buefy";
@@ -22,3 +23,4 @@
 @import "overrides";
 @import "styles";
 @import "helpers";
+@import "manage";
