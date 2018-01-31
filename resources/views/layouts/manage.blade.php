@@ -27,9 +27,8 @@
 <body>
 
         @include('partials._navbar')
-
-        @include('partials._manage')
         <div id="app-2">
+            @include('partials._manage')
             @include('partials._messages')
         </div>
 
