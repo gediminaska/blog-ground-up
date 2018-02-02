@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="flex-container">
+    <div class="flex-container" id="app">
         <div class="columns m-t-10">
             <div class="column">
                 <h1 class="title">Create new user</h1>
@@ -37,3 +37,14 @@
 
 @endsection
 
+@section('scripts')
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                autoPassword: true,
+            },
+            methods: {}
+        });
+    </script>
+@endsection

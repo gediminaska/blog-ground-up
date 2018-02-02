@@ -40,9 +40,7 @@
                 @yield('content')
             </div>
             <div class="column is-one-quarter right-panel" style="padding: 40px">
-                <div id="app">
                     @yield('panel-right')
-                </div>
             </div>
 
         </div>

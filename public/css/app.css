@@ -17305,6 +17305,10 @@ html {
   margin: 40px;
 }
 
+.media-content {
+  overflow: hidden;
+}
+
 .m-t-5 {
   margin-top: 5px !important;
 }

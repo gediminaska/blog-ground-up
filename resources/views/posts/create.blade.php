@@ -11,7 +11,7 @@
 
     {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'files' => true]) }}
 
-    <div id="app-3">
+    <div id="app">
         <b-field>
             <b-input type="text" placeholder="Post Title" size="is-large" v-model="title" name="title">
             </b-input>
@@ -19,7 +19,6 @@
 
         <slug-widget url="{{url('/')}}" subdirectory="/blog" :title="title" @slug-changed="updateSlug"></slug-widget>
         <input type="hidden" v-model="slug" name="slug" />
-    </div>
     <div class="columns" style="margin-bottom: 0px">
         <div class="column is-half">
             {{Form::label('tags', 'Tags:')}}
@@ -57,12 +56,15 @@
         {{ Form::hidden('user_id', Auth::id() )}}
         {{ Form::submit('Create', ['name'=>'submit_type', 'class'=>'button']) }}
     {{ Form::close() }}
+    </div>
+
 @endsection
 
 @section('scripts')
     <script>
-        var app3 = new Vue({
-            el: '#app-3',
+
+        var app = new Vue({
+            el: '#app',
             data: {
                 title: '',
                 slug: ''

@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="flex-container">
+    <div class="flex-container" id="app">
         <div class="columns m-t-10">
             <div class="column">
                 <h1 class="title">Create new permission</h1>
@@ -79,4 +79,28 @@
         </form>
     </div>
 
+@endsection
+
+@section('scripts')
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                permissionType: 'basic',
+                resource: '',
+                crudSelected: ['create', 'read', 'update', 'delete']
+            },
+            methods: {
+                crudName: function(item) {
+                    return item.substr(0,1).toUpperCase() + item.substr(1) + " " + app.resource.substr(0,1).toUpperCase() + app.resource.substr(1);
+                },
+                crudSlug: function(item) {
+                    return item.toLowerCase() + "-" + app.resource.toLowerCase();
+                },
+                crudDescription: function(item) {
+                    return "Allow a User to " + item.toUpperCase() + " a " + app.resource.substr(0,1).toUpperCase() + app.resource.substr(1);
+                }
+            }
+        });
+    </script>
 @endsection

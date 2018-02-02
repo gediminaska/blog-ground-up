@@ -8,9 +8,9 @@
                 <h1 class="title">{{$user->name}}</h1>
                 <h4 class="title">View user details</h4>
             </div>
-            <div class="column">
-                <a href="{{route('users.edit', $user->id)}}" class="button is-primary is-pulled-right"><i class="fa fa-user m-r-10"></i>Edit</a>
-            </div>
+        </div>
+        <div class="columns">
+            <a href="{{route('users.edit', $user->id)}}" class="button is-primary is-pulled-right"><i class="fa fa-user m-r-10"></i>Edit</a>
         </div>
         <hr class="m-t-0">
         <div class="columns">

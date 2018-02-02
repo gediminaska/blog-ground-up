@@ -24,7 +24,8 @@
 @endsection
 
 @section('panel-right')
-<div class="title is-4">Recent activity</div>
+<div id="app">
+    <div class="title is-4" id="app">Recent activity</div>
     <template>
         <section>
             <b-tabs v-model="activeTab">
@@ -51,18 +52,16 @@
             </b-tabs>
         </section>
     </template>
+</div>
 @endsection
 
 @section('scripts')
     <script>
-        export default {
-            data() {
-                return {
-                    activeTab: 0
-                }
+        var app = new Vue({
+            el: '#app',
+            data: {
+                activeTab: 0
             }
-        }
-
+        });
     </script>
-
 @endsection
