@@ -1058,6 +1058,8 @@ var app2 = new Vue({
     data: {}
 });
 
+__webpack_require__(59);
+
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -41538,6 +41540,40 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */
+/***/ (function(module, exports) {
+
+var accordions = document.getElementsByClassName('has-submenu');
+
+for (var i = 0; i < accordions.length; i++) {
+    accordions[i].onclick = function () {
+        this.classList.toggle('is-active');
+
+        var submenu = this.nextElementSibling;
+        if (submenu.style.maxHeight) {
+            //if the menu is open
+            submenu.style.maxHeight = null;
+            submenu.style.marginTop = null;
+            submenu.style.marginBottom = null;
+        } else {
+            //in the menu is closed
+            submenu.style.maxHeight = submenu.scrollHeight + "px";
+            submenu.style.marginTop = "0.75rem";
+            submenu.style.marginBottom = "0.75rem";
+        }
+    };
+}
 
 /***/ })
 /******/ ]);

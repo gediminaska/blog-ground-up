@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use Hash;
 use Session;
+use App\Role;
 
 class UserController extends Controller
 {
@@ -76,7 +77,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)->with('roles')->first();
         return view('manage.users.show')->withUser($user);
     }
 
@@ -88,8 +89,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        return view('manage.users.edit')->withUser($user);
+        $roles = Role::all();
+        $user = User::where('id', $id)->with('roles')->first();
+        return view('manage.users.edit')->withUser($user)->withRoles($roles);
     }
 
     /**
@@ -121,13 +123,16 @@ class UserController extends Controller
         } elseif($request->password_options == 'manual') {
             $user->password = Hash::make($request->password);
         }
+        $user->syncRoles(explode(',', $request->roles));
 
         if($user->save()) {
-            return redirect()->route('users.show', $id);
+            Session::flash('success', 'Changes successfully saved.');
+            return redirect()->route('users.show', $user->id);
         } else {
             Session::flash('error', 'There was a problem saving changes.');
-            return redirect()->route('users.edit', $id);
+            return redirect()->route('users.show', $user->id);
         }
+
     }
     /**
      * Remove the specified resource from storage.
