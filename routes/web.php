@@ -16,21 +16,22 @@ Route::prefix('manage')->middleware('role:superadministrator|administrator|edito
     Route::resource('/users', 'UserController');
     Route::resource('/permissions', 'PermissionController', ['except' => 'destroy']);
     Route::resource('/roles', 'RoleController', ['except' => 'destroy']);
+    Route::resource('posts', 'PostsController');
+    Route::resource('categories', 'CategoriesController', ['only' => [
+        'index', 'store', 'show', 'update']]);
+    Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
+
 });
 
 Route::get('/', 'WelcomeController@index')->name('welcome');
 
 Auth::routes();
 
-Route::resource('posts', 'PostsController');
 
-Route::resource('categories', 'CategoriesController', ['only' => [
-    'index', 'store', 'show', 'update']]);
 
 Route::resource('tags', 'TagsController', ['only' => [
      'store', 'destroy']]);
 
-Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
 
 Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
 Route::delete('comments/{id}', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);

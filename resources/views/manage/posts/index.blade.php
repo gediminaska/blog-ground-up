@@ -1,4 +1,4 @@
-@extends ('layouts.app')
+@extends ('layouts.manage')
 
 @section('content')
     <h1 class="title is-2">Your posts</h1>

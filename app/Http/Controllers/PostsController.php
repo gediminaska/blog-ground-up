@@ -27,7 +27,7 @@ class PostsController extends Controller
     {
 
         $categories=Category::all();
-        return view('posts.index')->withCategories($categories);
+        return view('manage.posts.index')->withCategories($categories);
     }
 
     /**
@@ -40,7 +40,7 @@ class PostsController extends Controller
         $categories=Category::all();
         $tags=Tag::orderBy('name', 'asc')->get();
 
-        return view('posts.create')->withCategories($categories)->withTags($tags);
+        return view('manage.posts.create')->withCategories($categories)->withTags($tags);
     }
 
     /**
@@ -104,9 +104,9 @@ class PostsController extends Controller
     {
         $post=Post::find($id);
         if (Auth::user()->id == $post->user->id) {
-        return view('posts.show')->withPost($post);
+        return view('manage.posts.show')->withPost($post);
         }
-        else{return redirect()->route('posts.index');}
+        else{return redirect()->route('manage.posts.index');}
     }
 
     /**
@@ -126,9 +126,9 @@ class PostsController extends Controller
             foreach ($tags as $tag) {
                 $tags2[$tag->id] = $tag->name;
             }
-            return view('posts.edit')->withPost($post)->withCategories($categories)->withTags($tags2);
+            return view('manage.posts.edit')->withPost($post)->withCategories($categories)->withTags($tags2);
         }
-        else{return redirect()->route('posts.index');}
+        else{return redirect()->route('manage.posts.index');}
     }
 
     /**
@@ -193,7 +193,7 @@ class PostsController extends Controller
 
         Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been updated!');
 
-        return redirect()->route('posts.index');
+        return redirect()->route('manage.posts.index');
     }
 
     /**
@@ -212,7 +212,7 @@ class PostsController extends Controller
         $post->delete();
 
         Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
-        return redirect()->route('posts.index');
+        return redirect()->route('manage.posts.index');
 
     }
 }

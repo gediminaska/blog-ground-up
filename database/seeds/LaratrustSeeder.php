@@ -57,7 +57,8 @@ class LaratrustSeeder extends Seeder
             $user = \App\User::create([
                 'name' => ucwords(str_replace('_', ' ', $key)),
                 'email' => $key.'@app.com',
-                'password' => bcrypt('password')
+                'password' => bcrypt('password'),
+                'api_token' => bin2hex(openssl_random_pseudo_bytes(30))
             ]);
 
             $user->attachRole($role);
@@ -76,6 +77,8 @@ class LaratrustSeeder extends Seeder
                         'email' => $key.'@app.com',
                         'password' => bcrypt('password'),
                         'remember_token' => str_random(10),
+                        'api_token' => bin2hex(openssl_random_pseudo_bytes(30)),
+
                     ]);
                     $permissions = [];
 
@@ -87,6 +90,7 @@ class LaratrustSeeder extends Seeder
                             'name' => $permissionValue . '-' . $module,
                             'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
                             'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+
                         ])->id;
 
                         $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);

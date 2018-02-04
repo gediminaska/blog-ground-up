@@ -12,7 +12,8 @@
 
 .right-panel {
   background-color: $body-bg;
-  padding-right: 40px;
+  margin: 10px;
+  padding: 20px;
 }
 
 .login-box {
@@ -28,10 +29,12 @@ html {
 
 .page-content-middle {
   background-color: white;
-  margin: 40px;
+  margin: 10px;
+  padding: 20px;
 
 }
 
 .media-content {
   overflow: hidden;
 }
+

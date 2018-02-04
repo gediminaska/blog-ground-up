@@ -19,7 +19,7 @@ class CategoriesController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return view('categories.index')->withCategories($categories);
+        return view('manage.categories.index')->withCategories($categories);
     }
 
     /**
@@ -52,7 +52,7 @@ class CategoriesController extends Controller
         $category->save();
         Session::flash('success', 'The category has been saved!');
 
-        return redirect()->route('categories.index');
+        return redirect()->route('manage.categories.index');
     }
 
     /**
@@ -64,7 +64,7 @@ class CategoriesController extends Controller
     public function show($id)
     {
         $category=Category::find($id);
-        return view('categories.show')->withCategory($category);
+        return view('manage.categories.show')->withCategory($category);
     }
 
     /**
@@ -85,7 +85,7 @@ class CategoriesController extends Controller
         $category->icon = $request->icon;
         $category->save();
         Session::flash('success', 'The category has been updated!');
-        return redirect()->route('categories.index');
+        return redirect()->route('manage.categories.index');
 
     }
 
@@ -101,6 +101,6 @@ class CategoriesController extends Controller
 
         $category->delete();
         Session::flash('success', 'The category has been deleted!');
-        return redirect()->route('categories.index');
+        return redirect()->route('manage.categories.index');
     }
 }

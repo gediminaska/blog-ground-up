@@ -4,6 +4,12 @@
             <a class="navbar-item is-paddingless" href="{{route('welcome')}}">
                 <img src="https://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">
             </a>
+            @if (Request::segment(1) == "manage")
+                <a class="navbar-item is-hidden-desktop" id="admin-slideout-button">
+                    <span class="icon"><i class="fa fa-arrow-alt-circle-right"></i></span>
+                </a>
+            @endif
+
             <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
                 <span></span>
                 <span></span>
@@ -82,12 +88,6 @@
                     <div class="navbar-dropdown is-right">
                         <a class="navbar-item">
                             Overview
-                        </a>
-                        <a class="navbar-item" href="{{ route('posts.index') }}">
-                            My posts
-                        </a>
-                        <a class="navbar-item" href="{{ route('categories.index') }}">
-                            View categories
                         </a>
                         <a class="navbar-item" href="{{ route('manage.dashboard') }}">
                             Manage

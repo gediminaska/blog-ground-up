@@ -1,9 +1,29 @@
-.side-menu {
+#admin-side-menu {
+  z-index: 99;
+  margin-top: 3px;
   position: fixed;
+  left: -235px;
   height: 100vh;
-  width: 200px;
+  width: 235px;
   background-color: white;
-  overflow-y: scroll;
+  overflow-y: auto;
+  padding: 20px;
+  transition: left 0.3s ease-in-out;
+  &.is-active {
+    transition: left 0.3s ease-in-out;
+    left: 0;
+  }
+
+  @include desktop {
+    left: 0;
+  }
+}
+
+#admin-slideout-button {
+  transition: 0.3s;
+  &.is-active {
+    transform: rotateY(180deg);
+  }
 }
 
 .flex-container {
@@ -19,4 +39,73 @@
 .menu-list li ul {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.menu-list a.is-active {
+  background-color: #00d1b2;
+}
+
+.menu-list a.is-active.second-lvl {
+  background-color: #b5b5b5;
+}
+
+.widget-area {
+  min-height: 75px;
+  padding: 10px;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+
+  &.author-widget {
+    .selected-author {
+      display: flex;
+      align-content: flex-start;
+      img {
+        border-radius: 25px;
+      }
+      .author {
+        margin: auto 0 auto 10px;
+        .subtitle {
+          font-weight: 300;
+          font-size: 0.8em;
+        }
+      }
+    }
+  }
+
+  &.post-status-widget {
+    .status {
+      display: flex;
+      align-content: flex-start;
+      .status-icon {
+        min-width: 50px;
+        .icon {
+          width: 100%;
+          i {
+            text-align: center;
+          }
+        }
+      }
+      .status-details {
+        margin-left: 10px;
+        h4 {
+          font-weight: 400;
+          span.status-emphasis {
+            font-weight: 800;
+          }
+        }
+        p {
+          font-weight: 300;
+          font-size: 0.8em;
+        }
+      }
+    }
+  }
+  &.publish-buttons-widget {
+    display: flex;
+    min-height: 50px;
+
+    .primary-action-button, .secondary-action-button {
+      flex: 1;
+      margin: 0 5px;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-@extends ('layouts.app')
+@extends ('layouts.manage')
 
 @section('stylesheets')
     {!! Html::style('css/select2.min.css') !!}

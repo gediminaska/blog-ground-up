@@ -28,20 +28,19 @@
 
         @include('partials._navbar')
         <div id="app-2">
-            @include('partials._manage')
             @include('partials._messages')
         </div>
 
 
         <div class="columns">
-            <div class="column is-one-quarter left-panel">
-                @yield('panel-left')
+            <div class="column is-one-fifth left-panel">
+                @include('partials._manage')
             </div>
-            <div class="column page-content-middle">
+            <div class="column page-content-middle" >
                 @yield('content')
             </div>
-            <div class="column is-one-quarter right-panel" style="padding: 40px">
-                    @yield('panel-right')
+            <div class="column is-one-fifth right-panel" style="padding: 20px">
+                @yield('panel-right')
             </div>
 
         </div>

@@ -1,8 +1,20 @@
 const accordions = document.getElementsByClassName('has-submenu');
+const adminSlideoutButton = document.getElementById('admin-slideout-button')
+
+adminSlideoutButton.onclick = function () {
+    this.classList.toggle('is-active');
+    document.getElementById('admin-side-menu').classList.toggle('is-active')
+}
 
 for (var i = 0; i < accordions.length; i++) {
+    if(accordions[i].classList.contains('is-active')) {
+        const submenu = accordions[i].nextElementSibling;
+        submenu.style.maxHeight = submenu.scrollHeight + "px";
+        submenu.style.marginTop = "0.75rem";
+        submenu.style.marginBottom = "0.75rem"
+    }
     accordions[i].onclick = function () {
-        this.classList.toggle('is-active');
+        // this.classList.toggle('is-active');
 
         const submenu = this.nextElementSibling;
         if(submenu.style.maxHeight) {
@@ -13,8 +25,9 @@ for (var i = 0; i < accordions.length; i++) {
         } else {
             //in the menu is closed
             submenu.style.maxHeight = submenu.scrollHeight + "px";
-            submenu.style.marginTop = "0.75rem"
+            submenu.style.marginTop = "0.75rem";
             submenu.style.marginBottom = "0.75rem"
         }
     }
 }
+
