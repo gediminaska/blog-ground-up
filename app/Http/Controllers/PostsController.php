@@ -15,7 +15,7 @@ use Auth;
 class PostsController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth');
+        $this->middleware('role:superadministrator|administrator|author');
 
     }
     /**
@@ -214,5 +214,9 @@ class PostsController extends Controller
         Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
         return redirect()->route('manage.posts.index');
 
+    }
+
+    public function apiCheckUnique(Request $request) {
+        return json_encode(!Post::where('slug', '=', $request->slug)->exists());
     }
 }
