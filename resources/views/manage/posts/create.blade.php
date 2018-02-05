@@ -33,7 +33,7 @@
                 {{ Form::text('name', null ,['class'=>'input']) }}
             </div>
             <div class="column m-t-25">
-                {{ Form::submit('Create', ['name'=>'submit_type', 'class'=>'button is-primary is-fullwidth']) }}
+                {{ Form::submit('New tag', ['name'=>'submit_type', 'class'=>'button is-primary is-fullwidth']) }}
             </div>
         </div>
         {{ Form::label('category_id', 'Category:') }}

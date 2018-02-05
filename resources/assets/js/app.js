@@ -10,8 +10,9 @@ Vue.use(Buefy);
 
 
 Vue.component('slugWidget', require('./components/slugWidget.vue'));
+Vue.component('laratoaster', require('./components/LaraToaster.vue'));
 
-var app2 = new Vue({
+const app2 = new Vue({
     el: '#app-2',
     data: {}
 });

@@ -25,6 +25,7 @@ class BlogController extends Controller
 
     public function show($slug){
         $post=Post::where('slug', '=', $slug)->first();
-        return view('blog.single')->withPost($post);
+        $prev_url = url()->previous();
+        return view('blog.single')->withPost($post)->withPrevUrl($prev_url);
     }
 }

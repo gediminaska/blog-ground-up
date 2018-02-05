@@ -49,7 +49,7 @@ class CommentsController extends Controller
 
         $comment->save();
         Session::flash('success', 'The comment has been saved!');
-        return redirect()->back();
+        return redirect()->back()->with('prev_url', $request->prev_url);
     }
 
     /**

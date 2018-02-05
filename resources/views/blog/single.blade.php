@@ -1,7 +1,7 @@
 @extends ('layouts.app')
 
 @section('content')
-    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ URL::previous() }}">
+    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ session()->has('prev_url') ? session('prev_url') : $prevUrl }}">
     <span class="icon">
       <i class="fas fa-chevron-circle-left"></i>
     </span>
@@ -36,6 +36,7 @@
         {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0']) }}
         {{ Form::submit('Post comment', ['class'=>'button is-success','style'=>'margin-top:10px']) }}
         {{ Form::hidden('post_id', $post->id) }}
+        {{ Form::hidden('prev_url', session()->has('prev_url') ? session('prev_url') : $prevUrl) }}
         {{ Form::close() }}
 
 

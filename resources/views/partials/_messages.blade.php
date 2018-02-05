@@ -1,14 +1,14 @@
-@if(Session::has('success'))
+{{--@if(Session::has('success'))--}}
 
-       <template>
-           <section>
-               <b-notification type="is-success" has-icon>
-                   <strong>Success: </strong>{{ Session::get('success') }}
-               </b-notification>
-           </section>
-       </template>
+       {{--<template>--}}
+           {{--<section>--}}
+               {{--<b-notification type="is-success" has-icon>--}}
+                   {{--<strong>Success: </strong>{{ Session::get('success') }}--}}
+               {{--</b-notification>--}}
+           {{--</section>--}}
+       {{--</template>--}}
 
-@endif
+{{--@endif--}}
 @if (session('status'))
 
         <template>

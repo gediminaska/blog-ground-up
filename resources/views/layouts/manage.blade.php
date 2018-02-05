@@ -29,6 +29,8 @@
         @include('partials._navbar')
         <div id="app-2">
             @include('partials._messages')
+            {!! Toaster::toast() !!}
+
         </div>
 
 

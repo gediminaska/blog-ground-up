@@ -9,6 +9,7 @@ use App\Tag;
 use Image;
 use Session;
 use Auth;
+use Toaster;
 
 
 
@@ -55,6 +56,7 @@ class PostsController extends Controller
             $tag = new Tag;
             $tag->name = $request->name;
             $tag->save();
+            Toaster::success("Tag was saved!");
             return redirect()->back();
         }
 
@@ -89,7 +91,7 @@ class PostsController extends Controller
             $post->save();
 
             $post->tags()->sync($request->tags, false);
-            Session::flash('success', 'The post has been saved!');
+            Toaster::success("Post has been saved!");
             return redirect()->route('blog.index');
         }
 
@@ -148,7 +150,7 @@ class PostsController extends Controller
             $tag = new Tag;
             $tag->name = $request->name;
             $tag->save();
-            Session::flash('success', 'New tag has been created!');
+            Toaster::success("Tag was saved!");
             return redirect()->back();
         }
 
@@ -190,8 +192,8 @@ class PostsController extends Controller
         $post->save();
 
         $post->tags()->sync($request->tags);
+        Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been updated!');
 
-        Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been updated!');
 
         return redirect()->route('manage.posts.index');
     }
@@ -211,8 +213,8 @@ class PostsController extends Controller
         }
         $post->delete();
 
-        Session::flash('success', 'The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
-        return redirect()->route('manage.posts.index');
+        Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
+        return redirect()->route('posts.index');
 
     }
 

@@ -52,7 +52,7 @@ class CategoriesController extends Controller
         $category->save();
         Session::flash('success', 'The category has been saved!');
 
-        return redirect()->route('manage.categories.index');
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -85,7 +85,7 @@ class CategoriesController extends Controller
         $category->icon = $request->icon;
         $category->save();
         Session::flash('success', 'The category has been updated!');
-        return redirect()->route('manage.categories.index');
+        return redirect()->route('categories.index');
 
     }
 
@@ -101,6 +101,6 @@ class CategoriesController extends Controller
 
         $category->delete();
         Session::flash('success', 'The category has been deleted!');
-        return redirect()->route('manage.categories.index');
+        return redirect()->route('categories.index');
     }
 }
