@@ -1,13 +1,15 @@
 window.Laravel = { csrfToken: '{{ csrf_token() }}' }
 
+
+
 import axios from 'axios'
-import {Line} from 'vue-chartjs'
+import {Doughnut} from 'vue-chartjs'
 
 export default {
-    extends: Line,
+    extends: Doughnut,
     mounted () {
         let vm = this
-        axios.get('http://' + window.location.hostname +'/api/dashboard/activity/posts', {
+        axios.get('http://' + window.location.hostname +'/api/dashboard/activity/categories', {
             params: {
                 api_token: vm.api_token
             }
@@ -19,7 +21,6 @@ export default {
                 this.setGraph()
             })
     },
-
     data () {
         return {
             rows: [],
@@ -33,15 +34,9 @@ export default {
             this.renderChart({
                 labels: this.labels,
                 datasets: [
-                    {label: 'Number of posts', backgroundColor: '#dd4b39', data: this.rows}
+                    {label: 'Number of posts', backgroundColor: ['#3097D1', '#8eb4cb', '#2ab27b', '#cbb956', '#bf5329'], data: this.rows}
                 ]
-            }, {responsive: true, maintainAspectRatio: false, scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }})
+            }, {responsive: true, maintainAspectRatio: false})
         }
     }
 }

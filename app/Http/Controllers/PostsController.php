@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Dashboard\DashboardRepository;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Category;
@@ -220,5 +221,39 @@ class PostsController extends Controller
 
     public function apiCheckUnique(Request $request) {
         return json_encode(!Post::where('slug', '=', $request->slug)->exists());
+    }
+
+    public function apiGetStats(DashboardRepository $dashboardRepository) {
+        $userActivity = $dashboardRepository->systemLastWeekActivities();
+        $labels = [];
+        $rows = [];
+
+        foreach ($userActivity as $value) {
+            $labels[] = $value->date;
+            $rows[] = $value->count;
+        }
+
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows,
+        ];
+        return response()->json(['data' => $data], 200);
+    }
+
+ public function apiGetCategoryStats(DashboardRepository $dashboardRepository) {
+        $categoryStats = $dashboardRepository->systemCategoryStats();
+        $labels = [];
+        $rows = [];
+
+        foreach ($categoryStats as $value) {
+            $labels[] = Category::find($value->category)->name;
+            $rows[] = $value->count;
+        }
+
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows,
+        ];
+        return response()->json(['data' => $data], 200);
     }
 }

@@ -7,5 +7,14 @@
 @endsection
 
 @section('scripts')
+    <script>
 
+        const app = new Vue({
+            el: '#app',
+            data: {
+                api_token: '{{Auth::user()->api_token}}'
+            }
+        });
+
+    </script>
 @endsection

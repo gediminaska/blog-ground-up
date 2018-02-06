@@ -2,9 +2,11 @@
 
 <script>
     import LineChart from './LineChart'
+    import PieChart from './PieChart'
     export default {
         components: {
-            'line-chart' : LineChart
+            'line-chart' : LineChart,
+            'pie-chart' : PieChart,
         }
     }
 </script>
