@@ -22,8 +22,11 @@
                 <a class="navbar-item is-tab" href="{{ route('blog.index') }}">
                     Blog
                 </a>
-                <a class="navbar-item is-tab" href="#">
-                    Empty
+                <a class="navbar-item is-tab" href="{{ route('email') }}">
+                    Email
+                </a>
+                <a class="navbar-item is-tab" href="{{ route('contact') }}">
+                    Contact
                 </a>
                 {{--<div class="navbar-item has-dropdown is-hoverable">--}}
                 {{--<a class="navbar-link" href="/documentation/overview/start/">--}}

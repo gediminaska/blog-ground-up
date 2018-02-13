@@ -7,6 +7,8 @@ use App\User;
 use Hash;
 use Session;
 use App\Role;
+use Toaster;
+use Auth;
 
 class UserController extends Controller
 {
@@ -29,7 +31,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
+        $roles = Role::where('id', '>', 1)->get();
         return view('manage.users.create')->withRoles($roles);
     }
 
@@ -95,7 +97,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $roles = Role::all();
+        $roles = Role::where('id', '>', 1)->get();
         $user = User::where('id', $id)->with('roles')->first();
         return view('manage.users.edit')->withUser($user)->withRoles($roles);
     }
@@ -109,6 +111,10 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if($id == 1 && Auth::user()->id != 1) {
+            Toaster::danger('You do not have permission to do that');
+            return redirect()->back();
+        }
         $this->validate($request, [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users,email,' . $id

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use \Toaster;
 
 class RedirectIfAuthenticated
 {
@@ -18,7 +19,8 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            Toaster::danger('Sorry, you do not have permission.');
+            return redirect()->back();
         }
 
         return $next($request);

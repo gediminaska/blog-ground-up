@@ -53,4 +53,30 @@ class EloquentDashboard implements DashboardRepository
         $query->groupBy('category');
         return $query->get();
     }
+
+  public function systemUserStats()
+    {
+        $select = [
+            DB::raw('count(id) AS count, user_id AS user')
+        ];
+
+        $query = DB::table('posts');
+        $query->select($select);
+        $query->groupBy('user');
+        $query->orderBy('count', 'desc');
+        return $query->get();
+    }
+
+    public function systemCommentStats()
+    {
+        $select = [
+            DB::raw('count(id) AS count, post_id AS post')
+        ];
+
+        $query = DB::table('comments');
+        $query->select($select);
+        $query->groupBy('post');
+        $query->orderBy('count', 'desc');
+        return $query->get();
+    }
 }

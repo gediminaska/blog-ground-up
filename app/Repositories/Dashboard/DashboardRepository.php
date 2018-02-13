@@ -17,4 +17,10 @@ interface DashboardRepository
     public function systemLastWeekActivities();
 
     public function systemCategoryStats();
+
+    public function systemUserStats();
+
+    public function systemCommentStats();
+
+
 }

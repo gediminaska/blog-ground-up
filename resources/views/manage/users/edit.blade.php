@@ -37,7 +37,7 @@
                     <div class="field">
                         <b-radio native-value="manual" v-model="password_options" name="password_options">Manually set new password</b-radio>
                         <p class="control">
-                            <input type="text" class="input" name="password" id="password" v-if="password_options == 'manual'" placeholder="Manually set password">
+                            <input type="text" class="input m-t-10" name="password" id="password" v-if="password_options == 'manual'" placeholder="Manually set password">
                         </p>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     </ul>
                 </div>
             </div>
-            <button class="button is-primary m-t-30 is-fullwidth">Edit User</button>
+            <button class="button is-primary m-t-30 is-fullwidth"{{$user->id == 1 ? 'disabled' : ''}}>Edit User</button>
         </form>
     </div>
 

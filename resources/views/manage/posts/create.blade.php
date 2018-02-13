@@ -4,11 +4,10 @@
     {!! Html::style('css/select2.min.css') !!}
 @endsection
 
-    @section('content')
+@section('content')
+    {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'files' => true]) }}
 
-        <div id="app">
-
-        {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'files' => true]) }}
+    <div id="app">
         {{csrf_field()}}
         <b-field>
             <b-input type="text" placeholder="Post Title" size="is-large" v-model="title" name="title">
@@ -52,48 +51,55 @@
         {{ Form::textarea('body', null, ['class'=>'input', 'style'=>'min-height: 400px' ]) }}
         {{ Form::file('image') }}
         {{ Form::hidden('user_id', Auth::id() )}}
-        {{ Form::submit('Create post', ['name'=>'submit_type', 'class'=>'button is-success is-large is-fullwidth m-t-10']) }}
-        {{ Form::close() }}
-        </div>
+    </div>
 
-    @endsection
-    @section('panel-right')
-        <div id="app2">
-            <div class="card card-widget">
-                <div class="author-widget widget-area">
-                    <div class="selected-author">
-                        <img src="https://placehold.it/50x50"/>
-                        <div class="author">
-                            <h4>{{Auth::user()->name}}</h4>
-                            <p class="subtitle">
-                                (####)
-                            </p>
-                        </div>
+@endsection
+@section('panel-right')
+    <div id="app2">
+        <div class="card card-widget">
+            <div class="author-widget widget-area">
+                <div class="selected-author">
+                    <img src="https://placehold.it/50x50"/>
+                    <div class="author">
+                        <h4>{{Auth::user()->name}}</h4>
+                        <p class="subtitle">
+                            (####)
+                        </p>
                     </div>
                 </div>
-                <div class="post-status-widget widget-area">
-                    <div class="status">
-                        <div class="status-icon">
-                            <b-icon icon="file" size="is-medium"></b-icon>
-                        </div>
-                        <div class="status-details">
-                            <h4><span class="status-emphasis">Draft</span> Saved</h4>
-                            <p>A Few Minutes Ago</p>
-                        </div>
+            </div>
+            <div class="post-status-widget widget-area">
+                <div class="status">
+                    <div class="status-icon">
+                        <b-icon icon="file" size="is-medium"></b-icon>
                     </div>
-                </div>
-                <div class="publish-buttons-widget widget-area">
-                    <div class="secondary-action-button">
-                        <button class="button is-info is-outlined is-fullwidth">Save Draft</button>
-                    </div>
-                    <div class="primary-action-button">
-                        <button class="button is-primary is-fullwidth">Publish</button>
+                    <div class="status-details">
+                        <h4><span class="status-emphasis">Draft</span> Saved</h4>
+                        <p>A Few Minutes Ago</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="columns m-t-10">
+        <div class="column">
+            <button class="button is-info is-outlined is-fullwidth" name="submit_type" value="Save Draft">Save Draft</button>
+        </div>
+        <div class="column">
+            <button class="button is-danger is-fullwidth" name="submit_type" value="Delete draft">Delete draft</button>
+        </div>
+    </div>
 
-    @endsection
+    @if(Auth::user()->hasPermission('publish-post'))
+        {{ Form::submit('Publish', ['name'=>'submit_type', 'class'=>'button is-success is-fullwidth m-t-10']) }}
+    @else
+        {{ Form::submit('Submit', ['name'=>'submit_type', 'class'=>'button is-primary is-fullwidth m-t-10']) }}
+    @endif
+
+    {{ Form::close() }}
+
+@endsection
+
 
 @section('scripts')
     <script>
@@ -111,7 +117,7 @@
                 }
             }
         });
-        var app2 = new Vue ({
+        var app2 = new Vue({
             el: '#app2',
             data: {}
         })

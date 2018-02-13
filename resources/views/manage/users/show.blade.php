@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="columns">
-            <a href="{{route('users.edit', $user->id)}}" class="button is-primary is-pulled-right"><i class="fa fa-user m-r-10"></i>Edit</a>
+            <a href="{{$user->id != 1 ? route('users.edit', $user->id) : ''}}" class="button is-primary is-pulled-right" {{$user->id == 1 ? 'disabled' : ''}}><i class="fa fa-user m-r-10"></i>Edit</a>
         </div>
         <hr class="m-t-0">
         <div class="columns">

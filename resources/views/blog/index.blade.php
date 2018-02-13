@@ -1,4 +1,5 @@
 @extends ('layouts.app')
+@section('title', ' | Blog')
 
 @section('content')
     @if(Auth::check())

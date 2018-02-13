@@ -14,7 +14,7 @@
 
         <div class="columns is-multiline">
             @foreach ($roles as $role)
-                <div class="column is-one-quarter">
+                <div class="column is-one-quarter role-card">
                     <div class="box">
                         <article class="media">
                             <div class="media-content">
@@ -24,6 +24,29 @@
                                     <p>
                                         {{$role->description}}
                                     </p>
+                                    @if($role->hasPermission('create-users'))
+                                        <span  title="Manage users"><i class="fas fa-user-plus"></i></span>
+                                    @endif
+
+                                    @if($role->hasPermission('create-category'))
+                                        <span title="Manage categories"><i class="fas fa-list-ul"></i></span>
+                                    @endif
+
+                                    @if($role->hasPermission('create-post'))
+                                        <span title="Manage posts"><i class="fas fa-file-alt"></i></span>
+                                    @endif
+
+                                    @if($role->hasPermission('publish-post'))
+                                        <span title="Publish posts"><i class="fas fa-bullhorn"></i></span>
+                                    @endif
+
+                                    @if($role->hasPermission('create-roles'))
+                                        <span title="Manage roles"><i class="fas fa-id-badge"></i></span>
+                                    @endif
+
+                                    @if($role->hasPermission('create-permission'))
+                                        <span title="Manage permissions"><i class="fas fa-ban"></i></span>
+                                    @endif
                                 </div>
 
                                 <div class="columns is-mobile">

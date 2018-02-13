@@ -9,18 +9,8 @@ import Buefy from 'buefy';
 import ActivityGraph from './components/activity-graph/ActivityGraph'
 import axios from "axios";
 
-
-axios.interceptors.request.use(function(config){
-    config.headers['X-CSRF-TOKEN'] = window.Laravel.csrfToken
-    config.headers['APP'] = 'Inferno'
-    return config
-})
-
 Vue.use(Buefy);
-Vue.use(axios)
-
-
-
+Vue.use(axios);
 
 Vue.component('slugWidget', require('./components/slugWidget.vue'));
 Vue.component('laratoaster', require('./components/LaraToaster.vue'));

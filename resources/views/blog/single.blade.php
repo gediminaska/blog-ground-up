@@ -1,4 +1,5 @@
 @extends ('layouts.app')
+@section('title', ' | Blog')
 
 @section('content')
     <a class="button is-info is-outlined" style="min-width: 200px" href="{{ session()->has('prev_url') ? session('prev_url') : $prevUrl }}">
@@ -27,18 +28,18 @@
         <p>{{ $comment->body }}</p>
     @endforeach
     <hr>
-
+    @if (Auth::user())
         <h3 class="title is-4">Add a comment:</h3>
         {{ Form::open(['action'=>'CommentsController@store']) }}
         {{ Form::label('user_name', 'Your name:', ['class'=>'label']) }}
-        {{ Form::text('user_name', $post->user->name, ['class'=>'control input', 'style'=>'max-width:500px']) }}
+        {{ Form::text('user_name', Auth::user()->name, ['class'=>'control input', 'style'=>'max-width:500px']) }}
         {{ Form::label('body', 'Comment text:', ['class'=>'label m-t-10']) }}
         {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0']) }}
         {{ Form::submit('Post comment', ['class'=>'button is-success','style'=>'margin-top:10px']) }}
         {{ Form::hidden('post_id', $post->id) }}
         {{ Form::hidden('prev_url', session()->has('prev_url') ? session('prev_url') : $prevUrl) }}
         {{ Form::close() }}
-
+    @endif
 
 
 @endsection

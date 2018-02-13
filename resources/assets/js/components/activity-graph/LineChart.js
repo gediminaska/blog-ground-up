@@ -1,5 +1,3 @@
-window.Laravel = { csrfToken: '{{ csrf_token() }}' }
-
 import axios from 'axios'
 import {Line} from 'vue-chartjs'
 
@@ -45,3 +43,4 @@ export default {
         }
     }
 }
+

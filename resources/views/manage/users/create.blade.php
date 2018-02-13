@@ -31,7 +31,7 @@
                             </div>
                             <div class="field">
                                 <b-radio native-value="manual" v-model="password_options" name="password_options">Manually set new password</b-radio>
-                                <p class="control">
+                                <p class="control m-t-10">
                                     <input type="text" class="input" name="password" id="password" v-if="password_options == 'manual'" placeholder="Manually set password">
                                 </p>
                             </div>

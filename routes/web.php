@@ -16,14 +16,18 @@ Route::prefix('manage')->middleware('role:superadministrator|administrator|edito
     Route::resource('/users', 'UserController');
     Route::resource('/permissions', 'PermissionController', ['except' => 'destroy']);
     Route::resource('/roles', 'RoleController', ['except' => 'destroy']);
-    Route::resource('posts', 'PostsController');
+    Route::resource('/posts', 'PostsController');
     Route::resource('categories', 'CategoriesController', ['only' => [
         'index', 'store', 'show', 'update']]);
     Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
 
 });
 
-Route::get('/', 'WelcomeController@index')->name('welcome');
+Route::get('/', 'PagesController@index')->name('welcome');
+Route::get('/email', 'PagesController@email')->name('email');
+Route::post('/email', 'PagesController@sendEmail')->name('send.email');
+Route::post('/contact', 'PagesController@sendEmail')->name('send.email');
+Route::get('/contact', 'PagesController@contact')->name('contact');
 
 Auth::routes();
 

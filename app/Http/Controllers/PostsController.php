@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Repositories\Dashboard\DashboardRepository;
 use Illuminate\Http\Request;
 use App\Post;
+use App\Role;
 use App\Category;
 use App\Tag;
+use App\User;
 use Image;
 use Session;
 use Auth;
@@ -14,10 +16,11 @@ use Toaster;
 
 
 
+
 class PostsController extends Controller
 {
     public function __construct(){
-        $this->middleware('role:superadministrator|administrator|author');
+        $this->middleware('role:superadministrator|administrator|author|editor');
 
     }
     /**
@@ -27,9 +30,9 @@ class PostsController extends Controller
      */
     public function index()
     {
-
+        Auth::user()->hasRole('superadministrator||administrator') ? $posts = Post::all() : $posts=[];
         $categories=Category::all();
-        return view('manage.posts.index')->withCategories($categories);
+        return view('manage.posts.index')->withCategories($categories)->withPosts($posts);
     }
 
     /**
@@ -54,6 +57,9 @@ class PostsController extends Controller
     public function store(Request $request)
     {
         if ($request->submit_type=='New tag') {
+            $this->validate($request, [
+                'name' => 'required|min:3|max:20'
+            ]);
             $tag = new Tag;
             $tag->name = $request->name;
             $tag->save();
@@ -61,40 +67,67 @@ class PostsController extends Controller
             return redirect()->back();
         }
 
-        else {
-            $this->validate($request, [
-                'title' => 'required|min:3|max:60',
-                'body' => 'required|min:5|max:4000',
-                'slug' => 'required|min:3|unique:posts,slug',
-                'category_id' => 'required|numeric',
-                'user_id' => 'required|numeric'
-            ]);
+        elseif ($request->submit_type == 'Save Draft') {
             $post = new Post;
+            $post->status = 1;
 
-            $post->title = $request->title;
-            $post->body = $request->body;
-            $post->slug = $request->slug;
-            $post->category_id = $request->category_id;
-            $post->user_id = $request->user_id;
-
-            if($request->hasFile('image')){
-                $image = $request->file('image');
-                $filename = time() . '.' . $image->getClientOriginalExtension();
-                $location = public_path('images/' . $filename);
-                Image::make($image)->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($location);
-
-                $post->image = $filename;
-            }
-
-
-            $post->save();
-
-            $post->tags()->sync($request->tags, false);
-            Toaster::success("Post has been saved!");
-            return redirect()->route('blog.index');
         }
+
+        elseif ($request->submit_type == 'Delete draft') {
+            Toaster::success("Draft deleted.");
+            return redirect()->route('posts.index');
+        }
+
+        elseif ($request->submit_type == 'Submit') {
+            $post = new Post;
+            $post->status = 2;
+        }
+
+        elseif ($request->submit_type == 'Publish' && Auth::user()->hasPermission('publish-post')) {
+            $post = new Post;
+            $post->status = 3;
+            $post->published_at = now();
+        }
+
+        $this->validate($request, [
+            'title' => 'required|min:3|max:60',
+            'body' => 'required|min:5|max:4000',
+            'slug' => 'required|min:3|unique:posts,slug',
+            'category_id' => 'required|numeric',
+            'user_id' => 'required|numeric'
+        ]);
+
+        $post->title = $request->title;
+        $post->body = $request->body;
+        $post->slug = $request->slug;
+        $post->category_id = $request->category_id;
+        $post->user_id = $request->user_id;
+
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($location);
+
+            $post->image = $filename;
+        }
+
+
+        $post->save();
+
+        if($post->status == 1) {
+            Toaster::success("Draft has been saved!");
+        } elseif ($post->status == 2) {
+            Toaster::success("Post has been submitted!");
+        } else {
+            Toaster::success("Post has been published!");
+        }
+        $post->tags()->sync($request->tags, false);
+
+        return redirect()->route('blog.index');
+
 
     }
     /**
@@ -109,7 +142,9 @@ class PostsController extends Controller
         if (Auth::user()->id == $post->user->id) {
         return view('manage.posts.show')->withPost($post);
         }
-        else{return redirect()->route('manage.posts.index');}
+        else{
+            return redirect()->route('posts.index');
+        }
     }
 
     /**
@@ -131,7 +166,9 @@ class PostsController extends Controller
             }
             return view('manage.posts.edit')->withPost($post)->withCategories($categories)->withTags($tags2);
         }
-        else{return redirect()->route('manage.posts.index');}
+        else{
+            return redirect()->route('posts.index');
+        }
     }
 
     /**
@@ -143,6 +180,7 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
+
        $post=Post::find($id);
         if ($request->submit_type=='New tag') {
             $this->validate($request, [
@@ -196,7 +234,7 @@ class PostsController extends Controller
         Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been updated!');
 
 
-        return redirect()->route('manage.posts.index');
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -207,6 +245,7 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
+
         $post=Post::find($id);
         $post->tags()->detach();
         foreach($post->comments as $comment){
@@ -247,6 +286,40 @@ class PostsController extends Controller
 
         foreach ($categoryStats as $value) {
             $labels[] = Category::find($value->category)->name;
+            $rows[] = $value->count;
+        }
+
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows,
+        ];
+        return response()->json(['data' => $data], 200);
+    }
+
+ public function apiGetUserStats(DashboardRepository $dashboardRepository) {
+        $userStats = $dashboardRepository->systemUserStats();
+        $labels = [];
+        $rows = [];
+
+        foreach ($userStats as $value) {
+            $labels[] = User::find($value->user)->name;
+            $rows[] = $value->count;
+        }
+
+        $data = [
+            'labels' => $labels,
+            'rows' => $rows,
+        ];
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function apiGetCommentStats(DashboardRepository $dashboardRepository) {
+        $commentStats = $dashboardRepository->systemCommentStats();
+        $labels = [];
+        $rows = [];
+
+        foreach ($commentStats as $value) {
+            $labels[] = Post::find($value->post)->slug;
             $rows[] = $value->count;
         }
 

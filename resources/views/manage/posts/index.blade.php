@@ -2,7 +2,7 @@
 
 @section('content')
     <h1 class="title is-2">Your posts</h1>
-    @foreach(Auth::user()->posts as $post)
+    @foreach((count($posts) != 0 ? $posts : Auth::user()->posts) as $post)
         <div class="columns">
             <div class="column is-two-thirds">
                 <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
