@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    public function __construct(){
+        $this->middleware('role:superadministrator|administrator');
+
+    }
     /**
      * Display a listing of the resource.
      *

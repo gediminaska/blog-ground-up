@@ -14,6 +14,10 @@ use App\Http\Controllers\PostsController;
 |
 */
 
+Route::get('posts/{post}/comments', 'CommentsController@index');
+Route::post('posts/{post}/comment', 'CommentsController@store');
+
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/posts/unique', 'PostsController@apiCheckUnique')->name('api.post');
     Route::get('/dashboard/activity/posts', 'PostsController@apiGetStats')->name('api.dashboard.posts');

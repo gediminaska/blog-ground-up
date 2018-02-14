@@ -9,7 +9,8 @@ use Session;
 class CategoriesController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth');
+        $this->middleware('role:superadministrator|administrator');
+
     }
     /**
      * Display a listing of the resource.

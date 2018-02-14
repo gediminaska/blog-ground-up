@@ -2,7 +2,8 @@
 @section('title', ' | Blog')
 
 @section('content')
-    <a class="button is-info is-outlined" style="min-width: 200px" href="{{ session()->has('prev_url') ? session('prev_url') : $prevUrl }}">
+    <a class="button is-info is-outlined" style="min-width: 200px"
+       href="{{ session()->has('prev_url') ? session('prev_url') : $prevUrl }}">
     <span class="icon">
       <i class="fas fa-chevron-circle-left"></i>
     </span>
@@ -19,27 +20,73 @@
 
     @if(count($post->comments)>0)
         <hr>
-        <span class="far fa-comments fa-2x"></span><span class="title is-4"> Comments:</span><br>
+
     @endif
 
-    @foreach($post->comments as $comment)
-        <br>
-        <strong>{{ $comment->user_name }}</strong>
-        <p>{{ $comment->body }}</p>
-    @endforeach
-    <hr>
-    @if (Auth::user())
+
+    <div id="app3">
+        <div v-if="comments.length > 0">
+            <span class="far fa-comments fa-2x"></span><span class="title is-4"> Comments:</span><br>
+        </div>
+        <div class="title" v-else>No comments</div>
+        <div v-for="comment in comments">
+            <br>
+            <strong>@{{comment.user_name}}:</strong>
+            <p>@{{comment.body}}</p>
+        </div>
+        <hr>
+
         <h3 class="title is-4">Add a comment:</h3>
         {{ Form::open(['action'=>'CommentsController@store']) }}
-        {{ Form::label('user_name', 'Your name:', ['class'=>'label']) }}
-        {{ Form::text('user_name', Auth::user()->name, ['class'=>'control input', 'style'=>'max-width:500px']) }}
         {{ Form::label('body', 'Comment text:', ['class'=>'label m-t-10']) }}
-        {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0']) }}
-        {{ Form::submit('Post comment', ['class'=>'button is-success','style'=>'margin-top:10px']) }}
+        {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0', 'v-model'=>'commentBox']) }}
         {{ Form::hidden('post_id', $post->id) }}
         {{ Form::hidden('prev_url', session()->has('prev_url') ? session('prev_url') : $prevUrl) }}
         {{ Form::close() }}
-    @endif
+        <button class="button" @click.prevent="postComment">Save comment</button>
 
+    </div>
+
+
+@endsection
+
+@section('scripts')
+    <script>
+        const app3 = new Vue({
+            el: '#app3',
+            data: {
+                comments: {},
+                commentBox: '',
+                post: {!! $post->toJson() !!},
+            },
+            mounted() {
+                this.getComments()
+            },
+            methods: {
+                getComments() {
+                    axios.get('/api/posts/' + this.post.id + '/comments')
+                        .then((response) => {
+                            this.comments = response.data
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                },
+                postComment() {
+                    axios.post('/api/posts/' + this.post.id + '/comment', {
+                        body: this.commentBox,
+                        post_id: this.post.id
+                    })
+                        .then((response) => {
+                            this.comments.unshift(response.data);
+                            this.commentBox = '';
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        })
+                }
+            }
+        })
+    </script>
 
 @endsection

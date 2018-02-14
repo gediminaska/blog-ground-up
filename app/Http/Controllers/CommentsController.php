@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Comment;
 use Session;
+use App\Post;
+use Auth;
 
 class CommentsController extends Controller
 {
@@ -13,9 +15,9 @@ class CommentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Post $post)
     {
-        //
+        return response()->json($post->comments()->latest()->get());
     }
 
     /**
@@ -34,22 +36,25 @@ class CommentsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Post $post)
     {
+
         $this->validate($request, [
             'body' => 'required|min:2|max:500',
-            'user_name' => 'required|max:100'
         ]);
 
+        //
         $comment = new Comment;
 
         $comment->post_id = $request->post_id;
-        $comment->user_name = $request->user_name;
+        $comment->user_name = Auth::check() ? Auth::user()->name : 'Guest';
         $comment->body = $request->body;
 
         $comment->save();
-        Session::flash('success', 'The comment has been saved!');
-        return redirect()->back()->with('prev_url', $request->prev_url);
+
+        $comment = Comment::where('id', $comment->id)->first();
+        return $comment->toJson();
+
     }
 
     /**
