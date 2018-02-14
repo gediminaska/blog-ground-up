@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Comment;
+use App\User;
 use Session;
 use App\Post;
 use Auth;
+use App\Events\NewComment;
 
 class CommentsController extends Controller
 {
@@ -36,7 +38,7 @@ class CommentsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Post $post)
+    public function store(Request $request)
     {
 
         $this->validate($request, [
@@ -47,12 +49,15 @@ class CommentsController extends Controller
         $comment = new Comment;
 
         $comment->post_id = $request->post_id;
-        $comment->user_name = Auth::check() ? Auth::user()->name : 'Guest';
+        $comment->user_name = $request->api_token ? User::where('api_token', $request->api_token)->first()->name : 'Guest';
         $comment->body = $request->body;
 
         $comment->save();
 
         $comment = Comment::where('id', $comment->id)->first();
+
+        broadcast(new NewComment($comment))->toOthers();
+
         return $comment->toJson();
 
     }

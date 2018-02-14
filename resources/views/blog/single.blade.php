@@ -58,9 +58,11 @@
                 comments: {},
                 commentBox: '',
                 post: {!! $post->toJson() !!},
+                api_token: '{!! Auth::check() ? Auth::user()->api_token : ''!!}',
             },
             mounted() {
-                this.getComments()
+                this.getComments();
+                this.listen();
             },
             methods: {
                 getComments() {
@@ -75,7 +77,8 @@
                 postComment() {
                     axios.post('/api/posts/' + this.post.id + '/comment', {
                         body: this.commentBox,
-                        post_id: this.post.id
+                        post_id: this.post.id,
+                        api_token: this.api_token,
                     })
                         .then((response) => {
                             this.comments.unshift(response.data);
@@ -83,6 +86,12 @@
                         })
                         .catch(function (error) {
                             console.log(error);
+                        })
+                },
+                listen() {
+                    Echo.channel('post.'+this.post.id)
+                        .listen('NewComment', (comment) => {
+                            this.comments.unshift(comment);
                         })
                 }
             }
