@@ -41,11 +41,17 @@
 
                 <b-tab-item label="Comments">
                     <br>
-                    @foreach($comments as $comment)
-                        <h5>{{Html::linkRoute('blog.show', 'In post "' . $comment->post->title . '", ' . $comment->created_at->diffForHumans(), $comment->post->slug, ['style'=>'color:inherit'])}}</h5>
-                        <span class="far fa-comment"></span><span><strong> {{ $comment->user_name }}: </strong>{{ substr($comment->body, 0, 100) . (strlen($comment->body)>100 ? '...' : '') }}</span>
+
+                    <div v-for="comment in comments">
+                        <h5>@{{ comment.user_name }} In post @{{ comment.post_id }}, @{{ comment.created_at }}</h5>
+                        <span class="far fa-comment"></span><span><strong> @{{  comment.user_name }}: </strong>@{{ comment.body }}</span>
                         <hr>
-                    @endforeach
+                    </div>
+                    {{--@foreach($comments as $comment)--}}
+                        {{--<h5>{{Html::linkRoute('blog.show', 'In post "' . $comment->post->title . '", ' . $comment->created_at->diffForHumans(), $comment->post->slug, ['style'=>'color:inherit'])}}</h5>--}}
+                        {{--<span class="far fa-comment"></span><span><strong> {{ $comment->user_name }}: </strong>{{ substr($comment->body, 0, 100) . (strlen($comment->body)>100 ? '...' : '') }}</span>--}}
+                        {{--<hr>--}}
+                    {{--@endforeach--}}
                 </b-tab-item>
 
             </b-tabs>
@@ -59,7 +65,29 @@
         var app = new Vue({
             el: '#app',
             data: {
-                activeTab: 0
+                activeTab: 0,
+                comments: {},
+            },
+            mounted() {
+                this.getComments();
+                this.listen();
+            },
+            methods: {
+                getComments() {
+                    axios.get('/api/blog/comments')
+                        .then((response) => {
+                            this.comments = response.data
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                },
+                listen() {
+                    Echo.channel('blog')
+                        .listen('NewCommentInBlog', (comment) => {
+                            this.comments.unshift(comment)
+                        })
+                }
             }
         });
     </script>

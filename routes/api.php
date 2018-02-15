@@ -15,6 +15,7 @@ use App\Http\Controllers\PostsController;
 */
 
 Route::get('posts/{post}/comments', 'CommentsController@index');
+Route::get('blog/comments', 'CommentsController@latest');
 Route::post('posts/{post}/comment', 'CommentsController@store');
 
 
