@@ -40,9 +40,8 @@ class NewCommentInBlog implements ShouldBroadcastNow
         return [
             'body' => $this->comment->body,
             'user_name' => $this->comment->user_name,
-            'post' => $this->comment->post->title,
-            'created_at' => $this->comment->created_at,
-
+            'created_at' => date_format($this->comment->created_at, 'Y-m-d H:i:s'),
+            'post' => $this->comment->post,
         ];
     }
 }

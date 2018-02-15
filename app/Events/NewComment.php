@@ -39,7 +39,8 @@ class NewComment implements ShouldBroadcastNow
     public function broadCastWith() {
         return [
             'body' => $this->comment->body,
-            'user_name' => $this->comment->user_name
+            'user_name' => $this->comment->user_name,
+            'post' => $this->comment->post,
         ];
     }
 }

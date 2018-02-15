@@ -25,7 +25,7 @@ class CommentsController extends Controller
 
     public function latest()
     {
-        $comments = Comment::latest()->take(5)->get();
+        $comments = Comment::latest()->take(5)->with('post')->get();
         return response()->json($comments);
     }
 
