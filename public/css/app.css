@@ -14256,6 +14256,11 @@ html {
   overflow: hidden;
 }
 
+.menu-list a.deactivated {
+  cursor: not-allowed;
+  color: #b1b7ba;
+}
+
 .m-t-5 {
   margin-top: 5px !important;
 }

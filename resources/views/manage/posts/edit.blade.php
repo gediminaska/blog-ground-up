@@ -42,21 +42,51 @@
 {{ Form::file('image') }}
 {{ Form::hidden('user_id', Auth::id() )}}
 <br>
-<div class="columns m-t-10">
-    <div class="column is-half">
-        <a class="button is-info is-outlined is-fullwidth" style="min-width: 200px" href="{{ URL::previous() }}">
-    <span class="icon">
-      <i class="fas fa-chevron-circle-left"></i>
-    </span>
-            <span>Cancel</span>
-        </a>
-    </div>
-    <div class="column is-half">
-        {{ Form::submit('Edit', ['name'=>'submit_type', 'class'=>'button is-fullwidth is-primary']) }}
-        {{ Form::close() }}
 
+
+@endsection
+
+@section('panel-right')
+    <div class="card card-widget">
+        <div class="author-widget widget-area">
+            <div class="selected-author">
+                <img src="https://placehold.it/50x50"/>
+                <div class="author">
+                    <h4>{{Auth::user()->name}}</h4>
+                    <p class="subtitle">
+                        (Author)
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="post-status-widget widget-area">
+            <div class="status">
+                <div class="status-icon">
+                    <b-icon icon="file" size="is-medium"></b-icon>
+                </div>
+                <div class="status-details">
+                    <h4><span class="status-emphasis">{{$post->status == 1 ? "Draft " : "Post "}}</span>{{$post->status == 1 ? "saved:" : ($post->status == 2 ? "submitted for review:" : "published:")}}</h4>
+                    <p>{{$post->status == 1 ? $post->updated_at->diffForHumans() : $post->status == 2 ? $post->updated_at->diffForHumans() : $post->published_at->diffForHumans()}}</p>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+    <div class="columns m-t-10">
+        <div class="column">
+            <button class="button is-info is-outlined is-fullwidth" name="submit_type" value="Save Draft">Save {{$post->status == 1 ? '' : 'as'}} draft</button>
+        </div>
+        <div class="column">
+            <button class="button is-danger is-fullwidth" name="submit_type" value="Delete draft">Delete</button>
+        </div>
+    </div>
+
+    @if(Auth::user()->hasPermission('publish-post'))
+        {{ Form::submit($post->status == 3 ? 'Publish again' : 'Publish', ['name'=>'submit_type', 'class'=>'button is-success is-fullwidth m-t-10']) }}
+    @else
+        {{ Form::submit('Submit again', ['name'=>'submit_type', 'class'=>'button is-primary is-fullwidth m-t-10']) }}
+    @endif
+
+    {{ Form::close() }}
 
 @endsection
 

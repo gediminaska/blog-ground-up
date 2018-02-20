@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Mail;
 class PagesController extends Controller
 {
     public function index(){
-        $posts=Post::orderBy('id', 'desc')->get()->take(5);
+        $posts=Post::where('status', 3)->orderBy('id', 'desc')->get()->take(5);
         $users=User::orderBy('id', 'desc')->get()->take(5);
         $comments=Comment::orderBy('id', 'desc')->get()->take(5);
         return view('welcome')->withPosts($posts)->withUsers($users)->withComments($comments);

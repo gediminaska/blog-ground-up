@@ -26,9 +26,8 @@ class BlogController extends Controller
 
     public function show($slug){
         $post=Post::where('slug', '=', $slug)->first();
-        $prev_url = url()->previous();
         if($post->status == 3) {
-            return view('blog.single')->withPost($post)->withPrevUrl($prev_url);
+            return view('blog.single')->withPost($post);
         }
         Toaster::danger('Post not published');
         return redirect()->route('blog.index');

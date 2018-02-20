@@ -2,267 +2,175 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\Dashboard\DashboardRepository;
-use Illuminate\Http\Request;
-use App\Post;
-use App\Role;
 use App\Category;
+use App\Post;
+use App\Repositories\Dashboard\DashboardRepository;
 use App\Tag;
 use App\User;
-use Image;
-use Session;
-use Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Imagine\Gmagick\Image;
 use Toaster;
-
-
 
 
 class PostsController extends Controller
 {
-    public function __construct(){
-        $this->middleware('role:superadministrator|administrator|author|editor');
 
+    public function __construct()
+    {
     }
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|mixed
      */
     public function index()
     {
-        Auth::user()->hasRole('superadministrator||administrator') ? $posts = Post::all() : $posts=[];
-        $categories=Category::all();
-        return view('manage.posts.index')->withCategories($categories)->withPosts($posts);
+        $neededPermission = 'read-post';
+
+        if (Auth::user()->hasPermission('read-all-posts')) {
+            $posts = Post::orderBy('updated_at', 'desc')->get();
+            return $this->viewSorted($posts);
+        } elseif (Auth::user()->hasPermission($neededPermission)) {
+            $posts = Post::query()->where('user_id', Auth::user()->id)->get();
+            return $this->viewSorted($posts);
+        }
+        return $this->rejectUnauthorized($neededPermission);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function create()
     {
-        $categories=Category::all();
-        $tags=Tag::orderBy('name', 'asc')->get();
-
+        if (!Laratrust::can('create-post')) {
+            return $this->rejectUnauthorized('create-post');
+        }
+        $categories = Category::all();
+        $tags = Tag::query()->orderBy('name', 'asc')->get();
         return view('manage.posts.create')->withCategories($categories)->withTags($tags);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        if ($request->submit_type=='New tag') {
-            $this->validate($request, [
-                'name' => 'required|min:3|max:20'
-            ]);
-            $tag = new Tag;
-            $tag->name = $request->name;
-            $tag->save();
-            Toaster::success("Tag was saved!");
-            return redirect()->back();
-        }
+        $neededPermission = 'create-post';
 
-        elseif ($request->submit_type == 'Save Draft') {
-            $post = new Post;
-            $post->status = 1;
-
-        }
-
-        elseif ($request->submit_type == 'Delete draft') {
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        } elseif ($request->submit_type == 'New tag') {
+            return $this->saveTags($request);
+        } elseif ($request->submit_type == 'Delete draft') {
             Toaster::success("Draft deleted.");
             return redirect()->route('posts.index');
         }
-
-        elseif ($request->submit_type == 'Submit') {
-            $post = new Post;
-            $post->status = 2;
-        }
-
-        elseif ($request->submit_type == 'Publish' && Auth::user()->hasPermission('publish-post')) {
-            $post = new Post;
-            $post->status = 3;
-            $post->published_at = now();
-        }
-
-        $this->validate($request, [
-            'title' => 'required|min:3|max:60',
-            'body' => 'required|min:5|max:4000',
-            'slug' => 'required|min:3|unique:posts,slug',
-            'category_id' => 'required|numeric',
-            'user_id' => 'required|numeric'
-        ]);
-
-        $post->title = $request->title;
-        $post->body = $request->body;
+        $this->validatePostData($request);
+        $post = new Post;
+        $post = $this->setPostStatus($request, $post);
+        $this->collectPostData($request, $post);
         $post->slug = $request->slug;
-        $post->category_id = $request->category_id;
-        $post->user_id = $request->user_id;
-
-        if($request->hasFile('image')){
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $location = public_path('images/' . $filename);
-            Image::make($image)->resize(800, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($location);
-
-            $post->image = $filename;
-        }
-
-
         $post->save();
-
-        if($post->status == 1) {
-            Toaster::success("Draft has been saved!");
-        } elseif ($post->status == 2) {
-            Toaster::success("Post has been submitted!");
-        } else {
-            Toaster::success("Post has been published!");
-        }
         $post->tags()->sync($request->tags, false);
-
-        return redirect()->route('blog.index');
-
-
+        return redirect()->route('posts.index');
     }
+
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function show($id)
     {
-        $post=Post::find($id);
-        if (Auth::user()->id == $post->user->id) {
+        $neededPermission = 'publish-post';
+
+        $post = Post::query()->find($id);
+        if (!Auth::user()->hasPermission($neededPermission) && !Auth::user()->id == $post->user->id) {
+            return $this->rejectUnauthorized('to view this post');
+        }
         return view('manage.posts.show')->withPost($post);
-        }
-        else{
-            return redirect()->route('posts.index');
-        }
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function edit($id)
     {
+        $neededPermission = 'publish-post';
 
-        $post = Post::find($id);
-        if (Auth::user()->id == $post->user->id) {
-            $categories = Category::all();
-            $tags = Tag::orderBy('name', 'asc')->get();
-            $tags2 = array();
-            foreach ($tags as $tag) {
-                $tags2[$tag->id] = $tag->name;
-            }
-            return view('manage.posts.edit')->withPost($post)->withCategories($categories)->withTags($tags2);
+        $post = Post::query()->find($id);
+        if (!Auth::user()->hasPermission($neededPermission) && !Auth::user()->id == $post->user->id) {
+            return $this->rejectUnauthorized('to edit this post');
         }
-        else{
-            return redirect()->route('posts.index');
-        }
+        $categories = Category::all();
+        $tags = $this->collectTags();
+        return view('manage.posts.edit')->withPost($post)->withCategories($categories)->withTags($tags);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
+        $neededPermission = 'publish-post';
 
-       $post=Post::find($id);
-        if ($request->submit_type=='New tag') {
+        $post = Post::find($id);
+        if (!Auth::user()->hasPermission($neededPermission) && !Auth::user()->id == $post->user->id) {
+            return $this->rejectUnauthorized('to edit this post');
+        } elseif ($request->submit_type == 'New tag') {
+            return $this->saveTags($request);
+        } elseif ($request->input('slug') == $post->slug) {
             $this->validate($request, [
-                'name' => 'required|min:3|max:30',
-                ]);
-            $tag = new Tag;
-            $tag->name = $request->name;
-            $tag->save();
-            Toaster::success("Tag was saved!");
-            return redirect()->back();
+                'title' => 'required|min:3|max:60',
+                'body' => 'required|min:5|max:4000',
+                'category_id' => 'required|numeric',
+                'user_id' => 'required|numeric'
+            ]);
+        } else {
+            $this->validatePostData($request);
         }
-
-        elseif($request->input('slug')==$post->slug){
-           $this->validate($request, [
-               'title' => 'required|min:3|max:60',
-               'body' => 'required|min:5|max:4000',
-               'category_id' => 'required|numeric',
-               'user_id' =>'required|numeric'
-           ]);
-       }
-       else{
-           $this->validate($request, [
-               'title' => 'required|min:5|max:60',
-               'body' => 'required|min:10|max:4000',
-               'slug' => 'required|min:3|unique:posts,slug',
-               'category_id' => 'required|numeric',
-               'user_id' =>'required|numeric'
-           ]);
-       }
-
-        $post->title=$request->title;
-        $post->body=$request->body;
-        $post->slug=$request->slug;
-        $post->category_id=$request->category_id;
-        $post->user_id=$request->user_id;
-
-        if($request->hasFile('image')){
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $location = public_path('images/' . $filename);
-            Image::make($image)->resize(800, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($location);
-
-            $post->image = $filename;
-        }
-
+        $this->collectPostData($request, $post);
+        $post = $this->setPostStatus($request, $post);
         $post->save();
-
         $post->tags()->sync($request->tags);
-        Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been updated!');
-
-
+        Toaster::success("Post '" . $post->title . "' has been updated");
         return redirect()->route('posts.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
+        $neededPermission = 'publish-post';
 
-        $post=Post::find($id);
+        $post = Post::find($id);
+        if (!Auth::user()->hasPermission($neededPermission) && !Auth::user()->id == $post->user->id) {
+            return $this->rejectUnauthorized('to delete this post');
+        }
         $post->tags()->detach();
-        foreach($post->comments as $comment){
+        foreach ($post->comments as $comment) {
             $comment->delete();
         }
         $post->delete();
 
         Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
         return redirect()->route('posts.index');
-
     }
 
-    public function apiCheckUnique(Request $request) {
+    public function apiCheckUnique(Request $request)
+    {
         return json_encode(!Post::where('slug', '=', $request->slug)->exists());
     }
 
-    public function apiGetStats(DashboardRepository $dashboardRepository) {
+    public function apiGetStats(DashboardRepository $dashboardRepository)
+    {
         $userActivity = $dashboardRepository->systemLastWeekActivities();
         $labels = [];
         $rows = [];
@@ -279,13 +187,14 @@ class PostsController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
- public function apiGetCategoryStats(DashboardRepository $dashboardRepository) {
+    public function apiGetCategoryStats(DashboardRepository $dashboardRepository)
+    {
         $categoryStats = $dashboardRepository->systemCategoryStats();
         $labels = [];
         $rows = [];
 
         foreach ($categoryStats as $value) {
-            $labels[] = Category::find($value->category)->name;
+            $labels[] = Category::query()->find($value->category)->name;
             $rows[] = $value->count;
         }
 
@@ -296,13 +205,14 @@ class PostsController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
- public function apiGetUserStats(DashboardRepository $dashboardRepository) {
+    public function apiGetUserStats(DashboardRepository $dashboardRepository)
+    {
         $userStats = $dashboardRepository->systemUserStats();
         $labels = [];
         $rows = [];
 
         foreach ($userStats as $value) {
-            $labels[] = User::find($value->user)->name;
+            $labels[] = User::query()->find($value->user)->name;
             $rows[] = $value->count;
         }
 
@@ -313,13 +223,14 @@ class PostsController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
-    public function apiGetCommentStats(DashboardRepository $dashboardRepository) {
+    public function apiGetCommentStats(DashboardRepository $dashboardRepository)
+    {
         $commentStats = $dashboardRepository->systemCommentStats();
         $labels = [];
         $rows = [];
 
         foreach ($commentStats as $value) {
-            $labels[] = Post::find($value->post)->slug;
+            $labels[] = Post::query()->find($value->post)->slug;
             $rows[] = $value->count;
         }
 
@@ -328,5 +239,108 @@ class PostsController extends Controller
             'rows' => $rows,
         ];
         return response()->json(['data' => $data], 200);
+    }
+
+
+    /**
+     * @param $posts
+     * @return mixed
+     */
+    public function viewSorted($posts)
+    {
+        $published = $posts->where('status', 3);
+        $submitted = $posts->where('status', 2);
+        $drafts = $posts->where('status', 1);
+        return view('manage.posts.index')->withPublished($published)->withSubmitted($submitted)->withDrafts($drafts);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveTags(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|min:3|max:20'
+        ]);
+        $tag = new Tag;
+        $tag->name = $request->name;
+        $tag->save();
+        Toaster::success("Tag was saved!");
+        return redirect()->back();
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function validatePostData(Request $request): void
+    {
+        $this->validate($request, [
+            'title' => 'required|min:3|max:60',
+            'body' => 'required|min:5|max:4000',
+            'slug' => 'required|min:3|unique:posts,slug',
+            'category_id' => 'required|numeric',
+            'user_id' => 'required|numeric',
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     *
+     * @param $post
+     */
+    public function collectPostData(Request $request, Post $post): void
+    {
+        $post->title = $request->title;
+        $post->body = $request->body;
+        $post->slug = $request->slug;
+        $post->category_id = $request->category_id;
+        $post->user_id = $request->user_id;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($location);
+
+            $post->image = $filename;
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Post $post
+     * @return Post
+     */
+    public function setPostStatus(Request $request, $post)
+    {
+        if ($request->submit_type == 'Save Draft') {
+            $post->status = 1;
+            Toaster::success("Draft has been saved!");
+        } elseif ($request->submit_type == 'Submit') {
+            $post->status = 2;
+            Toaster::success("Post has been submitted!");
+        } elseif ($request->submit_type == 'Publish' && Auth::user()->hasPermission('publish-post')) {
+            $post->status = 3;
+            $post->published_at = now();
+            Toaster::success("Post has been published!");
+        }
+        return $post;
+    }
+
+    /**
+     * @return array
+     */
+    public function collectTags(): array
+    {
+        $tags2 = Tag::query()->orderBy('name', 'asc')->get();
+        $tags = array();
+        foreach ($tags2 as $tag) {
+            $tags[$tag->id] = $tag->name;
+        }
+        return $tags;
     }
 }

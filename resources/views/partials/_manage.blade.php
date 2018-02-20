@@ -4,25 +4,29 @@
             General
         </p>
         <ul class="menu-list">
-            <li><a href="{{route('manage.dashboard')}}" class="{{Nav::isRoute('manage.dashboard')}}">Dashboard</a></li>
+            <li><a href="{{route('manage.dashboard')}}" class="{{Nav::isRoute('manage.dashboard')}}">Statistics</a></li>
         </ul>
         <p class="menu-label">
             Content
         </p>
         <ul class="menu-list">
-            <li><a href="{{route('posts.create')}}" class="{{Nav::isRoute('posts.create')}}"><span class="icon"><i class="fas fa-plus"></i></span><span> New post</span></a></li>
-            <li><a href="{{route('posts.index')}}" class="{{Nav::isRoute(['posts.index', 'posts.edit', 'posts.show'])}}">Posts</a></li>
-            <li><a href="{{route('categories.index')}}" class="{{Nav::isResource('categories')}}">Categories</a></li>
+            <li><a class="has-submenu {{Nav::hasSegment(['posts'], 2)}}">Posts</a>
+                <ul class="submenu">
+                    <li><a href="{{route('posts.create')}}" class="{{Nav::isRoute('posts.create')}}"><span class="icon"><i class="fas fa-plus"></i></span><span> New post</span></a></li>
+                    <li><a href="{{route('posts.index')}}" class="{{Nav::isRoute(['posts.index', 'posts.edit', 'posts.show'])}}">{{Laratrust::can('read-all-posts') ? 'All posts' : 'My posts'}} & drafts</a></li>
+                </ul>
+            </li>
+            <li><a {{Laratrust::can('create-category') ? "href=" . route('categories.index') : ''}} class="{{Nav::isResource('categories')}} {{Laratrust::can('create-category') ? "" : 'deactivated'}}">Categories</a></li>
         </ul>
         <p class="menu-label">
             Administration
         </p>
         <ul class="menu-list">
-            <li><a href="{{route('users.index')}}" class="{{Nav::isResource('users')}}">Manage users</a></li>
-            <li><a class="has-submenu {{Nav::hasSegment(['roles', 'permissions'], 2)}}">Roles and permissions</a>
+            <li><a {{Laratrust::can('read-users' ? 'href=' . route('users.index') : "")}} class="{{Nav::isResource('users')}} {{Laratrust::can('read-users') ? '' : 'deactivated'}}">Manage users</a></li>
+            <li><a class="{{Laratrust::can('read-roles')||Laratrust::can('read-permission') ? 'has-submenu' : 'deactivated'}} {{Nav::hasSegment(['roles', 'permissions'], 2)}}">Roles and permissions</a>
                 <ul class="submenu">
-                    <li><a href="{{route('roles.index')}}" class="{{Nav::isResource('roles')}} second-lvl">Roles</a></li>
-                    <li><a href="{{route('permissions.index')}}" class="{{Nav::isResource('permissions')}} second-lvl">Permissions</a></li>
+                    <li><a href="{{route('roles.index')}}" class="{{Nav::isResource('roles')}} second-lvl {{Laratrust::can('read-roles') ? '' : 'deactivated'}}">Roles</a></li>
+                    <li><a href="{{route('permissions.index')}}" class="{{Nav::isResource('permissions')}} second-lvl {{Laratrust::can('read-permission') ? '' : 'deactivated'}}">Permissions</a></li>
                 </ul>
             </li>
         </ul>

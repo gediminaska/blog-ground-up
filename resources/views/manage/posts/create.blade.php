@@ -55,7 +55,6 @@
 
 @endsection
 @section('panel-right')
-    <div id="app2">
         <div class="card card-widget">
             <div class="author-widget widget-area">
                 <div class="selected-author">
@@ -80,7 +79,6 @@
                 </div>
             </div>
         </div>
-    </div>
     <div class="columns m-t-10">
         <div class="column">
             <button class="button is-info is-outlined is-fullwidth" name="submit_type" value="Save Draft">Save Draft</button>
@@ -117,10 +115,7 @@
                 }
             }
         });
-        var app2 = new Vue({
-            el: '#app2',
-            data: {}
-        })
+
     </script>
 
     {!! Html::script('js/select2.min.js') !!}

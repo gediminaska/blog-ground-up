@@ -24,7 +24,7 @@
 
 @section('panel-right')
     <div id="app">
-        <div class="title is-4" id="app">Recent activity</div>
+        <div class="title is-4">Recent activity</div>
         <template>
             <section>
                 <b-tabs v-model="activeTab">
@@ -62,6 +62,37 @@
     </div>
 @endsection
 
+@section('panel-left')
+    <div id="app3">
+        <div class="title is-4">Features</div>
+        <template>
+            <section>
+                <b-tabs v-model="activeTab">
+                    <b-tab-item label="Back-end">
+                        <div class="subtitle">Multilevel authentification</div>
+                    </b-tab-item>
+
+                    <b-tab-item label="Front-end">
+                        <div class="subtitle">Vue components</div>
+                        <p>Laratoaster alerts</p>
+                        <p>Chart.js charts in management dashboard</p>
+                        <p>Custom made hideable side menu for management panel</p>
+                        <p>Custom made post slug generator: title gets slugified, checked in DB if unique, modified if necessary. Ability to edit generated slug.</p>
+                        <hr>
+                        <div class="subtitle">Pusher service</div>
+                        <p>Real time comments in post view and welcome page</p>
+                        <p>Comment date difference calculated every second</p>
+                        <hr>
+                        <div class="subtitle">Pusher service</div>
+                        <p>Real time comments</p>
+                    </b-tab-item>
+                </b-tabs>
+            </section>
+        </template>
+
+    </div>
+@endsection
+
 @section('scripts')
     <script>
         var app = new Vue({
@@ -77,9 +108,9 @@
                 this.listen();
                 this.$moment.relativeTimeThreshold('s', 59);
                 this.$moment.relativeTimeThreshold('ss', 2);
-                setInterval(function () {
-                    for (comment in app.comments) {
-                        app.comments[comment].created_at = app.$moment(app.comments[comment].created_at);
+                setInterval(() => {
+                    for (let comment in this.comments) {
+                        this.comments[comment].created_at = this.$moment(this.comments[comment].created_at);
                     }
                 }, 1000)
             },
@@ -106,5 +137,11 @@
 
             },
         });
+        var app3 = new Vue({
+            el: '#app3',
+            data: {
+                activeTab: 0,
+            }
+        })
     </script>
 @endsection

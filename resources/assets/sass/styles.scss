@@ -38,3 +38,7 @@ html {
   overflow: hidden;
 }
 
+.menu-list a.deactivated {
+  cursor: not-allowed;
+  color: lighten(#636b6f, 30);
+}

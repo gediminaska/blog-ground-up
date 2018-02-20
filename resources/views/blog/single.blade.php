@@ -3,7 +3,7 @@
 
 @section('content')
     <a class="button is-info is-outlined" style="min-width: 200px"
-       href="{{ session()->has('prev_url') ? session('prev_url') : $prevUrl }}">
+       href="{{ URL::previous() }}">
     <span class="icon">
       <i class="fas fa-chevron-circle-left"></i>
     </span>
@@ -41,7 +41,6 @@
         {{ Form::label('body', 'Comment text:', ['class'=>'label m-t-10']) }}
         {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0', 'v-model'=>'commentBox']) }}
         {{ Form::hidden('post_id', $post->id) }}
-        {{ Form::hidden('prev_url', session()->has('prev_url') ? session('prev_url') : $prevUrl) }}
         {{ Form::close() }}
         <button class="button" @click.prevent="postComment">Save comment</button>
 
@@ -89,12 +88,12 @@
                         })
                 },
                 listen() {
-                    Echo.channel('post.'+this.post.id)
+                    Echo.channel('post.' + this.post.id)
                         .listen('NewComment', (comment) => {
                             this.comments.unshift(comment);
-                        })
-                }
-            }
+                        });
+                },
+            },
         })
     </script>
 
