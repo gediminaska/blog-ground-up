@@ -20,9 +20,9 @@ Route::post('posts/{post}/comment', 'CommentsController@store');
 
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/posts/unique', 'PostsController@apiCheckUnique')->name('api.post');
-    Route::get('/dashboard/activity/posts', 'PostsController@apiGetStats')->name('api.dashboard.posts');
-    Route::get('/dashboard/activity/categories', 'PostsController@apiGetCategoryStats')->name('api.dashboard.categories');
-    Route::get('/dashboard/activity/users', 'PostsController@apiGetUserStats')->name('api.dashboard.users');
-    Route::get('/dashboard/activity/comments', 'PostsController@apiGetCommentStats')->name('api.dashboard.comments');
+    Route::get('/posts/unique', 'PostsApiController@apiCheckUnique')->name('api.post');
+    Route::get('/dashboard/activity/posts', 'PostsApiController@apiGetStats')->name('api.dashboard.posts');
+    Route::get('/dashboard/activity/categories', 'PostsApiController@apiGetCategoryStats')->name('api.dashboard.categories');
+    Route::get('/dashboard/activity/users', 'PostsApiController@apiGetUserStats')->name('api.dashboard.users');
+    Route::get('/dashboard/activity/comments', 'PostsApiController@apiGetCommentStats')->name('api.dashboard.comments');
 });

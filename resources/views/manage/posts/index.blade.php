@@ -5,6 +5,9 @@
     <div id="app">
         <template>
             <section>
+                @if(count($published) + count($submitted) + count($drafts) == 0)
+                    <h1 class="title">Sorry, you do not have any posts or drafts.</h1>
+                @endif
                 <b-tabs v-model="activeTab">
                     <b-tab-item label="Published ({{count($published)}})" icon="check">
                         @foreach($published as $post)

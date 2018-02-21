@@ -6,6 +6,8 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
+use App\Permission;
 use Toaster;
 
 class Controller extends BaseController
@@ -15,11 +17,13 @@ class Controller extends BaseController
     /**
      * @param $neededPermission
      * @param string $permissionText
+     * @param $destination
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function rejectUnauthorized($neededPermission, $permissionText='')
     {
-        Toaster::danger("Sorry, you do not have permission '" . strlen($permissionText==0) ? $neededPermission : $permissionText. "'");
+        $permissionError = strlen($permissionText) == 0 ? Permission::where('name', $neededPermission)->first()->display_name : $permissionText;
+        Toaster::danger('Sorry, you do not have permission to ' . $permissionError);
         return redirect()->route('blog.index');
     }
 }
