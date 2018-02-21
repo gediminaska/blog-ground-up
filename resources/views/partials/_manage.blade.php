@@ -16,7 +16,7 @@
                     <li><a href="{{route('posts.index')}}" class="{{Nav::isRoute(['posts.index', 'posts.edit', 'posts.show'])}}">{{Laratrust::can('read-all-posts') ? 'All posts' : 'My posts'}} & drafts</a></li>
                 </ul>
             </li>
-            <li><a {{Laratrust::can('create-category') ? "href=" . route('categories.index') : ''}} class="{{Nav::isResource('categories')}} {{Laratrust::can('create-category') ? "" : 'deactivated'}}">Categories</a></li>
+            <li><a {{Laratrust::can('read-category') ? "href=" . route('categories.index') : ''}} class="{{Nav::isResource('categories')}} {{Laratrust::can('read-category') ? "" : 'deactivated'}}">Categories</a></li>
         </ul>
         <p class="menu-label">
             Administration
@@ -25,8 +25,8 @@
             <li><a {{Laratrust::can('read-users') ? "href=" . route('users.index') : ''}}  class="{{Nav::isResource('users')}} {{Laratrust::can('read-users') ? '' : 'deactivated'}}">Manage users</a></li>
             <li><a class="{{Laratrust::can('read-roles')||Laratrust::can('read-permission') ? 'has-submenu' : 'deactivated'}} {{Nav::hasSegment(['roles', 'permissions'], 2)}}">Roles and permissions</a>
                 <ul class="submenu">
-                    <li><a href="{{route('roles.index')}}" class="{{Nav::isResource('roles')}} second-lvl {{Laratrust::can('read-roles') ? '' : 'deactivated'}}">Roles</a></li>
-                    <li><a href="{{route('permissions.index')}}" class="{{Nav::isResource('permissions')}} second-lvl {{Laratrust::can('read-permission') ? '' : 'deactivated'}}">Permissions</a></li>
+                    <li><a {{Laratrust::can('read-roles') ? "href=" . route('roles.index') : ''}} class="{{Nav::isResource('roles')}} second-lvl {{Laratrust::can('read-roles') ? '' : 'deactivated'}}">Roles</a></li>
+                    <li><a {{Laratrust::can('read-permission') ? "href=" . route('permissions.index') : ''}} class="{{Nav::isResource('permissions')}} second-lvl {{Laratrust::can('read-permission') ? '' : 'deactivated'}}">Permissions</a></li>
                 </ul>
             </li>
         </ul>

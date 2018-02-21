@@ -6,7 +6,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
 use App\Permission;
 use Toaster;
 
@@ -24,6 +23,6 @@ class Controller extends BaseController
     {
         $permissionError = strlen($permissionText) == 0 ? Permission::where('name', $neededPermission)->first()->display_name : $permissionText;
         Toaster::danger('Sorry, you do not have permission to ' . $permissionError);
-        return redirect()->route('blog.index');
+        return redirect()->back();
     }
 }

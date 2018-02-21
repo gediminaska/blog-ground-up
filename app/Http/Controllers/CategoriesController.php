@@ -4,44 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Toaster;
 
 class CategoriesController extends Controller
 {
     public function __construct(){
-        $this->middleware('role:superadministrator|administrator');
 
     }
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function index()
     {
-
+        $neededPermission = 'read-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $categories = Category::all();
         return view('manage.categories.index')->withCategories($categories);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-       //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
+        $neededPermission = 'create-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
             'icon' => 'max:30'
@@ -52,32 +46,37 @@ class CategoriesController extends Controller
         $category->name = $request->name;
         $category->icon = $request->icon;
         $category->save();
-        Session::flash('success', 'The category has been saved!');
+        Toaster::success('The category has been saved!');
 
         return redirect()->route('categories.index');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function show($id)
     {
+        $neededPermission = 'read-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $category=Category::find($id);
         return view('manage.categories.show')->withCategory($category);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
 
     public function update(Request $request, $id){
 
+        $neededPermission = 'update-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
              'icon' => 'max:30'
@@ -86,14 +85,17 @@ class CategoriesController extends Controller
         $category->name = $request->name;
         $category->icon = $request->icon;
         $category->save();
-        Session::flash('success', 'The category has been updated!');
+        Toaster::success('The category has been updated!');
         return redirect()->route('categories.index');
 
     }
 
     public function destroy(Request $request)
     {
-
+        $neededPermission = 'delete-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $id = $request->id;
         $category = Category::find($id);
 
@@ -102,7 +104,7 @@ class CategoriesController extends Controller
         }
 
         $category->delete();
-        Session::flash('success', 'The category has been deleted!');
+        Toaster::success('The category has been deleted!');
         return redirect()->route('categories.index');
     }
 }
