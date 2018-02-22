@@ -39,7 +39,8 @@ class NewComment implements ShouldBroadcastNow
     public function broadCastWith() {
         return [
             'body' => $this->comment->body,
-            'user_name' => $this->comment->user_name,
+            'user' => $this->comment->user,
+            'created_at' => date_format($this->comment->created_at, 'Y-m-d H:i:s'),
             'post' => $this->comment->post,
         ];
     }

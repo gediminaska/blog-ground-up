@@ -26,6 +26,9 @@ return [
         'supporter' => [
             'profile' => 'r,u'
         ],
+        'guest' => [
+            'profile' => 'r'
+        ],
     ],
     'permission_structure' => [
         'cru_user' => [

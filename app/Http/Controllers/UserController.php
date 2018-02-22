@@ -134,9 +134,9 @@ class UserController extends Controller
             $user->password = Hash::make($str);
         } elseif($request->password_options == 'manual') {
             $user->password = Hash::make($request->password);
-        } elseif ($request->roles && !in_array(1, $request->roles)){
+        } elseif ($request->roles && !in_array(1, explode(',', $request->roles))){
             $user->syncRoles(explode(',', $request->roles));
-        }
+            }
 
         if($user->save()) {
             Session::flash('success', 'Changes successfully saved.');

@@ -20,12 +20,12 @@ class CommentsController extends Controller
      */
     public function index(Post $post)
     {
-        return response()->json($post->comments()->latest()->get());
+        return response()->json($post->comments()->latest()->with('user')->get());
     }
 
     public function latest()
     {
-        $comments = Comment::latest()->take(5)->with('post')->get();
+        $comments = Comment::latest()->take(5)->with('post')->with('user')->get();
         return response()->json($comments);
     }
 
@@ -56,12 +56,15 @@ class CommentsController extends Controller
         $comment = new Comment;
 
         $comment->post_id = $request->post_id;
-        $comment->user_name = $request->api_token ? User::where('api_token', $request->api_token)->first()->name : 'Guest';
+
+        /* Hard-coded Guest user_id in the next line */
+        $comment->user_id = $request->api_token ? User::where('api_token', $request->api_token)->first()->id : 8;
+
         $comment->body = $request->body;
 
         $comment->save();
 
-        $comment = Comment::where('id', $comment->id)->first();
+        $comment = Comment::where('id', $comment->id)->with('user')->first();
 
         broadcast(new NewComment($comment))->toOthers();
         broadcast(new NewCommentInBlog($comment))->toOthers();

@@ -58,11 +58,11 @@
         <div class="card card-widget">
             <div class="author-widget widget-area">
                 <div class="selected-author">
-                    <img src="https://placehold.it/50x50"/>
+                    <img src="https://www.gravatar.com/avatar/{{md5(Auth::user()->email)}}?s=50"/>
                     <div class="author">
                         <h4>{{Auth::user()->name}}</h4>
                         <p class="subtitle">
-                            (####)
+                            {{Auth::user()->roles->pluck('display_name')->first()}}
                         </p>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
             <div class="post-status-widget widget-area">
                 <div class="status">
                     <div class="status-icon">
-                        <b-icon icon="file" size="is-medium"></b-icon>
+                        <b-icon icon="fa-user" size="is-medium"></b-icon>
                     </div>
                     <div class="status-details">
                         <h4><span class="status-emphasis">Draft</span> Saved</h4>

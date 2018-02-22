@@ -31,4 +31,7 @@ class User extends Authenticatable
     public function posts(){
         return $this->hasMany('App\Post')->orderBy('id', 'desc');
     }
+    public function comments(){
+        return $this->hasMany('App\Comment');
+    }
 }
