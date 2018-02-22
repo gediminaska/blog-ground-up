@@ -15,7 +15,7 @@
     <h2 class="title is-2">Recent posts</h2>
     @foreach($posts as $post)
         <h3 class="title is-5">{{ Html::linkRoute('blog.show', $post->title, $post->slug, ['style'=>'color:inherit']) }}</h3>
-        <h3 class="subtitle is-7">posted {{ $post->created_at->diffForHumans() }} by {{$post->user->name}}</h3>
+        <h3 class="subtitle is-7">published {{ $post->published_at->diffForHumans() }} by {{$post->user->name}}</h3>
         <h4>{{ substr($post->body, 0, 200) . (strlen($post->body)>200 ? '...' : '') }}</h4>
         <hr>
     @endforeach
@@ -69,7 +69,19 @@
             <section>
                 <b-tabs v-model="activeTab">
                     <b-tab-item label="Back-end">
-                        <div class="subtitle">Multilevel authentification</div>
+                        <div class="subtitle">Permission based access control</div>
+                        <p>Access to various management pages restricted for users without necessary permission.</p>
+                        <p>Permissions are assignable to both roles and users.</p>
+                        <p>Users can have several roles assigned to them.</p>
+                        <p>Ability to create new roles and permissions.</p>
+                        <hr>
+                        <div class="subtitle">Post resource</div>
+                        <p>Can be filtered by category.</p>
+                        <p>Can have several tags.</p>
+                        <p>All users can leave a comment.</p>
+                        <p>Post status can be 'draft', 'submitted draft' and 'published post'. Only published posts are visible in blog.</p>
+                        <p>Users without publish permission, have to wait for authorized user to publish their submitted draft.</p>
+                        <hr>
                     </b-tab-item>
 
                     <b-tab-item label="Front-end">
@@ -80,16 +92,13 @@
                         <p>Custom made post slug generator: title gets slugified, checked in DB if unique, modified if necessary. Ability to edit generated slug.</p>
                         <hr>
                         <div class="subtitle">Pusher service</div>
-                        <p>Real time comments in post view and welcome page</p>
-                        <p>Comment date difference calculated every second</p>
+                        <p>Real time comments in post view and welcome page.</p>
+                        <p>Comment date difference calculated every second.</p>
                         <hr>
-                        <div class="subtitle">Pusher service</div>
-                        <p>Real time comments</p>
                     </b-tab-item>
                 </b-tabs>
             </section>
         </template>
-
     </div>
 @endsection
 

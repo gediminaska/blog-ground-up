@@ -11,7 +11,7 @@
     <title>MANAGEMENT</title>
 
     <!-- Styles -->
-        <!--Bootstrap -->
+    <!--Bootstrap -->
 
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -20,65 +20,64 @@
     <link rel="stylesheet" href="{{ asset('css/fontawesome-all.css') }}">
 
 
-
-
     @yield('stylesheets')
 </head>
 <body>
 
-        @include('partials._navbar')
-        <div id="app-2">
-            @include('partials._messages')
-            {!! Toaster::toast() !!}
+@include('partials._navbar')
+<div id="app-2">
+    @include('partials._messages')
+    {!! Toaster::toast() !!}
 
-        </div>
-
-
-        <div class="columns">
-            <div class="column is-one-fifth left-panel">
-                @include('partials._manage')
-            </div>
-            <div class="column page-content-middle" >
-                @yield('content')
-            </div>
-            <div class="column is-one-fifth right-panel" style="padding: 20px">
-                @yield('panel-right')
-            </div>
-
-        </div>
+</div>
 
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    @yield('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+<div class="columns">
+    <div class="column is-one-fifth left-panel">
+        @include('partials._manage')
+    </div>
+    <div class="column page-content-middle">
+        @yield('content')
+    </div>
+    <div class="column is-one-fifth right-panel" style="padding: 20px">
+        @yield('panel-right')
+    </div>
 
-            // Get all "navbar-burger" elements
-            var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+</div>
 
-            // Check if there are any navbar burgers
-            if ($navbarBurgers.length > 0) {
 
-                // Add a click event on each of them
-                $navbarBurgers.forEach(function ($el) {
-                    $el.addEventListener('click', function () {
+<!-- Scripts -->
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/manage.js') }}"></script>
+@yield('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-                        // Get the target from the "data-target" attribute
-                        var target = $el.dataset.target;
-                        var $target = document.getElementById(target);
+        // Get all "navbar-burger" elements
+        var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
-                        // Toggle the class on both the "navbar-burger" and the "navbar-menu"
-                        $el.classList.toggle('is-active');
-                        $target.classList.toggle('is-active');
+        // Check if there are any navbar burgers
+        if ($navbarBurgers.length > 0) {
 
-                    });
+            // Add a click event on each of them
+            $navbarBurgers.forEach(function ($el) {
+                $el.addEventListener('click', function () {
+
+                    // Get the target from the "data-target" attribute
+                    var target = $el.dataset.target;
+                    var $target = document.getElementById(target);
+
+                    // Toggle the class on both the "navbar-burger" and the "navbar-menu"
+                    $el.classList.toggle('is-active');
+                    $target.classList.toggle('is-active');
+
                 });
-            }
+            });
+        }
 
-        });
+    });
 
-    </script>
+</script>
 
 </body>
 </html>

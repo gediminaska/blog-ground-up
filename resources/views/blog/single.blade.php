@@ -31,7 +31,7 @@
         <div class="title" v-else>No comments</div>
         <div v-for="comment in comments">
             <br>
-            <strong>@{{comment.user_name}}:</strong>
+            <strong>@{{comment.user_name}} </strong><span>@{{getDate(comment.created_at)}} said:</span>
             <p>@{{comment.body}}</p>
         </div>
         <hr>
@@ -51,7 +51,7 @@
 
 @section('scripts')
     <script>
-        const app3 = new Vue({
+        var app3 = new Vue({
             el: '#app3',
             data: {
                 comments: {},
@@ -62,6 +62,13 @@
             mounted() {
                 this.getComments();
                 this.listen();
+                this.$moment.relativeTimeThreshold('s', 59);
+                this.$moment.relativeTimeThreshold('ss', 2);
+                setInterval(() => {
+                    for (let comment in this.comments) {
+                        this.comments[comment].created_at = this.$moment(this.comments[comment].created_at);
+                    }
+                }, 1000)
             },
             methods: {
                 getComments() {
@@ -86,6 +93,9 @@
                         .catch(function (error) {
                             console.log(error);
                         })
+                },
+                getDate(date) {
+                    return this.$moment(date).add(2, 'hours').fromNow();
                 },
                 listen() {
                     Echo.channel('post.' + this.post.id)

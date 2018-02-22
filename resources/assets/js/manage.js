@@ -1,3 +1,10 @@
+window.Slug = require('slug');
+Slug.defaults.mode = 'rfc3986';
+import ActivityGraph from './components/activity-graph/ActivityGraph'
+Vue.component('activity-graph', ActivityGraph);
+Vue.component('slugWidget', require('./components/slugWidget.vue'));
+
+
 const accordions = document.getElementsByClassName('has-submenu');
 const adminSlideoutButton = document.getElementById('admin-slideout-button')
 
