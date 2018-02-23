@@ -107,6 +107,8 @@ class RoleController extends Controller
         $neededPermission = 'update-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
             return $this->rejectUnauthorized($neededPermission);
+        } elseif ($id < 3 && !Auth::user()->hasRole('superadministrator')) {
+            return $this->rejectUnauthorized($neededPermission, 'update this role');
         }
         $this->validate($request, [
            'display_name' => 'required|max:255',

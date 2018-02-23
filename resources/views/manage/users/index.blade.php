@@ -30,8 +30,8 @@
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->created_at }}</td>
                 <td class="has-text-right">
-                    <a href="{{$user->id != 1 ? route('users.show', $user->id) : ''}}" class="button is-outlined is-primary" {{$user->id == 1 ? 'disabled' : ''}}>View</a>
-                    <a href="{{$user->id != 1 ? route('users.edit', $user->id) : ''}}" class="button is-warning" {{$user->id == 1 ? 'disabled' : ''}}>Edit</a>
+                    <a href="{{$user->id > 2 ? route('users.show', $user->id) : ''}}" class="button is-outlined is-primary" {{$user->id < 3  ? 'disabled' : ''}}>View</a>
+                    <a href="{{$user->id > 2 ? route('users.edit', $user->id) : ''}}" class="button is-warning" {{$user->id < 3 ? 'disabled' : ''}}>Edit</a>
                 </td>
             </tr>
             @endforeach

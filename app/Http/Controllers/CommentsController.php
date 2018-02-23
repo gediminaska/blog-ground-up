@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserTyping;
 use Illuminate\Http\Request;
 use App\Comment;
 use App\User;
@@ -30,13 +31,14 @@ class CommentsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @param Request $request
      */
-    public function create()
+        public function typing($id, Request $request)
     {
-        //
+        $user = $request->user;
+        broadcast(new UserTyping($id, $user))->toOthers();
+
     }
 
     /**
@@ -58,7 +60,7 @@ class CommentsController extends Controller
         $comment->post_id = $request->post_id;
 
         /* Hard-coded Guest user_id in the next line */
-        $comment->user_id = $request->api_token ? User::where('api_token', $request->api_token)->first()->id : 8;
+        $comment->user_id = $request->api_token ? User::where('api_token', $request->api_token)->first()->id : 2;
 
         $comment->body = $request->body;
 

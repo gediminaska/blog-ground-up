@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Comment;
+use App\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -10,19 +11,22 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class NewComment implements ShouldBroadcastNow
+class UserTyping implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $comment;
+    public $postId;
+    public $user;
+
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * UserTyping constructor.
+     * @param $id
+     * @param $user
      */
-    public function __construct(Comment $comment)
+    public function __construct($id, $user)
     {
-        $this->comment = $comment;
+        $this->postId = $id;
+        $this->user = $user;
     }
 
     /**
@@ -32,14 +36,11 @@ class NewComment implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('post.'.$this->comment->post->id);
+        return new Channel('post.'.$this->postId);
     }
     public function broadCastWith() {
         return [
-            'body' => $this->comment->body,
-            'user' => $this->comment->user,
-            'created_at' => date_format($this->comment->created_at, 'Y-m-d H:i:s'),
-            'post' => $this->comment->post,
+            'user' => $this->user,
         ];
     }
 }

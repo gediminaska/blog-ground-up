@@ -13,7 +13,7 @@
             <li><a class="has-submenu {{Nav::hasSegment(['posts'], 2)}}">Posts</a>
                 <ul class="submenu">
                     <li><a href="{{route('posts.create')}}" class="{{Nav::isRoute('posts.create')}}"><span class="icon"><i class="fas fa-plus"></i></span><span> New post</span></a></li>
-                    <li><a href="{{route('posts.index')}}" class="{{Nav::isRoute(['posts.index', 'posts.edit', 'posts.show'])}}">{{Laratrust::can('read-all-posts') ? 'All posts' : 'My posts'}} & drafts</a></li>
+                    <li><a href="{{route('posts.index')}}" class="{{Nav::isRoute(['posts.index', 'posts.edit', 'posts.show'])}}">{{Laratrust::can('publish-post') ? 'All posts' : 'My posts'}} & drafts</a></li>
                 </ul>
             </li>
             <li><a {{Laratrust::can('read-category') ? "href=" . route('categories.index') : ''}} class="{{Nav::isResource('categories')}} {{Laratrust::can('read-category') ? "" : 'deactivated'}}">Categories</a></li>
