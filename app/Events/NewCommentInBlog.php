@@ -12,7 +12,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class NewCommentInBlog implements ShouldBroadcastNow
+class NewCommentInBlog implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

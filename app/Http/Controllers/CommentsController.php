@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\UserTyping;
 use Illuminate\Http\Request;
 use App\Comment;
 use App\User;
 use Session;
 use App\Post;
 use Auth;
+use App\Events\UserTyping;
 use App\Events\NewComment;
 use App\Events\NewCommentInBlog;
+
 
 class CommentsController extends Controller
 {
@@ -53,8 +54,6 @@ class CommentsController extends Controller
         $this->validate($request, [
             'body' => 'required|min:2|max:500',
         ]);
-
-        //
         $comment = new Comment;
 
         $comment->post_id = $request->post_id;
