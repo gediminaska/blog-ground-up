@@ -17,7 +17,7 @@
         <span class="tag is-dark">{{ $tag->name }}</span>
     @endforeach
     <br>
-    <span class="far fa-comments fa-2x"></span><span class="title is-4"> Comments:</span><br>
+    <span class="far fa-comments fa-2x"></span><span class="title is-4" id="commentsStart"> Comments:</span><br>
 
     <div id="app3">
         <div v-if="comments.length > 0">
@@ -29,12 +29,12 @@
 
         <div v-for="comment in comments">
             <br>
-            <div class="author-widget widget-area">
+            <div class="author-widget widget-area" v-bind:class="[getDate(comment.created_at)=='a few seconds ago' ? 'freshComment' : '']">
                 <div class="selected-author">
                     <img v-bind:src="userGravatar(comment.user.email)"
                          style="height: 30px; width: 30px; border-radius:30px; display: inline-block;">
                     <div class="author">
-                        <div v-if="app3.post_author == comment.user.id" style="padding-left: 10px; padding-right: 10px; border-radius: 5px; background-color: #00c4a7; display: inline-block; margin-right: 10px;"><small>Author</small></div><strong>@{{comment.user.name}} </strong>
+                        <div v-if="this.post_author == comment.user.id" style="padding-left: 10px; padding-right: 10px; border-radius: 5px; background-color: #00c4a7; display: inline-block; margin-right: 10px;"><small>Author</small></div><strong>@{{comment.user.name}} </strong>
                         <span>@{{getDate(comment.created_at)}} said:</span>
                         <p>@{{comment.body}}</p>
                     </div>
@@ -103,6 +103,8 @@
                         .then((response) => {
                             this.comments.unshift(response.data);
                             this.commentBox = '';
+                            document.getElementById("commentsStart").scrollIntoView({behavior: 'smooth', block: 'center'});
+
                         })
                         .catch(function (error) {
                             console.log(error);
@@ -123,18 +125,19 @@
                             this.whoIsTyping = user.user;
                             setTimeout(() => {
                                 this.whoIsTyping = false
-                            }, 2000);
+                            }, 4000);
                         });
                 },
                 isTyping() {
-                    setTimeout(function () {
+
                         axios.post('/api/posts/' + app3.post.id + '/typing-comment', {
                             user: window.Laravel.user,
                         })
                             .catch(function (error) {
                                 console.log(error);
-                            })
-                    }, 4000);
+                            });
+                        setTimeout(function(){}, 2000)
+                        
                 },
                 isAuthorComment(id) {
                     if(id = this.post_author) {

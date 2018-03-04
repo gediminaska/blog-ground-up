@@ -46,12 +46,14 @@
                         <br>
 
                         <div v-for="comment in comments">
-                            <h5>In post <strong>@{{ comment.post.title }}</strong>, @{{ getDate(comment.created_at) }}
-                            </h5>
-                            {{--<div v-html="userGravatar(comment.user.email)" style="height: 20px; width: 20px; display: inline-block;"></div>--}}
-                            <img v-bind:src="userGravatar(comment.user.email)" style="height: 20px; width: 20px; border-radius:20px; display: inline-block;">
-                            <span><strong> @{{  comment.user.name }}: </strong>@{{ comment.body }}</span>
-                            <hr>
+                            <div v-bind:class="[getDate(comment.created_at)=='a few seconds ago' ? 'freshComment' : '']">
+                                <h5>In post <strong>@{{ comment.post.title }}</strong>, @{{ getDate(comment.created_at) }}
+                                </h5>
+                                {{--<div v-html="userGravatar(comment.user.email)" style="height: 20px; width: 20px; display: inline-block;"></div>--}}
+                                <img v-bind:src="userGravatar(comment.user.email)" style="height: 20px; width: 20px; border-radius:20px; display: inline-block;">
+                                <span><strong> @{{  comment.user.name }}: </strong>@{{ comment.body }}</span>
+                                <hr>
+                            </div>
                         </div>
                         {{--@foreach($comments as $comment)--}}
                         {{--<h5>{{Html::linkRoute('blog.show', 'In post "' . $comment->post->title . '", ' . $comment->created_at->diffForHumans(), $comment->post->slug, ['style'=>'color:inherit'])}}</h5>--}}
@@ -73,18 +75,18 @@
             <section>
                 <b-tabs v-model="activeTab">
                     <b-tab-item label="Back-end">
-                        <div class="subtitle">Permission based access control</div>
-                        <p>Access to various management pages restricted for users without necessary permission.</p>
-                        <p>Permissions are assignable to both roles and users.</p>
-                        <p>Users can have several roles assigned to them.</p>
-                        <p>Ability to create new roles and permissions.</p>
-                        <hr>
                         <div class="subtitle">Post resource</div>
                         <p>Can be filtered by category.</p>
                         <p>Can have several tags.</p>
                         <p>All users can leave a comment.</p>
                         <p>Post status can be 'draft', 'submitted draft' and 'published post'. Only published posts are visible in blog.</p>
                         <p>Users without publish permission, have to wait for authorized user to publish their submitted draft.</p>
+                        <hr>
+                        <div class="subtitle">Permission based access control</div>
+                        <p>Access to various management pages restricted for users without necessary permission.</p>
+                        <p>Permissions are assignable to both roles and users.</p>
+                        <p>Users can have several roles assigned to them.</p>
+                        <p>Ability to create new roles and permissions.</p>
                         <hr>
                     </b-tab-item>
 

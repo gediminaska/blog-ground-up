@@ -58,7 +58,7 @@
         <div class="card card-widget">
             <div class="author-widget widget-area">
                 <div class="selected-author">
-                    <img src="https://www.gravatar.com/avatar/{{md5(Auth::user()->email)}}?s=50"/>
+                    <img src="https://www.gravatar.com/avatar/{{md5(Auth::user()->email)}}?d=mm&s=50"/>
                     <div class="author">
                         <h4>{{Auth::user()->name}}</h4>
                         <p class="subtitle">
