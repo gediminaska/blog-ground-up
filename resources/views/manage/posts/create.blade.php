@@ -73,8 +73,12 @@
                         <b-icon icon="fa-user" size="is-medium"></b-icon>
                     </div>
                     <div class="status-details">
-                        <h4><span class="status-emphasis">Draft</span> Saved</h4>
-                        <p>A Few Minutes Ago</p>
+                        <div class="status-details">
+                            @if(isset($post))
+                            <h4><span class="status-emphasis">{{$post->status == 1 ? "Draft " : "Post "}}</span>{{$post->status == 1 ? "saved:" : ($post->status == 2 ? "submitted for review:" : "published:")}}</h4>
+                            <p>{{$post->status == 1 ? $post->updated_at->diffForHumans() : $post->status == 2 ? $post->updated_at->diffForHumans() : $post->published_at->diffForHumans()}}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

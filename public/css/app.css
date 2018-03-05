@@ -11848,12 +11848,12 @@ label.panel-block:hover {
 
 .fade-enter-active,
 .fade-leave-active {
-  -webkit-transition: opacity 86ms ease-out;
-  transition: opacity 86ms ease-out;
+  -webkit-transition: opacity 150ms ease-out;
+  transition: opacity 150ms ease-out;
 }
 
 .fade-enter,
-.fade-leave-active {
+.fade-leave-to {
   opacity: 0;
 }
 
@@ -11953,6 +11953,11 @@ label.panel-block:hover {
 .autocomplete .dropdown-menu.is-opened-top {
   top: auto;
   bottom: 100%;
+}
+
+.autocomplete .dropdown-content {
+  overflow: auto;
+  max-height: 200px;
 }
 
 .autocomplete .dropdown-item.is-hovered,
@@ -12062,7 +12067,7 @@ label.panel-block:hover {
 }
 
 .collapse .collapse-content {
-  display: inline;
+  display: inherit;
 }
 
 .datepicker {

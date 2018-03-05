@@ -3,7 +3,7 @@
 
 @section('content')
     <a class="button is-info is-outlined" style="min-width: 200px"
-       href="{{ URL::previous() }}">
+       href="{{ URL::previous() }}" xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <span class="icon">
       <i class="fas fa-chevron-circle-left"></i>
     </span>
@@ -72,6 +72,7 @@
                 post_author: {!! $post->user->id !!},
                 typing: false,
                 whoIsTyping: false,
+                typingTimer: null,
             },
             mounted() {
                 this.getComments();
@@ -118,26 +119,26 @@
                         .listen('NewComment', (comment) => {
                             this.comments.unshift(comment);
                             this.whoIsTyping = false;
-                            setTimeout(() => {
-                            }, 2000);
                         })
-                        .listen('UserTyping', (user) => {
-                            this.whoIsTyping = user.user;
-                            setTimeout(() => {
-                                this.whoIsTyping = false
-                            }, 4000);
+                        .listen('UserTyping', (data) => {
+                                this.whoIsTyping = data.user;
+                                clearTimeout(this.typingTimer);
+                                this.typingTimer = setTimeout(() => {
+                                    app3.whoIsTyping = false;
+                                }, 4000);
                         });
                 },
                 isTyping() {
-
-                        axios.post('/api/posts/' + app3.post.id + '/typing-comment', {
-                            user: window.Laravel.user,
-                        })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
-                        setTimeout(function(){}, 2000)
-                        
+                        if(!this.typing) {
+                            this.typing = true;
+                            axios.post('/api/posts/' + app3.post.id + '/typing-comment', {
+                                user: window.Laravel.user,
+                            })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                            setTimeout(() => {this.typing = false}, 2000);
+                        }
                 },
                 isAuthorComment(id) {
                     if(id = this.post_author) {

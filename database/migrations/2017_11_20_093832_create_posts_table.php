@@ -24,7 +24,7 @@ class CreatePostsTable extends Migration
             $table->string('image')->nullable();
             $table->integer('status')->default(1);
             $table->integer('type')->unsigned()->default(1);
-            $table->dateTime('published_at');
+            $table->dateTime('published_at')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')
