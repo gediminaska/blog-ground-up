@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\Post;
 use Toaster;
-
+use Cache;
 
 class BlogController extends Controller
 {
+
     public function index()
     {
-        $posts = Post::where('status', '=', 3)->orderBy('published_at', 'desc')->paginate(5);
-        $categories = Category::all();
+        $posts = Cache::remember('blog', 1440, function() {
+            return $posts = Post::where('status', '=', 3)->orderBy('published_at', 'desc')->paginate(5);
+        });
+
+        $categories = Cache::remember('categories', 1440, function() {
+            return $categories = Category::all();
+        });
         return view('blog.index')->withPosts($posts)->withCategories($categories);
     }
 

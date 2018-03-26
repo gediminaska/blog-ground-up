@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Category;
 use Illuminate\Support\Facades\Auth;
 use Toaster;
+use Cache;
 
 class CategoriesController extends Controller
 {
@@ -47,6 +48,7 @@ class CategoriesController extends Controller
         $category->icon = $request->icon;
         $category->save();
         Toaster::success('The category has been saved!');
+        Cache::forget('categories');
 
         return redirect()->route('categories.index');
     }
@@ -86,6 +88,7 @@ class CategoriesController extends Controller
         $category->icon = $request->icon;
         $category->save();
         Toaster::success('The category has been updated!');
+        Cache::forget('categories');
         return redirect()->route('categories.index');
 
     }
@@ -105,6 +108,7 @@ class CategoriesController extends Controller
 
         $category->delete();
         Toaster::success('The category has been deleted!');
+        Cache::forget('categories');
         return redirect()->route('categories.index');
     }
 }

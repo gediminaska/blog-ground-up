@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Image;
 use Toaster;
+use Cache;
 
 
 class PostsController extends Controller
@@ -69,6 +70,7 @@ class PostsController extends Controller
         $post->slug = $request->slug;
         $post->save();
         $post->tags()->sync($request->tags, false);
+        Cache::forget('blog');
         return redirect()->route('posts.index');
     }
 
@@ -136,6 +138,7 @@ class PostsController extends Controller
         $post->save();
         $post->tags()->sync($request->tags);
         Toaster::success("Post '" . $post->title . "' has been updated");
+        Cache::forget('blog');
         return redirect()->route('posts.index');
     }
 
@@ -163,6 +166,7 @@ class PostsController extends Controller
         $post->delete();
 
         Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
+        Cache::forget('blog');
         return redirect()->route('posts.index');
     }
 
