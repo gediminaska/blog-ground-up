@@ -47,7 +47,7 @@
         <h3 class="title is-4">Add a comment:</h3>
         {{ Form::open(['action'=>'CommentsController@store']) }}
         {{ Form::label('body', 'Comment text:', ['class'=>'label m-t-10']) }}
-        {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0', 'v-model'=>'commentBox', '@keydown'=>'isTyping']) }}
+        {{ Form::textarea('body', null, ['class'=>'control textarea', 'style'=>'max-width:500px; min-width:0', 'v-model'=>'commentBox', '@keyup'=>'isTyping', '@keydown.enter'=>'postComment']) }}
         {{ Form::hidden('post_id', $post->id) }}
         {{ Form::close() }}
         <button class="button" @click.prevent="postComment">Save comment</button>
@@ -78,7 +78,7 @@
                 this.getComments();
                 this.listen();
                 this.$moment.relativeTimeThreshold('s', 59);
-                this.$moment.relativeTimeThreshold('ss', 2);
+                this.$moment.relativeTimeThreshold('ss', 5);
                 setInterval(() => {
                     for (let comment in this.comments) {
                         this.comments[comment].created_at = this.$moment(this.comments[comment].created_at);
@@ -102,9 +102,11 @@
                         api_token: this.api_token,
                     })
                         .then((response) => {
-                            this.comments.unshift(response.data);
                             this.commentBox = '';
-                            document.getElementById("commentsStart").scrollIntoView({behavior: 'smooth', block: 'center'});
+                            setTimeout(() => {
+                                this.comments.unshift(response.data);
+                                document.getElementById("commentsStart").scrollIntoView({behavior: 'smooth', block: 'center'})
+                            }, 100);
 
                         })
                         .catch(function (error) {
@@ -112,7 +114,7 @@
                         })
                 },
                 getDate(date) {
-                    return this.$moment(date).add(2, 'hours').fromNow();
+                    return this.$moment(date).fromNow();
                 },
                 listen() {
                     Echo.channel('post.' + this.post.id)

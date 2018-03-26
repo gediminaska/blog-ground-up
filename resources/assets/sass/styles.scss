@@ -44,7 +44,9 @@ html {
 }
 
 .freshComment {
-  background-color: #8eb4cb ;
+  background-color: #8eb4cb;
+  transition: background-color 2s;
+  transition-timing-function: linear;
   border-radius: 10px;
   padding: 5px;
 }
