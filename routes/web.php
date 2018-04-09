@@ -43,6 +43,7 @@ Route::delete('comments/{id}', ['as'=>'comments.delete', 'uses' => 'CommentsCont
 Route::get('blog/{slug}', ['as' => 'blog.show', 'uses' => 'BlogController@show']);
 Route::get('blog/category/{category_id}', ['as' => 'blog.category', 'uses' => 'BlogController@category']);
 
+//Route::get('blog/filtered/tags={tagId}', ['as' => 'blog.index', 'uses' => 'BlogController@indexFiltered']);
 Route::get('blog', ['as' => 'blog.index', 'uses' => 'BlogController@index']);
 
 

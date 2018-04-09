@@ -58,10 +58,13 @@
             </b-checkbox>
         </div>
         <div class="field" v-for="tag in tags">
-            <b-checkbox :selectedTags="tag">
+            <b-checkbox v-model="selectedTags" native-value="tag">
                 @{{ tag }}
             </b-checkbox>
         </div>
+        @{{ selectedTags }}
+        @{{ tags }}
+        <p>{{ isset($filter) ? $filter : 'not set'}}</p>
     </div>
 @stop
 
@@ -75,7 +78,15 @@
                 checkboxGroup: ['Flint'],
                 checkbox: true,
                 checkboxCustom: 'Yes'
+            },
+            computed: {
+                allTags: ()=>{
+                   if(app3.selectedTags.length === 0) {
+                       return true;
+                   } else { return false;}
+                }
             }
+
         })
     </script>
 @stop
