@@ -19,13 +19,13 @@
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item is-tab" href="{{ route('blog.index') }}">
+                <a class="navbar-item is-tab {{ Request::is('blog'.'*') ? 'is-active' : '' }}" href="{{ route('blog.index') }}">
                     Blog
                 </a>
-                <a class="navbar-item is-tab" href="{{ route('email') }}">
+                <a class="navbar-item is-tab {{ Request::is('email') ? 'is-active' : '' }}" href="{{ route('email') }}">
                     Email
                 </a>
-                <a class="navbar-item is-tab" href="{{ route('contact') }}">
+                <a class="navbar-item is-tab {{ Request::is('contact') ? 'is-active' : '' }}" href="{{ route('contact') }}">
                     Contact
                 </a>
                 {{--<div class="navbar-item has-dropdown is-hoverable">--}}

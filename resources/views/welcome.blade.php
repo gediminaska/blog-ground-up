@@ -88,6 +88,9 @@
                         <p>Users can have several roles assigned to them.</p>
                         <p>Ability to create new roles and permissions.</p>
                         <hr>
+                        <div class="subtitle">Redis storage</div>
+                        <p>Broadcasting related AJAX requests go through queue.</p>
+                        <p>For better performance some database queries get stored in cache.</p>
                     </b-tab-item>
 
                     <b-tab-item label="Front-end">
@@ -97,13 +100,14 @@
                         <p>Custom made hideable side menu for management panel</p>
                         <p>Custom made post slug generator: title gets slugified, checked in DB if unique, modified if necessary. Ability to edit generated slug.</p>
                         <hr>
-                        <div class="subtitle">Pusher service</div>
+                        <div class="subtitle">Pusher broadcasting service</div>
                         <p>Real time comments in post view and welcome page.</p>
                         <p>Users are notified if someone else is typing in comment box.</p>
                         <p>Comment date difference calculated every second.</p>
                         <hr>
                         <div class="subtitle">Gravatar icons</div>
-                        <p>In comments </p>
+                        <p>Displayed next to user who has provided email.</p>
+
                     </b-tab-item>
                 </b-tabs>
             </section>

@@ -49,4 +49,35 @@
 
 @endsection
 
+@section('panel-left')
+    <div id="app-3">
+        <h2 class="subtitle">Filer by tags:</h2>
+        <div class="field">
+            <b-checkbox v-model="checkbox">
+                All
+            </b-checkbox>
+        </div>
+        <div class="field" v-for="tag in tags">
+            <b-checkbox :selectedTags="tag">
+                @{{ tag }}
+            </b-checkbox>
+        </div>
+    </div>
+@stop
+
+@section('scripts')
+    <script>
+        var app3 = new Vue({
+            el: '#app-3',
+            data: {
+                tags: {!! $tags !!},
+                selectedTags: [],
+                checkboxGroup: ['Flint'],
+                checkbox: true,
+                checkboxCustom: 'Yes'
+            }
+        })
+    </script>
+@stop
+
 
