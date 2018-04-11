@@ -19,8 +19,6 @@
     <link rel="stylesheet" href="{{ asset('css/fontawesome-all.css') }}">
 
 
-
-
     @yield('stylesheets')
 </head>
 <body>

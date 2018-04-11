@@ -16,20 +16,46 @@ class BlogController extends Controller
         $tags = Tag::all()->pluck('name');
         if(request()->has('filter')) {
             $posts = Post::whereHas('tags', function($q) {
-                $q->where('name', '=', request('filter'));
+                $selectedTags = explode(',', request('filter'));
+                $q->where('name', $selectedTags[0]);
+                array_shift($selectedTags);
+                foreach ($selectedTags as $selectedTag) {
+                    $q->orWhere('name', $selectedTag);
+                }
             })->with('comments', 'user', 'category')->where('status', '=', 3)->orderBy('published_at', 'desc')->paginate(5);
-            $filteredOut = request('filter');
         } else {
             $posts = Cache::remember('blog', 1440, function() {
                 return $posts = Post::with('comments', 'user', 'category')->where('status', '=', 3)->orderBy('published_at', 'desc')->paginate(5);
             });
         }
-
         $categories = Cache::remember('categories', 1440, function() {
             return $categories = Category::all();
         });
         return view('blog.index')->withPosts($posts)->withCategories($categories)->withTags($tags);
     }
+
+    public function indexFiltered()
+        {
+            $tags = Tag::all()->pluck('name');
+            if(request()->has('filter')) {
+                $posts = Post::whereHas('tags', function($q) {
+                    $selectedTags = request('filter');
+                    $q->where('name', $selectedTags[0]);
+                    array_shift($selectedTags);
+                    foreach ($selectedTags as $selectedTag) {
+                        $q->orWhere('name', $selectedTag);
+                    }
+                })->with('comments', 'user', 'category')->where('status', '=', 3)->orderBy('published_at', 'desc')->paginate(5);
+            } else {
+                $posts = Cache::remember('blog', 1440, function() {
+                    return $posts = Post::with('comments', 'user', 'category')->where('status', '=', 3)->orderBy('published_at', 'desc')->paginate(5);
+                });
+            }
+            $categories = Cache::remember('categories', 1440, function() {
+                return $categories = Category::all();
+            });
+            return view('blog.index')->withPosts($posts)->withCategories($categories)->withTags($tags);
+        }
 
     public function category($category_id)
     {

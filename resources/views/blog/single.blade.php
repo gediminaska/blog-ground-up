@@ -20,10 +20,10 @@
     <span class="far fa-comments fa-2x"></span><span class="title is-4" id="commentsStart"> Comments:</span><br>
 
     <div id="app3">
-        <div v-if="comments.length > 0">
+        <div v-if="comments.length === 0">
+            <div class="title">No comments yet</div>
         </div>
-        <div class="title" v-else>No comments yet</div>
-        <div v-if="whoIsTyping" class="m-t-20" style="background-color: #00c4a7; opacity: 50; padding: 30px; border-radius:20px; -webkit-animation: fadein 1s;">
+        <div v-if="whoIsTyping" class="m-t-20 someone-typing">
             <span class="far fa-comments m-r-10"></span><strong v-text="whoIsTyping"></strong><span> is typing...</span>
         </div>
 

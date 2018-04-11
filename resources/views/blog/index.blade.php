@@ -51,20 +51,42 @@
 
 @section('panel-left')
     <div id="app-3">
-        <h2 class="subtitle">Filer by tags:</h2>
-        <div class="field">
-            <b-checkbox v-model="checkbox">
-                All
-            </b-checkbox>
-        </div>
-        <div class="field" v-for="tag in tags">
-            <b-checkbox v-model="selectedTags" native-value="tag">
-                @{{ tag }}
-            </b-checkbox>
-        </div>
-        @{{ selectedTags }}
-        @{{ tags }}
-        <p>{{ isset($filter) ? $filter : 'not set'}}</p>
+        <h2 class="subtitle">Filter by tags:</h2>
+
+        <form action="{{ route('blog.index.filtered', 'filter') }}" method="get">
+            <label class="checkbox">
+                <input type="checkbox" {{ request()->has('filter') ? '' : 'checked' }}>
+                All posts
+            </label>
+            <br>
+        @foreach($tags as $tag)
+                <label class="checkbox">
+                    <input type="checkbox" name='filter[]' value={{ $tag }} {{ request()->has('filter') ? in_array($tag, request('filter')) ? 'checked' : '' : ''}}>
+                    {{ $tag }}
+                </label>
+                <br>
+            @endforeach
+            <input class="button" type="submit" value="Submit">
+        </form>
+
+        {{--<div class="field">--}}
+            {{--<b-checkbox v-model="checkbox">--}}
+                {{--All--}}
+            {{--</b-checkbox>--}}
+        {{--</div>--}}
+        {{--@foreach($tags as $tag)--}}
+            {{--<b-checkbox v-model="selectedTags" native-value= {{ $tag }}>--}}
+                {{--{{ $tag }}--}}
+            {{--</b-checkbox>--}}
+        {{--@endforeach--}}
+
+        {{--@{{ filterUrl }}--}}
+        {{--<div class="field" v-for="tag in tags">--}}
+            {{--<b-checkbox v-model="selectedTags" native-value="tag">--}}
+                {{--@{{ tag }}--}}
+            {{--</b-checkbox>--}}
+        {{--</div>--}}
+
     </div>
 @stop
 
@@ -84,6 +106,9 @@
                    if(app3.selectedTags.length === 0) {
                        return true;
                    } else { return false;}
+                },
+                filterUrl: ()=>{
+                    return this.selectedTags;
                 }
             }
 
