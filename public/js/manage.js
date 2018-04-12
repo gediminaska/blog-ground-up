@@ -34712,14 +34712,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
-        title: {
+        tag: {
             type: String,
             required: true
         }
     },
     data: function data() {
         return {
-            slug: this.setSlug(this.title),
+            tagSlug: this.setSlug(this.tag),
             wasEdited: false,
             api_token: this.$root.api_token
         };
@@ -34731,13 +34731,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             // Slugify new val
             var slug = Slug(newVal + (count > 0 ? '-' + count : ''));
             var vm = this;
-            vm.slug = slug;
-            vm.$emit('slug-changed', slug);
+            vm.tagSlug = slug;
+            vm.$emit('tag-slug-changed', slug);
         }
     },
     watch: {
-        title: _.debounce(function () {
-            this.setSlug(this.title);
+        tag: _.debounce(function () {
+            this.setSlug(this.tag);
         }, 500)
     }
 });
