@@ -32,6 +32,23 @@
             @endforeach
         </ul>
     </div>
+    <div id="app-4" class="is-pulled-right" >
+        <b-dropdown >
+            <button class="button is-secondary is-small" slot="trigger">
+                <span>Filter by tags</span>
+                <b-icon icon="menu-down"></b-icon>
+            </button>
+
+            <form v-cloak action="{{ Request::is('blog/category'.'*') ? route('blog.category.filtered', [request('category_id'), 'filter']) : route('blog.index.filtered', 'filter') }}" method="get">
+                <label for="" class="checkbox filter-checkbox" v-for="tag in tagsList">
+                    <input type="checkbox" name='filter[]' :value="tag.name" :checked="tag.checked">
+                    @{{ tag.name }}
+                    <br>
+                </label>
+                <input class="button is-small" type="submit" value="Filter">
+            </form>
+        </b-dropdown>
+    </div>
     @foreach($posts as $post)
                 {{Html::linkRoute('blog.show', $post->title, $post->slug, ['class'=>'title is-4', 'style'=>'color:inherit'])}}<br>
                 <small><span>Published  {{ $post->published_at->diffForHumans() }}, by    <span class="far fa-user m-l-5"></span> {{ $post->user->name }}, </span><span class="fas fa-comment m-l-5"> </span> <strong>{{ count($post->comments) }}</strong> comments</small>
@@ -52,82 +69,32 @@
 
 @endsection
 
-@section('panel-left')
-    <div id="app-3">
-        <h2 class="subtitle">Filter by tags:</h2>
 
-        <form action="{{ Request::is('blog/category'.'*') ? route('blog.category.filtered', [request('category_id'), 'filter']) : route('blog.index.filtered', 'filter') }}" method="get">
-            <label class="checkbox">
-                <input onchange="disableFilter()" id="filter-off" type="checkbox" {{ request()->has('filter') ? '' : 'checked' }}>
-                All posts
-            </label>
-            <br>
-        @foreach($tags as $tag)
-                <label class="checkbox filter-checkbox">
-                    <input onchange="addFilter(this)" type="checkbox" name='filter[]' value={{ $tag }} {{ request()->has('filter') ? in_array($tag, request('filter')) ? 'checked' : '' : ''}}>
-                    {{ $tag }}
-                </label>
-                <br>
-            @endforeach
-            <input class="button" type="submit" value="Filter">
-        </form>
-
-        {{--<div class="field">--}}
-            {{--<b-checkbox v-model="checkbox">--}}
-                {{--All--}}
-            {{--</b-checkbox>--}}
-        {{--</div>--}}
-        {{--@foreach($tags as $tag)--}}
-            {{--<b-checkbox v-model="selectedTags" native-value= {{ $tag }}>--}}
-                {{--{{ $tag }}--}}
-            {{--</b-checkbox>--}}
-        {{--@endforeach--}}
-
-        {{--@{{ filterUrl }}--}}
-        {{--<div class="field" v-for="tag in tags">--}}
-            {{--<b-checkbox v-model="selectedTags" native-value="tag">--}}
-                {{--@{{ tag }}--}}
-            {{--</b-checkbox>--}}
-        {{--</div>--}}
-
-    </div>
-@stop
 
 @section('scripts')
     <script>
-        function addFilter(obj) {
-            document.getElementById("filter-off").checked = false;
-        }
-
-        function disableFilter() {
-            let cbs = document.getElementsByClassName("filter-checkbox");
-            for (let i = 0; i < cbs.length; i++) {
-                cbs[i].checked = false;
-            }
-        }
-
-
-        var app3 = new Vue({
-            el: '#app-3',
+        var app4 = new Vue({
+            el: '#app-4',
             data: {
-                tags: {!! $tags !!},
-                selectedTags: [],
-                checkboxGroup: ['Flint'],
-                checkbox: true,
-                checkboxCustom: 'Yes'
+                tagsList: [],
             },
             computed: {
-                allTags: ()=>{
-                   if(app3.selectedTags.length === 0) {
-                       return true;
-                   } else { return false;}
+            },
+            methods: {
+                populateTagsList() {
+                    let a = {!! $tags !!};
+                    for(let i = 0; i < a.length; i++){
+                        let obj = {};
+                        obj.name = a[i];
+                        obj.checked = {!! collect(request('filter')) !!}.includes(a[i]);
+                        this.tagsList.push(obj);
+                    }
                 },
-                filterUrl: ()=>{
-                    return this.selectedTags;
-                }
+            },
+            mounted() {
+                this.populateTagsList();
             }
-
-        })
+        });
     </script>
 @stop
 

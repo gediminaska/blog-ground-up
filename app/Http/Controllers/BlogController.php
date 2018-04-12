@@ -7,6 +7,8 @@ use App\Post;
 use App\Tag;
 use Cache;
 use Toaster;
+use Illuminate\Http\Request;
+
 
 class BlogController extends Controller
 {
@@ -45,6 +47,9 @@ class BlogController extends Controller
 
     public function indexFiltered()
     {
+        if(!is_array(request('filter'))) {
+            return redirect()->route('blog.index');
+        }
         $tags = Tag::all()->pluck('name');
         $posts = Post::with('comments', 'user', 'category')
             ->where('status', '=', 3)
@@ -85,6 +90,9 @@ class BlogController extends Controller
 
     public function categoryFiltered($category_id)
     {
+        if(!is_array(request('filter'))) {
+            return redirect()->route('blog.category', $category_id);
+        }
         $categories = Category::all();
         $tags = Tag::all()->pluck('name');
         $posts = Post::with('user', 'comments')

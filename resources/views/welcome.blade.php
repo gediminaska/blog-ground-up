@@ -76,7 +76,7 @@
                 <b-tabs v-model="activeTab">
                     <b-tab-item label="Back-end">
                         <div class="subtitle">Post resource</div>
-                        <p>Can be filtered by category.</p>
+                        <p>Can be filtered by category and tags.</p>
                         <p>Can have several tags.</p>
                         <p>All users can leave a comment.</p>
                         <p>Post status can be 'draft', 'submitted draft' and 'published post'. Only published posts are visible in blog.</p>

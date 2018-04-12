@@ -45,6 +45,6 @@ Route::get('blog/category/{category_id}', ['as' => 'blog.category', 'uses' => 'B
 Route::get('blog/category/{category_id}/filter/{filter}', ['as' => 'blog.category.filtered', 'uses' => 'BlogController@categoryFiltered']);
 
 Route::get('blog', ['as' => 'blog.index', 'uses' => 'BlogController@index']);
-Route::get('blog/filter/{filter}', ['as' => 'blog.index.filtered', 'uses' => 'BlogController@indexFiltered']);
+Route::get('blog/filtered/{filter}', ['as' => 'blog.index.filtered', 'uses' => 'BlogController@indexFiltered']);
 
 

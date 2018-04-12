@@ -28,12 +28,15 @@
                 </select>
             </div>
             <div class="column is-one-third">
-                {{ Form::label('name', 'New tag:') }}
-                {{ Form::text('name', null ,['class'=>'input']) }}
+                {{ Form::label('slug', 'New tag:') }}
+                {{ Form::text('slug', null ,['class'=>'input', 'v-model' => 'slug']) }}
+                <tag-slug-widget :title="slug" @slug-changed="updateSlug"></tag-slug-widget>
+                <input type="hidden" v-model="slug" name="tagSlug"/>
             </div>
             <div class="column m-t-25">
-                {{ Form::submit('New tag', ['name'=>'submit_type', 'class'=>'button is-primary is-fullwidth']) }}
+                <input type="submit" name="submit_type" class="button is-primary is-fullwidth" value="New tag">
             </div>
+
         </div>
         {{ Form::label('category_id', 'Category:') }}
         <br>
@@ -111,12 +114,14 @@
             data: {
                 title: '',
                 slug: '',
+                name: '',
+                input_name: '',
                 api_token: '{{Auth::user()->api_token}}',
             },
             methods: {
                 updateSlug: function (val) {
                     this.slug = val;
-                }
+                },
             }
         });
 

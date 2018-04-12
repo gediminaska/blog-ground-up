@@ -189,10 +189,10 @@ class PostsController extends Controller
     public function saveTags(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|min:3|max:20'
+            'tagSlug' => 'required|min:3|max:20'
         ]);
         $tag = new Tag;
-        $tag->name = $request->name;
+        $tag->name = $request->tagSlug;
         $tag->save();
         Toaster::success("Tag was saved!");
         return redirect()->back();
