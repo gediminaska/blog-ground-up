@@ -40,6 +40,7 @@ Route::resource('tags', 'TagsController', ['only' => [
 Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
 Route::delete('comments/{id}', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);
 
+Route::get('blog/search', ['as' => 'blog.search', 'uses' => 'BlogController@search']);
 Route::get('blog/{slug}', ['as' => 'blog.show', 'uses' => 'BlogController@show']);
 Route::get('blog/category/{category_id}', ['as' => 'blog.category', 'uses' => 'BlogController@category']);
 Route::get('blog/category/{category_id}/filter/{filter}', ['as' => 'blog.category.filtered', 'uses' => 'BlogController@categoryFiltered']);

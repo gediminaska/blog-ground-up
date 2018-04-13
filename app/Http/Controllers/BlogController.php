@@ -29,13 +29,12 @@ class BlogController extends Controller
                 ->orderBy('published_at', 'desc')
                 ->paginate(5);
         } else {
-            $posts = Cache::remember('blog', 1440, function () {
-                return $posts = Post::with('comments', 'user', 'category')
-                    ->where('status', '=', 3)
-                    ->orderBy('published_at', 'desc')
-                    ->paginate(5);
-            });
+            $posts = Post::with('comments', 'user', 'category')
+                ->where('status', '=', 3)
+                ->orderBy('published_at', 'desc')
+                ->paginate(5);
         }
+
         $categories = Cache::remember('categories', 1440, function () {
             return $categories = Category::all();
         });
@@ -122,5 +121,21 @@ class BlogController extends Controller
         }
         Toaster::danger('Post not published');
         return redirect()->route('blog.index');
+    }
+
+    public function search() {
+        $search = request('q');
+
+        $posts =  Post::search($search)->paginate(5);
+        $categories = Cache::remember('categories', 1440, function () {
+            return $categories = Category::all();
+        });
+
+        $tags = Tag::all()->pluck('name');
+
+        return view('blog.index')
+            ->withPosts($posts)
+            ->withCategories($categories)
+            ->withTags($tags);
     }
 }

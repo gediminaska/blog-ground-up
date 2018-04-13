@@ -1,5 +1,4 @@
 <template>
-
 </template>
 <script>
     export default {
@@ -12,7 +11,6 @@
         data: function() {
             return {
                 tagSlug: this.setSlug(this.tag),
-                wasEdited: false,
                 api_token: this.$root.api_token,
             }
         },
@@ -23,7 +21,6 @@
                 let vm = this;
                 vm.tagSlug = slug;
                 vm.$emit('tag-slug-changed', slug);
-
             }
         },
         watch: {

@@ -15,6 +15,7 @@ use Cache;
 class PostsController extends Controller
 {
 
+
     public function __construct()
     {
     }

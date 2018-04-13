@@ -3,10 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Comment extends Model
 {
     protected $table = 'comments';
+
+    use Searchable;
+
+    protected $touches = ['post'];
 
     public function post(){
         return $this->belongsTo('App\Post');
