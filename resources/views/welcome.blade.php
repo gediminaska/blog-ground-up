@@ -90,7 +90,12 @@
                         <hr>
                         <div class="subtitle">Redis storage</div>
                         <p>Broadcasting related AJAX requests go through queue.</p>
-                        <p>For better performance some database queries get stored in cache.</p>
+                        <p>For better performance some database queries get stored in cache.</p>      <hr>
+                        <div class="subtitle">Algolia search</div>
+                        <p>Post title, slug, full text body and comments text are indexed.</p>
+                        <p>Index is refreshed as soon as a post or comment is published/updated.</p>
+                        <p>Realtime search with autocomplete and highlighted suggestions.</p>
+                        <p>Search results are ranked by relevance, comments count, publish time.</p>
                     </b-tab-item>
 
                     <b-tab-item label="Front-end">

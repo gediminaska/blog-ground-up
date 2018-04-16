@@ -32,8 +32,30 @@
             @endforeach
         </ul>
     </div>
-    <div id="app-4" class="is-pulled-right" >
-        <b-dropdown >
+    <div class="aa-input-container is-pulled-right" id="aa-input-container">
+        <input type="search" id="aa-search-input" class="aa-input-search" placeholder="Search for posts..." name="search" autocomplete="true" />
+    </div>
+    <div id="app-4">
+        {{--<ais-index--}}
+                {{--app-id="{{ config('scout.algolia.id') }}"--}}
+                {{--api-key="{{ config('scout.algolia.key') }}"--}}
+                {{--index-name="posts"--}}
+        {{-->--}}
+            {{--<ais-search-box></ais-search-box>--}}
+            {{--<ais-results style="position: absolute; background-color: white; padding: 5px; border: #00c4a7">--}}
+                {{--<template slot-scope="{ result }">--}}
+                    {{--<h2>--}}
+                        {{--<a href={{ Request::url() }}>--}}
+                            {{--@{{ result.title }}--}}
+                        {{--</a>--}}
+                    {{--</h2>--}}
+                    {{--<p> @{{ result._snippetResult.body.value }} </p>--}}
+                    {{--<hr style="margin: 0px">--}}
+
+                {{--</template>--}}
+            {{--</ais-results>--}}
+        {{--</ais-index>--}}
+        <b-dropdown  class="is-pulled-right" >
             <button class="button is-secondary is-small" slot="trigger">
                 <span>Filter by tags</span>
                 <b-icon icon="menu-down"></b-icon>
@@ -49,6 +71,7 @@
             </form>
         </b-dropdown>
     </div>
+
     @if(count($posts) > 0)
         @foreach($posts as $post)
             {{Html::linkRoute('blog.show', $post->title, $post->slug, ['class'=>'title is-4', 'style'=>'color:inherit'])}}<br>
@@ -75,6 +98,30 @@
 
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+    <script>
+        var client = algoliasearch('PI8U7T64NH', 'c7fc6f0970b13edfa72f6b6a3d09df3f');
+        var index = client.initIndex('posts');
+        //initialize autocomplete on search input (ID selector must match)
+        autocomplete('#aa-search-input',
+            { hint: true, debug: true }, {
+                source: autocomplete.sources.hits(index, {hitsPerPage: 5}),
+                //value to be displayed in input control after user's suggestion selection
+                displayKey: 'title',
+                //hash of templates used when rendering dataset
+                templates: {
+                    //'suggestion' templating function used to render a single suggestion
+                    suggestion: function(suggestion) {
+                        return '<a href="blog/' + suggestion.slug + '"><span><strong>' +
+                            suggestion._highlightResult.title.value + '</strong></a></span><br><span>' +
+                            suggestion._snippetResult.body.value + '</span>';
+                    }
+                }
+            });
+    </script>
+
+
     <script>
         var app4 = new Vue({
             el: '#app-4',
