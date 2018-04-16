@@ -55,7 +55,7 @@
                 {{--</template>--}}
             {{--</ais-results>--}}
         {{--</ais-index>--}}
-        <b-dropdown  class="is-pulled-right" >
+        <b-dropdown  class="is-pulled-right m-t-5 m-r-10" >
             <button class="button is-secondary is-small" slot="trigger">
                 <span>Filter by tags</span>
                 <b-icon icon="menu-down"></b-icon>
@@ -81,7 +81,7 @@
             @endforeach
             @if(Request::is('blog'))<p><strong>Category: </strong><span class="{{ $post->category->icon }}"></span> {{ $post->category->name }}</p>@else<br>@endif
             <br>
-            <a href="{{ route('blog.show', $post->slug) }}"><img class= "index-thumbnail" src="{{ $post->image==null ? asset('images/no-image-landscape.png') : asset('images/' . $post->image) }}"></a>
+            <a href="{{ route('blog.show', $post->slug) }}"><img class= "index-thumbnail" src="{{ count($post->images)==0 ? asset('images/no-image-landscape.png') : asset('images/' . $post->images[0]->name) }}"></a>
             <h4 style="text-align: justify; white-space: pre-line">{{substr($post->body,0, 700)}} {{strlen($post->body)>700 ? "..." : ""}}</h4>
             <br>
             {{Html::linkRoute('blog.show', 'Show post', $post->slug, ['class'=>'button is-info is-outlined'])}}
@@ -89,7 +89,6 @@
             <br>
             <hr>
         @endforeach
-        <p>{{ count($posts) }}</p>
     @endif
     {{ $posts->links() }}
 

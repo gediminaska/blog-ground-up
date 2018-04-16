@@ -14353,6 +14353,13 @@ html {
   background-color: rgba(241, 241, 241, 0.35);
 }
 
+.image-checkbox {
+  margin-left: -15px;
+  margin-top: 3px;
+  margin-right: 20px;
+  position: relative;
+}
+
 .m-t-5 {
   margin-top: 5px !important;
 }

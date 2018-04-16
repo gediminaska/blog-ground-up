@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'files' => true]) }}
+    {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'enctype' => 'multipart/form-data', 'files' => true]) }}
 
     <div id="app">
         {{csrf_field()}}
@@ -52,7 +52,7 @@
         <br>
         {{ Form::label('body','Post text:') }}
         {{ Form::textarea('body', null, ['class'=>'input', 'style'=>'min-height: 400px' ]) }}
-        {{ Form::file('image') }}
+        {{ Form::file('images[]', ['multiple'=>'multiple']) }}
         {{ Form::hidden('user_id', Auth::id() )}}
     </div>
 

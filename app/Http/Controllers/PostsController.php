@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Image;
 use Toaster;
 use Cache;
+use App\Image as PostImage;
 
 
 class PostsController extends Controller
@@ -26,7 +27,7 @@ class PostsController extends Controller
     public function index()
     {
         if (Auth::user()->hasPermission('publish-post')) {
-            $posts = Post::orderBy('updated_at', 'desc')->get();
+            $posts = Post::with('comments', 'category')->orderBy('updated_at', 'desc')->get();
         } elseif (Auth::user()->hasPermission('read-post')) {
             $posts = Post::where('user_id', Auth::user()->id)->get();
         } else {
@@ -71,6 +72,9 @@ class PostsController extends Controller
         $post->slug = $request->slug;
         $post->save();
         $post->tags()->sync($request->tags, false);
+        if ($request->hasFile('images')) {
+            $this->uploadImages($request, $post);
+        }
         Cache::forget('blog');
         return redirect()->route('posts.index');
     }
@@ -121,9 +125,16 @@ class PostsController extends Controller
         } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
             return $this->rejectUnauthorized($neededPermission);
         } elseif ($request->submit_type == 'New tag') {
-            return $this->saveTags($request);        }
-        elseif ($request->submit_type == 'Delete draft') {
+            return $this->saveTags($request);
+        } elseif ($request->submit_type == 'Delete draft') {
             return $this->destroy($post->id);
+        } elseif ($request->submit_type == 'Delete selected images') {
+            foreach($request->image_id as $image_id){
+                $image = $post->images()->where('id', $image_id);
+                $image->delete();
+            }
+            Toaster::success("Image".count($request->image_id)==0 ? '' : 's'." deleted.");
+            return redirect()->back();
         } elseif ($request->input('slug') == $post->slug) {
             $this->validate($request, [
                 'title' => 'required|min:3|max:60',
@@ -140,6 +151,9 @@ class PostsController extends Controller
         $post->tags()->sync($request->tags);
         Toaster::success("Post '" . $post->title . "' has been updated");
         Cache::forget('blog');
+        if ($request->hasFile('images')) {
+            $this->uploadImages($request, $post);
+        }
         return redirect()->route('posts.index');
     }
 
@@ -226,17 +240,6 @@ class PostsController extends Controller
         $post->slug = $request->slug;
         $post->category_id = $request->category_id;
         $post->user_id = $request->user_id;
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $location = public_path('images/' . $filename);
-            Image::make($image)->resize(800, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($location);
-
-            $post->image = $filename;
-        }
     }
 
     /**
@@ -280,6 +283,28 @@ class PostsController extends Controller
     public function userIsAuthorOf($post): bool
     {
         return Auth::user()->id == $post->user->id;
+    }
+
+    /**
+     * @param $request
+     * @param $post
+     */
+    public function uploadImages(Request $request, $post)
+    {
+        foreach ($request->file('images') as $image) {
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($location);
+
+            $postImage = new PostImage;
+            $postImage->name = $filename;
+            $postImage->rank = 1;
+            $postImage->post_id = $post->id;
+            $postImage->save();
+
+        }
     }
 
 }

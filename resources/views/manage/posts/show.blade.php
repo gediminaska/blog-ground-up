@@ -10,7 +10,9 @@
         <span>Go back</span>
     </a>
     <h2 class="title is-2">{{ $post->title }}</h2>
-    <img src="{{ asset('images/' . $post->image) }}" style="display:block; margin: auto; width: 100%">
+    @foreach($post->images as $image)
+        <img src="{{ asset('images/' . $image->name) }}" style="display:block; margin: auto; width: 100%">
+    @endforeach
     <h4 style="margin:auto; font-size:larger; margin-top: 30px; text-align: justify; white-space: pre-line; max-width:700px">{{ $post->body }}</h4>
     <br><span style="margin-top:20px"><strong>Tags:</strong></span>
     @foreach($post->tags as $tag)

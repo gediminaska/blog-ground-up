@@ -29,7 +29,7 @@ class BlogController extends Controller
                 ->orderBy('published_at', 'desc')
                 ->paginate(5);
         } else {
-            $posts = Post::with('comments', 'user', 'category')
+            $posts = Post::with('comments', 'user', 'category', 'tags')
                 ->where('status', '=', 3)
                 ->orderBy('published_at', 'desc')
                 ->paginate(5);

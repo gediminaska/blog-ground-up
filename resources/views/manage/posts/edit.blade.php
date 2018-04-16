@@ -6,7 +6,7 @@
 
 @section('content') <h1 class="title is-3">Edit post</h1>
 
-{!! Form::model($post, ['route' => ['posts.update', $post->id], 'method' => 'PUT', 'files' => true]) !!}
+{!! Form::model($post, ['route' => ['posts.update', $post->id], 'method' => 'PUT',  'enctype' => 'multipart/form-data', 'files' => true]) !!}
 {{ Form::label('title', 'Blog title:') }}
 {{ Form::text('title', null, ['class'=>'input']) }}
 <div class="columns" style="margin-bottom: 0px">
@@ -39,10 +39,19 @@
 <br>
 {{ Form::label('body','Post text:') }}
 {{ Form::textarea('body', null, ['class'=>'input', 'style'=>'min-height: 400px' ]) }}
-{{ Form::file('image') }}
+<span class="title is-6">Add images: </span>
+{{ Form::file('images[]', ['multiple'=>'multiple']) }}
 {{ Form::hidden('user_id', Auth::id() )}}
-<br>
+<br><br>
 
+@if($post->has('images'))
+    <p class="title is-6">Remove images:</p>
+    @foreach($post->images as $image)
+        <img class="is-pulled-left" src="{{ asset('images/' . $image->name) }}" style="display:block; max-width: 100px; max-height: 100px">
+        {{ Form::checkbox('image_id[]', $image->id, null, ['class'=>'is-pulled-left image-checkbox' ]) }}
+    @endforeach
+            {{ Form::submit('Delete selected images', ['name'=>'submit_type', 'class'=>'button is-danger']) }}
+@endif
 
 @endsection
 
