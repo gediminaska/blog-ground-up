@@ -22,9 +22,9 @@ class PostsTest extends TestCase
     /** @test */
     public function a_user_can_see_a_posts()
     {
-        $category = factory('App\Category')->create();
-        $user = factory('App\User')->create();
-        $post = factory('App\Post')->create(['status' => '3']);
+        $category = create('App\Category');
+        $user = create('App\User');
+        $post = create('App\Post', ['status' => '3']);
 
         $this->get(route('blog.index'))
             ->assertSee($post->title, $category->name, $user->name);
@@ -35,10 +35,10 @@ class PostsTest extends TestCase
     /** @test */
     public function a_user_cannot_see_unpublished_posts()
     {
-        factory('App\Category')->create();
-        factory('App\User')->create();
-        $draft = factory('App\Post')->create(['status' => '1']);
-        $unpublished = factory('App\Post')->create(['status' => '2']);
+        create('App\Category');
+        create('App\User');
+        $draft = create('App\Post', ['status' => '1']);
+        $unpublished = create('App\Post', ['status' => '2']);
 
         $this->get(route('blog.show', $draft->slug))
             ->assertDontSee($draft->title);
@@ -67,20 +67,16 @@ class PostsTest extends TestCase
 
         $this->seed('LaratrustSeeder');
 
-        $user = factory('App\User')->create();
-
-        $this->actingAs($user)->followingRedirects()
+        $this->signIn()->followingRedirects()
             ->get(route('posts.create'))
             ->assertSee('do not have permission');
 
-        $user->attachPermission('create-post');
-        $this->actingAs($user)
+        $this->signIn(null,[],['create-post'])
             ->get(route('posts.create'))
             ->assertSee('Save Draft')
             ->assertDontSee('Publish');
 
-        $user->attachPermission('publish-post');
-        $this->actingAs($user)
+        $this->signIn(null,[],['create-post', 'publish-post'])->followingRedirects()
             ->get(route('posts.create'))
             ->assertSee('Publish');
     }
