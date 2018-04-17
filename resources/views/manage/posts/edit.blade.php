@@ -7,8 +7,15 @@
 @section('content') <h1 class="title is-3">Edit post</h1>
 
 {!! Form::model($post, ['route' => ['posts.update', $post->id], 'method' => 'PUT',  'enctype' => 'multipart/form-data', 'files' => true]) !!}
-{{ Form::label('title', 'Blog title:') }}
-{{ Form::text('title', null, ['class'=>'input']) }}
+<div id="app">
+    {{csrf_field()}}
+    <b-field>
+        <b-input type="text" placeholder="Post Title" size="is-large" v-model="title" name="title">
+        </b-input>
+    </b-field>
+
+    <slug-widget url="{{url('/')}}" subdirectory="/blog" :title="title" @slug-changed="updateSlug"></slug-widget>
+    <input type="hidden" v-model="slug" name="slug"/>
 <div class="columns" style="margin-bottom: 0px">
     <div class="column is-half">
         {{Form::label('tags', 'Tags:')}}
@@ -16,15 +23,17 @@
 
     </div>
     <div class="column is-one-third">
-        {{ Form::label('name', 'Create new tag:') }}
-        {{ Form::text('name', null ,['class'=>'input']) }}
+        {{ Form::label('tag', 'New tag:') }}
+        {{ Form::text('tag', null ,['class'=>'input', 'v-model' => 'tag']) }}
+        <tag-slug-widget :tag="tag" @tag-slug-changed="updateTagSlug"></tag-slug-widget>
+        <input type="hidden" v-model="tagSlug" name="tagSlug"/>
     </div>
     <div class="column m-t-25">
-        {{ Form::submit('New tag', ['name'=>'submit_type', 'class'=>'button is-success is-fullwidth']) }}
+        <input type="submit" name="submit_type" class="button is-primary is-fullwidth" value="New tag">
     </div>
 </div>
-{{ Form::label('slug', 'Slug:') }}
-{{ Form::text('slug', null, ['class'=>'input']) }}
+</div>
+
 {{ Form::label('category_id', 'Category:') }}
 <br>
 <div class="select">
@@ -98,8 +107,30 @@
     {{ Form::close() }}
 
 @endsection
-
 @section('scripts')
+    <script>
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                title: '{!! $post->title !!}',
+                slug: '',
+                tag: '',
+                tagSlug: '',
+                api_token: '{!! Auth::user()->api_token !!}',
+            },
+            methods: {
+                updateSlug: function (val) {
+                    this.slug = val;
+                },
+                updateTagSlug: function (val) {
+                    this.tagSlug = val;
+                },
+
+            },
+        });
+
+    </script>
 
     {!! Html::script('js/select2.min.js') !!}
 

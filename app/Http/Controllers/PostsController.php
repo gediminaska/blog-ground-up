@@ -135,7 +135,7 @@ class PostsController extends Controller
             }
             Toaster::success("Image".count($request->image_id)==0 ? '' : 's'." deleted.");
             return redirect()->back();
-        } elseif ($request->input('slug') == $post->slug) {
+        } elseif ($request->input('slug') == $post->slug || !$request->input('slug')) {
             $this->validate($request, [
                 'title' => 'required|min:3|max:60',
                 'body' => 'required|min:5|max:4000',
@@ -145,7 +145,7 @@ class PostsController extends Controller
         } else {
             $this->validatePostData($request);
         }
-        $this->collectPostData($request, $post);
+
         $post = $this->setPostStatus($request, $post);
         $post->save();
         $post->tags()->sync($request->tags);
@@ -204,7 +204,7 @@ class PostsController extends Controller
     public function saveTags(Request $request)
     {
         $this->validate($request, [
-            'tagSlug' => 'required|min:3|max:20'
+            'tagSlug' => 'required|min:3|max:20|unique:tags,name'
         ]);
         $tag = new Tag;
         $tag->name = $request->tagSlug;
@@ -237,7 +237,9 @@ class PostsController extends Controller
     {
         $post->title = $request->title;
         $post->body = $request->body;
-        $post->slug = $request->slug;
+        if($request->slug) {
+            $post->slug = $request->slug;
+        }
         $post->category_id = $request->category_id;
         $post->user_id = $request->user_id;
     }

@@ -10,7 +10,7 @@
         <span>Back to blog</span>
     </a>
     <h2 class="title is-2">{{ $post->title }}</h2>
-    <img src="{{ asset('images/' . $post->image) }}" style="display:block; margin: auto; width: 100%">
+    <img src="{{ count($post->images)>0 ? asset('images/' . $post->images[0]->name) : '' }}" style="display:block; margin: auto; width: 100%">
     <h4 style="margin:auto; font-size:larger; margin-top: 30px; text-align: justify; white-space: pre-line; max-width:700px">{{ $post->body }}</h4>
     <br><span style="margin-top:20px"><strong>Tags:</strong></span>
     @foreach($post->tags as $tag)
@@ -34,7 +34,7 @@
                     <img v-bind:src="userGravatar(comment.user.email)"
                          style="height: 30px; width: 30px; border-radius:30px; display: inline-block;">
                     <div class="author">
-                        <div v-if="this.post_author == comment.user.id" style="padding-left: 10px; padding-right: 10px; border-radius: 5px; background-color: #00c4a7; display: inline-block; margin-right: 10px;"><small>Author</small></div><strong>@{{comment.user.name}} </strong>
+                        <div v-if="post_author == comment.user.id" style="padding-left: 10px; padding-right: 10px; border-radius: 5px; background-color: #00c4a7; display: inline-block; margin-right: 10px;"><small>Author</small></div><strong>@{{comment.user.name}} </strong>
                         <span>@{{getDate(comment.created_at)}} said:</span>
                         <p>@{{comment.body}}</p>
                     </div>

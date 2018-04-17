@@ -23,6 +23,6 @@ class Controller extends BaseController
     {
         $permissionError = strlen($permissionText) == 0 ? Permission::where('name', $neededPermission)->first()->display_name : $permissionText;
         Toaster::danger('Sorry, you do not have permission to ' . $permissionError);
-        return redirect()->back();
+        return redirect()->route('blog.index');
     }
 }

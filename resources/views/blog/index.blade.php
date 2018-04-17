@@ -112,7 +112,7 @@
                 templates: {
                     //'suggestion' templating function used to render a single suggestion
                     suggestion: function(suggestion) {
-                        return '<a href="blog/' + suggestion.slug + '"><span><strong>' +
+                        return '<a href="/blog/' + suggestion.slug + '"><span><strong>' +
                             suggestion._highlightResult.title.value + '</strong></a></span><br><span>' +
                             suggestion._snippetResult.body.value + '</span>';
                     }
