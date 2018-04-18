@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="control">
-                    <input name="name" value={{ $category->name }} class="input{{ $errors->has('name') ? ' is-danger' : '' }}" type="text" required>
+                    <input name="name" value="{{ $category->name }}" class="input{{ $errors->has('name') ? ' is-danger' : '' }}" type="text" required>
                     @include('partials._form-errors', ['field' => 'name', 'type' => 'horizontal'])
                 </div>
             </div>

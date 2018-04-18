@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Permission;
 use Toaster;
+use Auth;
 
 class Controller extends BaseController
 {
@@ -24,5 +25,16 @@ class Controller extends BaseController
         $permissionError = strlen($permissionText) == 0 ? Permission::where('name', $neededPermission)->first()->display_name : $permissionText;
         Toaster::danger('Sorry, you do not have permission to ' . $permissionError);
         return redirect()->route('blog.index');
+    }
+
+    /**
+     * @param $neededPermission
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function rejectUserWhoCannot($neededPermission)
+    {
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
     }
 }

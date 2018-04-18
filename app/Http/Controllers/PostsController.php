@@ -37,10 +37,8 @@ class PostsController extends Controller
      */
     public function create()
     {
-        $neededPermission = 'create-post';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
-        }
+        $this->rejectUserWhoCannot('create-post');
+
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
         return view('manage.posts.create')->withCategories($categories)->withTags($tags);
@@ -52,11 +50,10 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        $neededPermission = 'create-post';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
-        } elseif ($request->submit_type == 'New tag') {
-            return $this->saveTags($request);
+        $this->rejectUserWhoCannot('create-post');
+
+        if ($request->submit_type == 'New tag') {
+            return $this->saveTag($request);
         } elseif ($request->submit_type == 'Delete draft') {
             Toaster::success("Draft deleted.");
             return redirect()->route('posts.index');
@@ -83,10 +80,8 @@ class PostsController extends Controller
     {
         $post = Post::query()->find($id);
 
-        $neededPermission = 'publish-post';
-        if (!Auth::user()->hasPermission($neededPermission) && !$this->userIsAuthorOf($post)) {
-            return $this->rejectUnauthorized($neededPermission);
-        }
+        $this->userIsAuthorOf($post) ?: $this->rejectUserWhoCannot('publish-post');
+
         return view('manage.posts.show')->withPost($post);
     }
 
@@ -97,12 +92,10 @@ class PostsController extends Controller
     public function edit($id)
     {
         $post = Post::query()->find($id);
-        $neededPermission = 'update-post';
-        if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized('publish-post', 'edit that post');
-        } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
-        }
+        $this->userIsAuthorOf($post) ?
+            $this->rejectUserWhoCannot('update-post') :
+            $this->rejectUserWhoCannot('publish-post');
+
         return view('manage.posts.edit')->withPost($post)->withCategories(Category::all())->withTags($this->collectTags());
     }
 
@@ -113,14 +106,12 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::find($id);
-        $neededPermission = 'update-post';
+        $post = Post::query()->find($id);
+        $this->userIsAuthorOf($post) ?
+            $this->rejectUserWhoCannot('update-post') :
+            $this->rejectUserWhoCannot('publish-post');
 
-        if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized('publish-post', 'edit that post');
-        } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
-        } elseif ($request->submit_type == 'New tag') {
+        if ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
             return $this->destroy($post->id);
@@ -161,15 +152,11 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        $neededPermission = 'delete-post';
+        $post = Post::query()->find($id);
+        $this->userIsAuthorOf($post) ?
+            $this->rejectUserWhoCannot('delete-post'):
+            $this->rejectUserWhoCannot('publish-post');
 
-        $post = Post::find($id);
-
-        if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized('publish-post', 'delete that post');
-        } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized($neededPermission);
-        }
         $post->tags()->detach();
         foreach ($post->comments as $comment) {
             $comment->delete();
@@ -197,7 +184,7 @@ class PostsController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveTags(Request $request)
+    public function saveTag(Request $request)
     {
         $this->validate($request, [
             'tagSlug' => 'required|min:3|max:20|unique:tags,name'

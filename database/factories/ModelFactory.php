@@ -26,11 +26,12 @@ $factory->define(App\User::class, function (Faker $faker) {
 });
 
 
-
 $factory->define(App\Category::class, function (Faker $faker) {
 
+    $name = $faker->word;
+    (strlen($name) > 4) ?: $name = $name . $name;
     return [
-        'name' => $faker->word,
+        'name' => $name,
         'icon' => 'far fa-user',
     ];
 });
@@ -38,7 +39,7 @@ $factory->define(App\Category::class, function (Faker $faker) {
 $factory->define(App\Post::class, function (Faker $faker) {
 
     return [
-        'title' => $faker->sentence(4),
+        'title' => preg_replace('/[^A-Za-z0-9\-]/', '', $faker->sentence(3)),
         'body' => $faker->paragraphs(8, true),
         'slug' => $faker->slug,
         'category_id' => '1',
