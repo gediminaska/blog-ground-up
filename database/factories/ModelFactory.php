@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,12 +38,12 @@ $factory->define(App\Category::class, function (Faker $faker) {
 $factory->define(App\Post::class, function (Faker $faker) {
 
     return [
-        'title' => $faker->sentence(5),
+        'title' => $faker->sentence(4),
         'body' => $faker->paragraphs(8, true),
         'slug' => $faker->slug,
         'category_id' => '1',
         'status' => '3',
         'published_at' => $faker->dateTimeBetween('-2 years', 'now'),
-        'user_id' => '1',
+        'user_id' => Auth::user() ? Auth::user()->id: '1',
     ];
 });

@@ -7,12 +7,12 @@ use App\Post;
 use App\Tag;
 use Cache;
 use Toaster;
-use Illuminate\Http\Request;
-
 
 class BlogController extends Controller
 {
-
+    /**
+     * @return mixed
+     */
     public function index()
     {
         $tags = Tag::all()->pluck('name');
@@ -44,6 +44,9 @@ class BlogController extends Controller
             ->withTags($tags);
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function indexFiltered()
     {
         if(!is_array(request('filter'))) {
@@ -71,6 +74,10 @@ class BlogController extends Controller
             ->withTags($tags);
     }
 
+    /**
+     * @param $category_id
+     * @return mixed
+     */
     public function category($category_id)
     {
         $categories = Category::all();
@@ -87,6 +94,10 @@ class BlogController extends Controller
             ->withTags($tags);
     }
 
+    /**
+     * @param $category_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function categoryFiltered($category_id)
     {
         if(!is_array(request('filter'))) {
@@ -113,6 +124,10 @@ class BlogController extends Controller
             ->withTags($tags);
     }
 
+    /**
+     * @param $slug
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function show($slug)
     {
         $post = Post::where('slug', $slug)->first();
@@ -123,6 +138,9 @@ class BlogController extends Controller
         return redirect()->route('blog.index');
     }
 
+    /**
+     * @return mixed
+     */
     public function search() {
         $search = request('q');
 

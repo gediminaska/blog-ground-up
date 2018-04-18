@@ -10,10 +10,6 @@ use Cache;
 
 class CategoriesController extends Controller
 {
-    public function __construct(){
-
-    }
-
     /**
      * @return \Illuminate\Http\RedirectResponse
      */

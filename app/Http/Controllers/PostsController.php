@@ -13,13 +13,9 @@ use Cache;
 use App\Image as PostImage;
 
 
+
 class PostsController extends Controller
 {
-
-
-    public function __construct()
-    {
-    }
 
     /**
      * @return \Illuminate\Http\RedirectResponse|mixed
@@ -29,7 +25,7 @@ class PostsController extends Controller
         if (Auth::user()->hasPermission('publish-post')) {
             $posts = Post::with('comments', 'category')->orderBy('updated_at', 'desc')->get();
         } elseif (Auth::user()->hasPermission('read-post')) {
-            $posts = Post::where('user_id', Auth::user()->id)->get();
+            $posts = Post::query()->where('user_id', Auth::user()->id)->get();
         } else {
             return redirect()->back();
         }
@@ -251,16 +247,18 @@ class PostsController extends Controller
      */
     public function setPostStatus(Request $request, $post)
     {
-        if ($request->submit_type == 'Save Draft') {
-            $post->status = 1;
-            Toaster::success("Draft has been saved!");
-        } elseif ($request->submit_type == 'Submit') {
-            $post->status = 2;
-            Toaster::success("Post has been submitted!");
-        } elseif ($request->submit_type == 'Publish' && Auth::user()->hasPermission('publish-post')) {
-            $post->status = 3;
+        if ($request->submit_type == 'Publish' && Auth::user()->hasPermission('publish-post')) {
+        $post->status = 3;
             $post->published_at = now();
             Toaster::success("Post has been published!");
+        }
+        elseif ($request->submit_type == 'Submit') {
+            $post->status = 2;
+            Toaster::success("Post has been submitted!");
+        }
+        else {
+            $post->status = 1;
+            Toaster::success("Draft has been saved!");
         }
         return $post;
     }

@@ -16,22 +16,22 @@
 
     <slug-widget url="{{url('/')}}" subdirectory="/blog" :title="title" @slug-changed="updateSlug"></slug-widget>
     <input type="hidden" v-model="slug" name="slug"/>
-<div class="columns" style="margin-bottom: 0px">
-    <div class="column is-half">
-        {{Form::label('tags', 'Tags:')}}
-        {{ Form::select('tags[]', $tags, null, ['class' => 'select select2-multi is-fullwidth', 'multiple' => 'multiple']) }}
+    <div class="columns" style="margin-bottom: 0px">
+        <div class="column is-half">
+            {{Form::label('tags', 'Tags:')}}
+            {{ Form::select('tags[]', $tags, null, ['class' => 'select select2-multi is-fullwidth', 'multiple' => 'multiple']) }}
 
+        </div>
+        <div class="column is-one-third">
+            {{ Form::label('tag', 'New tag:') }}
+            {{ Form::text('tag', null ,['class'=>'input', 'v-model' => 'tag']) }}
+            <tag-slug-widget :tag="tag" @tag-slug-changed="updateTagSlug"></tag-slug-widget>
+            <input type="hidden" v-model="tagSlug" name="tagSlug"/>
+        </div>
+        <div class="column m-t-25">
+            <input type="submit" name="submit_type" class="button is-primary is-fullwidth" value="New tag">
+        </div>
     </div>
-    <div class="column is-one-third">
-        {{ Form::label('tag', 'New tag:') }}
-        {{ Form::text('tag', null ,['class'=>'input', 'v-model' => 'tag']) }}
-        <tag-slug-widget :tag="tag" @tag-slug-changed="updateTagSlug"></tag-slug-widget>
-        <input type="hidden" v-model="tagSlug" name="tagSlug"/>
-    </div>
-    <div class="column m-t-25">
-        <input type="submit" name="submit_type" class="button is-primary is-fullwidth" value="New tag">
-    </div>
-</div>
 </div>
 
 {{ Form::label('category_id', 'Category:') }}
@@ -53,13 +53,14 @@
 {{ Form::hidden('user_id', Auth::id() )}}
 <br><br>
 
-@if($post->has('images'))
+@if(count($post->images) > 0)
     <p class="title is-6">Remove images:</p>
     @foreach($post->images as $image)
-        <img class="is-pulled-left" src="{{ asset('images/' . $image->name) }}" style="display:block; max-width: 100px; max-height: 100px">
+        <img class="is-pulled-left" src="{{ asset('images/' . $image->name) }}"
+             style="display:block; max-width: 100px; max-height: 100px">
         {{ Form::checkbox('image_id[]', $image->id, null, ['class'=>'is-pulled-left image-checkbox' ]) }}
     @endforeach
-            {{ Form::submit('Delete selected images', ['name'=>'submit_type', 'class'=>'button is-danger']) }}
+    {{ Form::submit('Delete selected images', ['name'=>'submit_type', 'class'=>'button is-danger']) }}
 @endif
 
 @endsection
@@ -83,7 +84,9 @@
                     <b-icon icon="file" size="is-medium"></b-icon>
                 </div>
                 <div class="status-details">
-                    <h4><span class="status-emphasis">{{$post->status == 1 ? "Draft " : "Post "}}</span>{{$post->status == 1 ? "saved:" : ($post->status == 2 ? "submitted for review:" : "published:")}}</h4>
+                    <h4>
+                        <span class="status-emphasis">{{$post->status == 1 ? "Draft " : "Post "}}</span>{{$post->status == 1 ? "saved:" : ($post->status == 2 ? "submitted for review:" : "published:")}}
+                    </h4>
                     <p>{{$post->status == 1 ? $post->updated_at->diffForHumans() : $post->status == 2 ? $post->updated_at->diffForHumans() : $post->published_at->diffForHumans()}}</p>
                 </div>
             </div>
@@ -91,7 +94,9 @@
     </div>
     <div class="columns m-t-10">
         <div class="column">
-            <button class="button is-info is-outlined is-fullwidth" name="submit_type" value="Save Draft">Save {{$post->status == 1 ? '' : 'as'}} draft</button>
+            <button class="button is-info is-outlined is-fullwidth" name="submit_type" value="Save Draft">
+                Save {{$post->status == 1 ? '' : 'as'}} draft
+            </button>
         </div>
         <div class="column">
             <button class="button is-danger is-fullwidth" name="submit_type" value="Delete draft">Delete</button>

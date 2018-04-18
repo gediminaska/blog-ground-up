@@ -8,17 +8,17 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    /**
+     * @param null $user
+     * @param array $roles
+     * @param array $permissions
+     * @return $this
+     */
     protected function signIn($user = null, $roles = [], $permissions = [])
     {
         $user = $user ?: create('App\User');
 
-        foreach ($roles as $role) {
-            $user->attachRole($role);
-        }
-
-        foreach ($permissions as $permission) {
-            $user->attachPermission($permission);
-        }
+        $user->attachRoles($roles)->attachPermissions($permissions);
 
         $this->actingAs($user);
 
