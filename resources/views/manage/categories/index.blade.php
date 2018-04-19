@@ -1,3 +1,4 @@
+
 @extends ('layouts.manage')
 
 @section('content')
@@ -59,7 +60,7 @@
             </div>
 
             <div class="column in-one-quarter">
-                {{ Form::open(['action' => 'CategoriesController@destroy', 'method' => 'DELETE']) }}
+                {{ Form::open(['route' => ['categories.destroy', $category->id], 'method' => 'DELETE']) }}
                 {{ Form::hidden('id', $category->id) }}
                 <button class="button is-danger m-t-25 is-fullwidth" type="submit"><i class="far fa-trash-alt m-r-10" > </i>Delete with posts</button>
                 {{Form::close()}}

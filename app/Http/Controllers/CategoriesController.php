@@ -15,9 +15,11 @@ class CategoriesController extends Controller
      */
     public function index()
     {
+
         $this->rejectUserWhoCannot('read-category');
 
         $categories = Category::with('posts')->get();
+
         return view('manage.categories.index')->withCategories($categories);
     }
 
@@ -39,6 +41,7 @@ class CategoriesController extends Controller
         $category->name = $request->name;
         $category->icon = $request->icon;
         $category->save();
+
         Toaster::success('The category has been saved!');
         Cache::forget('categories');
 

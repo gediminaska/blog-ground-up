@@ -17,9 +17,7 @@ Route::prefix('manage')->middleware('auth')->group(function(){
     Route::resource('/permissions', 'PermissionController', ['except' => 'destroy']);
     Route::resource('/roles', 'RoleController', ['except' => 'destroy']);
     Route::resource('/posts', 'PostsController');
-    Route::resource('categories', 'CategoriesController', ['only' => [
-        'index', 'store', 'show', 'update']]);
-    Route::delete('categories', ['as' => 'categories.destroy', 'uses' => 'CategoriesController@destroy'] );
+    Route::resource('/categories', 'CategoriesController');
 
 });
 
