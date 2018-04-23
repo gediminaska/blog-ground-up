@@ -8,7 +8,6 @@
     {{ Form::open(['action'=> 'PostsController@store', 'method'=>'POST', 'enctype' => 'multipart/form-data', 'files' => true]) }}
 
     <div id="app">
-        {{csrf_field()}}
         <b-field>
             <b-input type="text" placeholder="Post Title" size="is-large" v-model="title" name="title">
             </b-input>

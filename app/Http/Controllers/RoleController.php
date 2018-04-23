@@ -56,10 +56,14 @@ class RoleController extends Controller
         ]);
 
         $role = new Role;
+
+
         $role->display_name = $request->display_name;
         $role->name = $request->name;
         $role->description = $request->description;
+
         $role->save();
+
 
         if($request->permissions) {
             $role->syncPermissions(explode(',', $request->permissions));

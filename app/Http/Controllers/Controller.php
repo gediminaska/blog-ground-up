@@ -7,8 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Permission;
-use Toaster;
-use Auth;
+use TheoryThree\LaraToaster\LaraToaster as Toaster;
 
 class Controller extends BaseController
 {
@@ -17,24 +16,15 @@ class Controller extends BaseController
     /**
      * @param $neededPermission
      * @param string $permissionText
-     * @param $destination
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function rejectUnauthorized($neededPermission, $permissionText='')
     {
-        $permissionError = strlen($permissionText) == 0 ? Permission::where('name', $neededPermission)->first()->display_name : $permissionText;
-        Toaster::danger('Sorry, you do not have permission to ' . $permissionError);
+        $permissionError = strlen($permissionText) == 0 ? Permission::query()->where('name', $neededPermission)->first()->display_name : $permissionText;
+        $toaster = new Toaster;
+        $toaster->danger('Sorry, you do not have permission to ' . $permissionError);
         return redirect()->route('blog.index');
     }
 
-    /**
-     * @param $neededPermission
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    protected function rejectUserWhoCannot($neededPermission)
-    {
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
-        }
-    }
 }
+

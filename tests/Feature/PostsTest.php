@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -70,18 +71,30 @@ class PostsTest extends TestCase
 
         $this->post(route('posts.store'), make('App\Post'))
             ->assertRedirect(route('login'));
+
+        $this->assertTrue(count(Post::all()) == 0);
     }
 
     /** @test */
     public function unauthorized_user_cannot_create_post()
     {
+
+        create('App\User');
+        create('App\Category');
+        $this->seed('LaratrustSeeder');
         $this->signIn()->followingRedirects()
             ->get(route('posts.create'))
-            ->assertSee('do not have permission');
+            ->assertStatus(200)
+            ->assertSee('do not have permission')
+            ->assertViewIs('blog.index');
+        $this->signIn(null,[], ['read-post'])->followingRedirects()
+            ->post(route('posts.store'), make('App\Post', ['_token' => csrf_token()]))
+            ->assertStatus(200)
+            ->assertSee('do not have permission')
+            ->assertViewIs('blog.index');
 
-        $this->signIn()->followingRedirects()
-            ->post(route('posts.store'), make('App\Post'))
-            ->assertSee('do not have permission');
+        $this->assertTrue(count(Post::all()) == 0);
+
     }
 
     /** @test */
@@ -89,14 +102,19 @@ class PostsTest extends TestCase
     {
         create('App\User');
         create('App\Category');
-        create('App\Post');
+        create('App\Post', ['title' => 'testing']);
         $this->signIn()->followingRedirects()
             ->get(route('posts.edit', 1))
-            ->assertSee('do not have permission to edit');
-
+            ->assertSee('do not have permission to edit')
+            ->assertViewIs('blog.index');
         $this->signIn()->followingRedirects()
-            ->put(route('posts.update', 1), make('App\Post'))
-            ->assertSee('do not have permission to edit');
+            ->put(route('posts.update', 1), make('App\Post', ['title' => 'changing']))
+            ->assertStatus(200)
+            ->assertSee('do not have permission to edit')
+            ->assertViewIs('blog.index');
+
+        $this->assertTrue(Post::query()->first()->title == 'testing');
+
     }
 
 /** @test */
@@ -108,7 +126,11 @@ class PostsTest extends TestCase
 
         $this->signIn()->followingRedirects()
             ->delete(route('posts.destroy', 1))
-            ->assertSee('do not have permission to delete');
+            ->assertStatus(200)
+            ->assertSee('do not have permission to delete')
+            ->assertViewIs('blog.index');
+
+        $this->assertTrue(count(Post::all()) == 1);
     }
 
     /** @test */
@@ -118,6 +140,8 @@ class PostsTest extends TestCase
 
         $this->signIn(null, [], ['create-post'])
             ->get(route('posts.create'))
+            ->assertStatus(200)
+            ->assertViewIs('manage.posts.create')
             ->assertSee('Save Draft')
             ->assertDontSee('Publish');
 
@@ -127,12 +151,17 @@ class PostsTest extends TestCase
         $this->signIn(null, [], ['create-post', 'read-post'])->followingRedirects()
             ->post(route('posts.store'), $post)
             ->assertStatus(200)
+            ->assertViewIs('manage.posts.index')
             ->assertSee('Published (0)')
             ->assertSee($post['title'])
             ->assertSee('Draft has been saved!');
 
+        $this->assertTrue(count(Post::all()) == 1);
+        $this->assertTrue(Post::query()->first()->status == 1);
+
         $this->signIn(null, [], ['create-post', 'publish-post'])->followingRedirects()
             ->get(route('posts.create'))
+            ->assertStatus(200)
             ->assertSee('Publish');
 
         $post = make('App\Post', ['user_id' => 9, 'submit_type' => 'Publish']);
@@ -142,6 +171,10 @@ class PostsTest extends TestCase
             ->assertSee('Published (1)')
             ->assertSee($post['title'])
             ->assertSee('Post has been published!');
+
+        $this->assertTrue(count(Post::all()) == 2);
+        $this->assertTrue(Post::query()->where('id', 2)->first()->status == 3);
+
     }
 
     /** @test */
@@ -154,14 +187,24 @@ class PostsTest extends TestCase
 
         $user->attachPermissions(['create-post', 'read-post', 'update-post']);
 
-        $this->actingAs($user)->post(route('posts.store'), make('App\Post'));
-        $this->actingAs($user)->followingRedirects()->put(route('posts.update', 1), make('App\Post'))
+        $this->actingAs($user)->followingRedirects()
+            ->post(route('posts.store'), make('App\Post', ['title' => 'firstTitle']))
+            ->assertStatus(200)
+            ->assertSee('has been saved');
+
+        $this->actingAs($user)->followingRedirects()
+            ->put(route('posts.update', 1), make('App\Post', ['title' => 'secondTitle']))
+            ->assertStatus(200)
             ->assertSee('has been updated');
 
-        create('App\Post');
+        $this->assertTrue(Post::query()->first()->title == 'secondTitle');
+
         $this->signIn(null,[], ['read-post', 'publish-post'])->followingRedirects()
-            ->put(route('posts.destroy', 2), make('App\Post'))
+            ->put(route('posts.update', 1), make('App\Post', ['title' => 'thirdTitle']))
+            ->assertStatus(200)
             ->assertSee('has been updated');
+
+        $this->assertTrue(Post::query()->first()->title == 'thirdTitle');
     }
 
     /** @test */
@@ -174,12 +217,24 @@ class PostsTest extends TestCase
 
         $user->attachPermissions(['create-post', 'read-post', 'update-post', 'delete-post']);
 
-        $this->actingAs($user)->post(route('posts.store'), make('App\Post'));
-        $this->actingAs($user)->followingRedirects()->delete(route('posts.destroy', 1))
+        $this->actingAs($user)
+            ->post(route('posts.store'), make('App\Post'));
+
+        $this->assertTrue(count(Post::all()) == 1);
+
+        $this->actingAs($user)->followingRedirects()
+            ->delete(route('posts.destroy', 1))
+            ->assertStatus(200)
+            ->assertViewIs('manage.posts.index')
             ->assertSee('has been deleted');
 
+        $this->assertTrue(count(Post::all()) == 0);
+
         create('App\Post');
-        $this->signIn(null,[], ['read-post', 'publish-post'])->followingRedirects()->delete(route('posts.destroy', 2))
+        $this->signIn(null,[], ['read-post', 'publish-post'])->followingRedirects()
+            ->delete(route('posts.destroy', 2))
+            ->assertStatus(200)
+            ->assertViewIs('manage.posts.index')
             ->assertSee('has been deleted');
     }
 

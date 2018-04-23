@@ -36,6 +36,17 @@ $factory->define(App\Category::class, function (Faker $faker) {
     ];
 });
 
+
+$factory->define(App\Role::class, function (Faker $faker) {
+
+    $name = $faker->word;
+    (strlen($name) > 4) ?: $name = $name . $name;
+    return [
+        'name' => $name,
+        'display_name' => $name,
+    ];
+});
+
 $factory->define(App\Post::class, function (Faker $faker) {
 
     return [
@@ -46,5 +57,14 @@ $factory->define(App\Post::class, function (Faker $faker) {
         'status' => '3',
         'published_at' => $faker->dateTimeBetween('-2 years', 'now'),
         'user_id' => Auth::user() ? Auth::user()->id: '1',
+    ];
+});
+
+$factory->define(App\Comment::class, function (Faker $faker) {
+
+    return [
+        'post_id' => '1',
+        'user_id' => '1',
+        'body' => $faker->sentence(),
     ];
 });

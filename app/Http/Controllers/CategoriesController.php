@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Category;
-use Illuminate\Support\Facades\Auth;
-use Toaster;
 use Cache;
+use Illuminate\Http\Request;
+use Toaster;
+use Auth;
 
 class CategoriesController extends Controller
 {
@@ -15,11 +14,11 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-
-        $this->rejectUserWhoCannot('read-category');
-
-        $categories = Category::with('posts')->get();
-
+        $neededPermission = 'read-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
+        $categories = Category::all();
         return view('manage.categories.index')->withCategories($categories);
     }
 
@@ -29,8 +28,10 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        $this->rejectUserWhoCannot('create-category');
-
+        $neededPermission = 'create-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
             'icon' => 'max:30'
@@ -41,7 +42,6 @@ class CategoriesController extends Controller
         $category->name = $request->name;
         $category->icon = $request->icon;
         $category->save();
-
         Toaster::success('The category has been saved!');
         Cache::forget('categories');
 
@@ -54,8 +54,10 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        $this->rejectUserWhoCannot('read-category');
-
+        $neededPermission = 'read-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $category=Category::find($id);
         return view('manage.categories.show')->withCategory($category);
     }
@@ -68,11 +70,16 @@ class CategoriesController extends Controller
 
     public function update(Request $request, $id){
 
-        $this->rejectUserWhoCannot('update-category');
+        $neededPermission = 'update-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+
+
+            return $this->rejectUnauthorized($neededPermission);
+        }
 
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
-             'icon' => 'max:30'
+            'icon' => 'max:30'
         ]);
         $category=Category::find($id);
         $category->name = $request->name;
@@ -86,18 +93,23 @@ class CategoriesController extends Controller
 
     public function destroy($id)
     {
-        $this->rejectUserWhoCannot('delete-category');
-
+        $neededPermission = 'delete-category';
+        if (!Auth::user()->hasPermission($neededPermission)) {
+            return $this->rejectUnauthorized($neededPermission);
+        }
         $category = Category::find($id);
 
-        foreach($category->posts as $post){
-            $post->delete();
-        }
-
+//
+//        foreach($category->posts as $post){
+//            $post->delete();
+//        }
+//        dd('passed permissions');
+//
+//
         $category->delete();
+
         Toaster::success('The category has been deleted!');
         Cache::forget('categories');
         return redirect()->route('categories.index');
     }
-
 }
