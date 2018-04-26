@@ -199,6 +199,16 @@ services:
         - backend
 
 
+### Selenium ###############################################
+    selenium:
+      build: ./selenium
+      ports:
+        - "${SELENIUM_PORT}:4444"
+      volumes:
+        - /dev/shm:/dev/shm
+      networks:
+        - frontend
+
 ### Laravel Echo Server #######################################
     laravel-echo-server:
       build:

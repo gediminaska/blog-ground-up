@@ -145,7 +145,6 @@ class PostsController extends Controller
         $this->setPostStatus($request, $post);
         $post->save();
         $post->tags()->sync($request->tags);
-        Toaster::success("Post '" . $post->title . "' has been updated");
         Cache::forget('blog');
         if ($request->hasFile('images')) {
             $this->uploadImages($request, $post);
@@ -247,14 +246,14 @@ class PostsController extends Controller
      */
     public function setPostStatus(Request $request, $post)
     {
-        if ($request->submit_type == 'Publish' && Auth::user()->hasPermission('publish-post')) {
+        if ($request->submit_type == ('Publish' || 'Publish again')  && Auth::user()->hasPermission('publish-post')) {
             $post->status = 3;
             $post->published_at = now();
-            Toaster::success("Post has been published!");
+            Toaster::success("Post '".$post->title."' has been published!");
         }
         elseif ($request->submit_type == 'Submit') {
             $post->status = 2;
-            Toaster::success("Post has been submitted!");
+            Toaster::success("Post '".$post->title."' has been submitted!");
         }
         else {
             $post->status = 1;

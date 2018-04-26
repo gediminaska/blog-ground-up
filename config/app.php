@@ -172,6 +172,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Laratrust\LaratrustServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Laravel\Dusk\DuskServiceProvider::class,
 
 
 

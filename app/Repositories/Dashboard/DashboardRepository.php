@@ -13,7 +13,6 @@ interface DashboardRepository
 {
     public function userLastWeekActivities($userId);
 
-
     public function systemLastWeekActivities();
 
     public function systemCategoryStats();

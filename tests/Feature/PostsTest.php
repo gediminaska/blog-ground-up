@@ -162,7 +162,7 @@ class PostsTest extends TestCase
             ->assertStatus(200)
             ->assertSee('Published (1)')
             ->assertSee($post['title'])
-            ->assertSee('Post has been published!');
+            ->assertSee('has been published!');
 
         $this->assertTrue(count(Post::all()) == 2);
         $this->assertTrue(Post::query()->where('id', 2)->first()->status == 3);
@@ -187,14 +187,14 @@ class PostsTest extends TestCase
         $this->actingAs($user)->followingRedirects()
             ->put(route('posts.update', 1), make('App\Post', ['title' => 'secondTitle']))
             ->assertStatus(200)
-            ->assertSee('has been updated');
+            ->assertSee('has been saved');
 
         $this->assertTrue(Post::query()->first()->title == 'secondTitle');
 
         $this->signIn(null,[], ['read-post', 'publish-post'])->followingRedirects()
             ->put(route('posts.update', 1), make('App\Post', ['title' => 'thirdTitle']))
             ->assertStatus(200)
-            ->assertSee('has been updated');
+            ->assertSee('has been saved');
 
         $this->assertTrue(Post::query()->first()->title == 'thirdTitle');
     }
