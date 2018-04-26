@@ -20,7 +20,7 @@
     @endforeach
     <br>
 
-    @if(count($post->comments)>0)
+    @if($post->comments_count>0)
         <hr>
         <span class="far fa-comments fa-2x"></span><span class="title is-4"> Comments:</span><br>
     @endif

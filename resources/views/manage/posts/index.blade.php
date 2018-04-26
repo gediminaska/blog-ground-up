@@ -14,7 +14,7 @@
                             <div class="columns">
                                 <div class="column is-two-thirds">
                                     <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
-                                    <small> Has {{ count($post->comments) }} comments </small>
+                                    <small> Has {{ $post->comments_count }} {{ str_plural('comment', $post->comments_count) }} </small>
                                     <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
                                     <p><strong>Category: </strong> {{ $post->category->name }}</p>
                                 </div>
@@ -44,7 +44,7 @@
                             <div class="columns">
                                 <div class="column is-two-thirds">
                                     <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
-                                    <small> Has {{ count($post->comments) }} comments </small>
+                                    <small> Has {{ $post->comments_count }} {{ str_plural('comment', $post->comments_count) }} </small>
                                     <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
                                     <p><strong>Category: </strong> {{ $post->category->name }}</p>
                                 </div>
@@ -69,7 +69,7 @@
                             <div class="columns">
                                 <div class="column is-two-thirds">
                                     <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
-                                    <small> Has {{ count($post->comments) }} comments </small>
+                                    <small> Has {{ $post->comments_count }} {{ str_plural('comment', $post->comments_count) }} </small>
                                     <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
                                     <p><strong>Category: </strong> {{ $post->category->name }}</p>
                                 </div>

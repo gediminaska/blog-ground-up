@@ -30,7 +30,7 @@
     </div>
     <hr>
     @foreach($categories as $category)
-        <a href="{{ route('categories.show', $category->id) }}"><i class="{{ $category->icon }} fa-2x m-r-10 m-b-10" style="color: black"></i><span class="title is-3">{{ $category->name }} </span><span class="subtitle is-6">has {{count($category->posts)}} posts</span></a>
+        <a href="{{ route('categories.show', $category->id) }}"><i class="{{ $category->icon }} fa-2x m-r-10 m-b-10" style="color: black"></i><span class="title is-3">{{ $category->name }} </span><span class="subtitle is-6">has {{$category->posts()->count()}} posts</span></a>
         {{ Form::open(['route'=> ['categories.update', $category->id], 'method'=>'PUT']) }}
         <div class="columns">
 

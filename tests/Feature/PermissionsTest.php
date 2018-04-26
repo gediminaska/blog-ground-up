@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class RolesTest extends TestCase
+class PermissionsTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -15,22 +15,22 @@ class RolesTest extends TestCase
         $this->seed('LaratrustSeeder');
 
         $this->signIn()
-            ->get(route('roles.index'))
+            ->get(route('permissions.index'))
             ->assertRedirect(route('blog.index'));
         $this->signIn()
-            ->get(route('roles.create'))
+            ->get(route('permissions.create'))
             ->assertRedirect(route('blog.index'));
         $this->signIn()
-            ->get(route('roles.show', 1))
+            ->get(route('permissions.show', 1))
             ->assertRedirect(route('blog.index'));
         $this->signIn()
-            ->get(route('roles.edit', 1))
+            ->get(route('permissions.edit', 1))
             ->assertRedirect(route('blog.index'));
         $this->signIn()
-            ->put(route('roles.update', 1), make('App\Role'))
+            ->put(route('permissions.update', 1), make('App\Permission'))
             ->assertRedirect(route('blog.index'));
         $this->signIn()
-            ->post(route('roles.store'), make('App\Role'))
+            ->post(route('permissions.store'), make('App\Permission'))
             ->assertRedirect(route('blog.index'));
     }
 
@@ -39,30 +39,30 @@ class RolesTest extends TestCase
     {
         $this->seed('LaratrustSeeder');
 
-        $this->signIn(null,[],['read-roles'])
-            ->get(route('roles.index'))
+        $this->signIn(null,[],['read-permission'])
+            ->get(route('permissions.index'))
             ->assertStatus(200);
-        $this->signIn(null,[],['read-roles'])
-            ->get(route('roles.show', 1))
+        $this->signIn(null,[],['read-permission'])
+            ->get(route('permissions.show', 1))
             ->assertStatus(200);
 
-        $this->signIn(null,[],['create-roles'])
-            ->get(route('roles.create'))
+        $this->signIn(null,[],['create-permission'])
+            ->get(route('permissions.create'))
             ->assertStatus(200);
-        $this->signIn(null,[],['read-roles','create-roles'])->followingRedirects()
-            ->post(route('roles.store'), make('App\Role'))
+        $this->signIn(null,[],['read-permission','create-permission'])->followingRedirects()
+            ->post(route('permissions.store'), make('App\Permission'))
             ->assertStatus(200)
-            ->assertViewIs('manage.roles.index')
-            ->assertSee('Successfully created');
+            ->assertViewIs('manage.permissions.index')
+            ->assertSee('successfully added');
 
-        $this->signIn(null,[],['update-roles'])
-            ->get(route('roles.edit', 3))
+        $this->signIn(null,[],['update-permission'])
+            ->get(route('permissions.edit', 3))
             ->assertStatus(200);
-        $this->signIn(null,[],['read-roles','update-roles'])->followingRedirects()
-            ->put(route('roles.update', 3), make('App\Role'))
+        $this->signIn(null,[],['read-permission','update-permission'])->followingRedirects()
+            ->put(route('permissions.update', 3), make('App\Permission'))
             ->assertStatus(200)
-            ->assertViewIs('manage.roles.show')
-            ->assertSee('Successfully updated');
+            ->assertViewIs('manage.permissions.show')
+            ->assertSee('Updated the');
     }
 
 }

@@ -19,9 +19,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('id', 'desc')->paginate(10);
+        $users = User::query()->orderBy('id', 'desc')->paginate(10);
 
-        return view('manage.users.index')->withUsers($users);
+        return view('manage.users.index')->with('users', $users);
     }
 
     /**
@@ -31,8 +31,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('id', '>', 2)->get();
-        return view('manage.users.create')->withRoles($roles);
+        $roles = Role::query()->where('id', '>', 2)->get();
+        return view('manage.users.create')->with('roles', $roles);
     }
 
     /**
@@ -85,8 +85,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('id', $id)->with('roles')->first();
-        return view('manage.users.show')->withUser($user);
+        $user = User::query()->where('id', $id)->with('roles')->first();
+        return view('manage.users.show')->with('user', $user);
     }
 
     /**
@@ -97,9 +97,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $roles = Role::where('id', '>', 2)->get();
-        $user = User::where('id', $id)->with('roles')->first();
-        return view('manage.users.edit')->withUser($user)->withRoles($roles);
+        $roles = Role::query()->where('id', '>', 2)->get();
+        $user = User::query()->where('id', $id)->with('roles')->first();
+        return view('manage.users.edit')->with('user', $user)->with('roles', $roles);
     }
 
     /**
@@ -120,7 +120,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $id
         ]);
 
-        $user = User::findOrFail($id);
+        $user = User::query()->findOrFail($id);
         $user->name = $request->name;
         $user->email = $request->email;
         if ($request->password_options == 'auto') {
@@ -146,15 +146,5 @@ class UserController extends Controller
             return redirect()->route('users.show', $user->id);
         }
 
-    }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

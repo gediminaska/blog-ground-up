@@ -47,6 +47,17 @@ $factory->define(App\Role::class, function (Faker $faker) {
     ];
 });
 
+$factory->define(App\Permission::class, function (Faker $faker) {
+
+    $name = $faker->word;
+    (strlen($name) > 4) ?: $name = $name . $name;
+    return [
+        'name' => $name,
+        'display_name' => $name,
+        'permission_type' => 'basic',
+    ];
+});
+
 $factory->define(App\Post::class, function (Faker $faker) {
 
     return [
@@ -55,7 +66,7 @@ $factory->define(App\Post::class, function (Faker $faker) {
         'slug' => $faker->slug,
         'category_id' => '1',
         'status' => '3',
-        'published_at' => $faker->dateTimeBetween('-2 years', 'now'),
+        'published_at' => $faker->dateTimeBetween('-1 years', 'now'),
         'user_id' => Auth::user() ? Auth::user()->id: '1',
     ];
 });

@@ -10,6 +10,27 @@ class Post extends Model
 {
     use Searchable;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('user', function($builder) {
+           $builder->with('user');
+        });
+        static::addGlobalScope('category', function($builder) {
+           $builder->with('category');
+        });
+        static::addGlobalScope('commentCount', function($builder) {
+           $builder->withCount('comments');
+        });
+        static::addGlobalScope('images', function($builder) {
+           $builder->with('images');
+        });
+        static::addGlobalScope('tags', function($builder) {
+           $builder->with('tags');
+        });
+    }
+
     public function toSearchableArray()
     {
         $array = $this->toArray();

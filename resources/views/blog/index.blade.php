@@ -75,13 +75,13 @@
     @if(count($posts) > 0)
         @foreach($posts as $post)
             {{Html::linkRoute('blog.show', $post->title, $post->slug, ['class'=>'title is-4', 'style'=>'color:inherit'])}}<br>
-            <small><span>Published  {{ $post->published_at ? $post->published_at->diffForHumans() : 'is not' }}, by    <span class="far fa-user m-l-5"></span> {{ $post->user->name }}, </span><span class="fas fa-comment m-l-5"> </span> <strong>{{ count($post->comments) }}</strong> comments</small>
+            <small><span>Published  {{ $post->published_at ? $post->published_at->diffForHumans() : 'is not' }}, by    <span class="far fa-user m-l-5"></span> {{ $post->user->name }}, </span><span class="fas fa-comment m-l-5"> </span><strong> {{ $post->comments_count  }}</strong> {{ str_plural('comment', $post->comments_count) }}</small>
             @foreach($post->tags as $tag)
                 <span class="tag">{{ $tag->name }}</span>
             @endforeach
             @if(Request::is('blog'))<p><strong>Category: </strong><span class="{{ $post->category->icon }}"></span> {{ $post->category->name }}</p>@else<br>@endif
             <br>
-            <a href="{{ route('blog.show', $post->slug) }}"><img class= "index-thumbnail" src="{{ count($post->images)==0 ? asset('images/no-image-landscape.png') : asset('images/' . $post->images[0]->name) }}"></a>
+            <a href="{{ route('blog.show', $post->slug) }}"><img class= "index-thumbnail" src="{{ $post->images->count()==0 ? asset('images/no-image-landscape.png') : asset('images/' . $post->images[0]->name) }}"></a>
             <h4 style="text-align: justify; white-space: pre-line">{{substr($post->body,0, 700)}} {{strlen($post->body)>700 ? "..." : ""}}</h4>
             <br>
             {{Html::linkRoute('blog.show', 'Show post', $post->slug, ['class'=>'button is-info is-outlined'])}}

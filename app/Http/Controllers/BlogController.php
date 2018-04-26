@@ -24,13 +24,11 @@ class BlogController extends Controller
                 foreach ($selectedTags as $selectedTag) {
                     $q->orWhere('name', $selectedTag);
                 }
-            })->with('comments', 'user', 'category')
-                ->where('status', '=', 3)
+            })->where('status', '=', 3)
                 ->orderBy('published_at', 'desc')
                 ->paginate(5);
         } else {
-            $posts = Post::with('comments', 'user', 'category', 'tags')
-                ->where('status', '=', 3)
+            $posts = Post::where('status', '=', 3)
                 ->orderBy('published_at', 'desc')
                 ->paginate(5);
         }
@@ -53,8 +51,7 @@ class BlogController extends Controller
             return redirect()->route('blog.index');
         }
         $tags = Tag::all()->pluck('name');
-        $posts = Post::with('comments', 'user', 'category')
-            ->where('status', '=', 3)
+        $posts = Post::where('status', '=', 3)
             ->whereHas('tags', function ($q) {
                 $selectedTags = request('filter');
                 $q->where('name', $selectedTags[0]);
@@ -80,10 +77,12 @@ class BlogController extends Controller
      */
     public function category($category_id)
     {
-        $categories = Category::all();
+
+        $categories = Cache::remember('categories', 1440, function () {
+            return $categories = Category::all();
+        });
         $tags = Tag::all()->pluck('name');
-        $posts = Post::with('user', 'comments')
-            ->where('category_id', $category_id)
+        $posts = Post::where('category_id', $category_id)
             ->where('status', '=', 3)
             ->orderBy('id', 'desc')
             ->paginate(5);
@@ -103,10 +102,13 @@ class BlogController extends Controller
         if(!is_array(request('filter'))) {
             return redirect()->route('blog.category', $category_id);
         }
-        $categories = Category::all();
+
+        $categories = Cache::remember('categories', 1440, function () {
+            return $categories = Category::all();
+        });
+
         $tags = Tag::all()->pluck('name');
-        $posts = Post::with('user', 'comments')
-            ->where('category_id', $category_id)
+        $posts = Post::where('category_id', $category_id)
             ->where('status', '=', 3)
             ->whereHas('tags', function ($q) {
                 $selectedTags = request('filter');

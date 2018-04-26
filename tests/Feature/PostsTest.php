@@ -56,14 +56,6 @@ class PostsTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_see_register_page()
-    {
-        $this->get(route('register'))
-            ->assertStatus(200)
-            ->assertSee('Register');
-    }
-
-    /** @test */
     public function unauthenticated_user_cannot_create_post()
     {
         $this->get(route('posts.create'))

@@ -23,7 +23,7 @@ class PostsController extends Controller
     public function index()
     {
         if (Auth::user()->hasPermission('publish-post')) {
-            $posts = Post::with('comments', 'category')->orderBy('updated_at', 'desc')->get();
+            $posts = Post::orderBy('updated_at', 'desc')->get();
         } elseif (Auth::user()->hasPermission('read-post')) {
             $posts = Post::query()->where('user_id', Auth::user()->id)->get();
         } else {
