@@ -20104,7 +20104,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             params: {
                 api_token: vm.api_token
             }
-        }).then(function (response) {
+        })
+        // .catch(function (error) {
+        //     alert(error);
+        // })
+        .then(function (response) {
             _this.rows = response.data.data.rows;
             _this.labels = response.data.data.labels;
             _this.setGraph();
@@ -33454,6 +33458,8 @@ window.Laravel = { csrfToken: '{{ csrf_token() }}' };
             params: {
                 api_token: vm.api_token
             }
+        }).catch(function (error) {
+            alert(error);
         }).then(function (response) {
             _this.rows = response.data.data.rows;
             _this.labels = response.data.data.labels;
@@ -33500,6 +33506,8 @@ window.Laravel = { csrfToken: '{{ csrf_token() }}' };
             params: {
                 api_token: vm.api_token
             }
+        }).catch(function (error) {
+            alert(error);
         }).then(function (response) {
             _this.rows = response.data.data.rows;
             _this.labels = response.data.data.labels;
@@ -33553,6 +33561,8 @@ window.Laravel = { csrfToken: '{{ csrf_token() }}' };
             params: {
                 api_token: vm.api_token
             }
+        }).catch(function (error) {
+            alert(error);
         }).then(function (response) {
             _this.rows = response.data.data.rows;
             _this.labels = response.data.data.labels;

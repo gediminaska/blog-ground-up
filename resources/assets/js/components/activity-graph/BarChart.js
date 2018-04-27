@@ -10,6 +10,9 @@ export default {
                 api_token: vm.api_token
             }
         })
+            .catch(function (error) {
+                alert(error);
+            })
             .then(response => {
                 this.rows = response.data.data.rows;
                 this.labels = response.data.data.labels;

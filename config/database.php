@@ -33,7 +33,7 @@ return [
 
     'connections' => [
         'testing' => [
-            'driver' => 'sqlite',
+            'driver' => 'mysql',
             'database' => database_path('testing.sqlite'),
             'prefix' => '',
         ],
