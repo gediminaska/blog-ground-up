@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Repositories\Dashboard\DashboardRepository;
 use App\Repositories\Dashboard\EloquentDashboard;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ($this->app->environment('local')) {
+            $this->app->register(DuskServiceProvider::class);
+        }
         $this->app->bind(DashboardRepository::class, EloquentDashboard::class);
     }
 }

@@ -246,14 +246,14 @@ class PostsController extends Controller
      */
     public function setPostStatus(Request $request, $post)
     {
-        if ($request->submit_type == ('Publish' || 'Publish again')  && Auth::user()->hasPermission('publish-post')) {
+        if (($request->submit_type == 'Publish' || $request->submit_type == 'Publish again')  && Auth::user()->hasPermission('publish-post')) {
             $post->status = 3;
             $post->published_at = now();
-            Toaster::success("Post '".$post->title."' has been published!");
+            Toaster::success("Post '" . $post->title . "' has been published!");
         }
         elseif ($request->submit_type == 'Submit') {
             $post->status = 2;
-            Toaster::success("Post '".$post->title."' has been submitted!");
+            Toaster::success("Post '" . $post->title . "' has been submitted!");
         }
         else {
             $post->status = 1;

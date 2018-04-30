@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'Europe/Vilnius',
+    'timezone' => env('TEST_TZ', 'Europe/Vilnius'),
 
     /*
     |--------------------------------------------------------------------------
@@ -172,7 +172,6 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Laratrust\LaratrustServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Laravel\Dusk\DuskServiceProvider::class,
 
 
 
