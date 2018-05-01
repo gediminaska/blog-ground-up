@@ -15,6 +15,23 @@ class BrowserTest extends DuskTestCase
      * @throws \Exception
      * @throws \Throwable
      */
+    public function tests_if_user_can_register()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/register')
+                ->type('name', 'Meooiw')
+                ->type('email', 'someone@outlook.com')
+                ->type('password', 'secret')
+                ->type('password_confirmation', 'secret')
+                ->press('Register');
+            $this->assertTrue(count(User::all()) == 1);
+        });
+    }
+
+    /**
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function test_if_admin_can_login_and_see_panel()
     {
         $this->seed('LaratrustSeeder');
@@ -23,7 +40,7 @@ class BrowserTest extends DuskTestCase
         create('App\Post');
 
         $this->browse(function (Browser $browser) {
-            $browser->visit('/login')
+            $browser->logout()->visit('/login')
                 ->type('email', 'superadministrator@app.com')
                 ->type('password', 'password')
                 ->press('Login')
@@ -31,11 +48,6 @@ class BrowserTest extends DuskTestCase
                 ->assertVisible('#line-chart.chartjs-render-monitor')
                 ->assertVisible('#doughnut-chart.chartjs-render-monitor')
                 ->assertVisible('#bar-chart.chartjs-render-monitor');
-        });
-
-        $this->browse(function (Browser $browser) {
-            $browser->visit('/blog')
-                ->assertSee('Filter by tags');
         });
     }
 
@@ -57,7 +69,7 @@ class BrowserTest extends DuskTestCase
 
             $first->visit('/')
                 ->clickLink('Comments')
-                ->resize(1060, 1080);
+                ->resize(1600, 1080);
             $third->loginAs(User::query()->find(2))
                 ->visit('/blog/' . $post->slug);
 
@@ -95,7 +107,8 @@ class BrowserTest extends DuskTestCase
                 ->click('.select2-selection__rendered')
                 ->click('.select2-results__option')
                 ->type('title', 'test title')
-                ->pause(500)
+                ->pause(300)
+                ->attach('images[]',  __DIR__.'/logo.png')
                 ->type('body', 'Lorem ipsum text. Lorem ipsum text.')
                 ->press('Save Draft')
                 ->clickLink('Drafts (1)')
@@ -107,6 +120,7 @@ class BrowserTest extends DuskTestCase
                 ->pause(200)
                 ->press('Publish')
                 ->visit('/blog/test-title-changed')
+                ->assertVisible('.blog-single-page-image')
                 ->assertSee('test title edited')
                 ->assertSee('Lorem ipsum text.')
                 ->assertSee('new-tag');

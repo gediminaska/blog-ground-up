@@ -14360,6 +14360,12 @@ html {
   position: relative;
 }
 
+.blog-single-page-image {
+  display: block;
+  margin: auto;
+  width: 100%;
+}
+
 .m-t-5 {
   margin-top: 5px !important;
 }

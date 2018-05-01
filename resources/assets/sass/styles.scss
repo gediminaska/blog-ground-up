@@ -114,11 +114,18 @@ html {
   border-top: 1px solid rgba(228, 228, 228, 0.6);
 }
 .aa-suggestion:hover, .aa-suggestion.aa-cursor {
-  background-color: rgba(241, 241, 241, 0.35); }
+  background-color: rgba(241, 241, 241, 0.35);
+}
 
 .image-checkbox {
   margin-left: -15px;
   margin-top: 3px;
   margin-right: 20px;
   position: relative;
+}
+
+.blog-single-page-image {
+  display:block;
+  margin: auto;
+  width: 100%;
 }
