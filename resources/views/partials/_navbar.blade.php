@@ -89,8 +89,8 @@
                     </a>
 
                     <div class="navbar-dropdown is-right">
-                        <a class="navbar-item">
-                            Overview
+                        <a class="navbar-item"  href="{{ route('my.account') }}">
+                            My account
                         </a>
                         <a class="navbar-item" href="{{ route('manage.dashboard') }}">
                             Manage

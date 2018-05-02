@@ -57,6 +57,40 @@
 
 @endsection
 
+@section('panel-right')
+    <div class="card card-widget">
+        <div class="author-widget widget-area">
+            <div class="selected-author">
+                <img src="https://www.gravatar.com/avatar/{{md5($post->user->email)}}?d=mm" alt="" style="height: 50px; width:50px; border-radius: 50px">
+                <div class="author">
+                    <h4>{{$post->user->name}}</h4>
+                    <p class="subtitle" style="margin-bottom: 0px">
+                        (Author)
+                    </p>
+                    @foreach($post->user->socialLinks as $socialLink)
+                        <a href="http://{{ $socialLink->link }}">
+                            <i class="{{ array_flip(\App\SocialLinks::socialMediaSites)[$socialLink->site_name] }}"></i>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="post-status-widget widget-area">
+            <div class="status">
+                <div class="status-icon">
+                    <b-icon icon="file" size="is-medium"></b-icon>
+                </div>
+                <div class="status-details">
+                    <h4>
+                        <span class="status-emphasis">{{$post->status == 1 ? "Draft " : "Post "}}</span>{{$post->status == 1 ? "saved:" : ($post->status == 2 ? "submitted for review:" : "published:")}}
+                    </h4>
+                    <p>{{$post->status == 1 ? $post->updated_at->diffForHumans() : $post->status == 2 ? $post->updated_at->diffForHumans() : $post->published_at->diffForHumans()}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
 @section('scripts')
     <script>
         window.Laravel = {!! json_encode([

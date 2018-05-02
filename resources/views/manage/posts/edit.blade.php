@@ -69,7 +69,7 @@
     <div class="card card-widget">
         <div class="author-widget widget-area">
             <div class="selected-author">
-                <img src="https://placehold.it/50x50"/>
+                <img src="https://www.gravatar.com/avatar/{{md5($post->user->email)}}?d=mm" alt="" style="height: 50px; width:50px; border-radius: 50px">
                 <div class="author">
                     <h4>{{$post->user->name}}</h4>
                     <p class="subtitle">

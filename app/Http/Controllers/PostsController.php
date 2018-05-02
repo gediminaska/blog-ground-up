@@ -27,7 +27,7 @@ class PostsController extends Controller
         } elseif (Auth::user()->hasPermission('read-post')) {
             $posts = Post::query()->where('user_id', Auth::user()->id)->get();
         } else {
-            return redirect()->back();
+            return $this->rejectUnauthorized('read-post');
         }
         return $this->viewSorted($posts);
     }
@@ -136,11 +136,11 @@ class PostsController extends Controller
                 'title' => 'required|min:3|max:60',
                 'body' => 'required|min:5|max:4000',
                 'category_id' => 'required|numeric',
-                'user_id' => 'required|numeric'
             ]);
         } else {
             $this->validatePostData($request);
         }
+        $request->user_id = $post->user_id;
         $this->collectPostData($request, $post);
         $this->setPostStatus($request, $post);
         $post->save();

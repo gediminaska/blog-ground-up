@@ -32,7 +32,7 @@ class BrowserTest extends DuskTestCase
      * @throws \Exception
      * @throws \Throwable
      */
-    public function test_if_admin_can_login_and_see_panel()
+    public function tests_if_admin_can_login_and_see_charts()
     {
         $this->seed('LaratrustSeeder');
 

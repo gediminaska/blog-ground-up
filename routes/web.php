@@ -26,6 +26,9 @@ Route::get('/email', 'PagesController@email')->name('email');
 Route::post('/email', 'PagesController@sendEmail')->name('send.email');
 Route::post('/contact', 'PagesController@sendEmail')->name('send.email');
 Route::get('/contact', 'PagesController@contact')->name('contact');
+Route::get('/my-account', 'Auth\MyAccountController@show')->name('my.account');
+Route::post('/my-account', 'Auth\MyAccountController@update')->name('my.account.update');
+Route::delete('/my-account', 'Auth\MyAccountController@delete')->name('delete.link');
 
 Auth::routes();
 
