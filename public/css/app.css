@@ -14366,6 +14366,11 @@ html {
   width: 100%;
 }
 
+.filter-checkbox {
+  display: block;
+  padding: 10px;
+}
+
 .m-t-5 {
   margin-top: 5px !important;
 }

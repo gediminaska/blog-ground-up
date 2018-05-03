@@ -44,8 +44,8 @@ class Post extends Model
             return $array;
 
         } else {
-            $array['author_name'] = $this->user->name;
-            $array['category_name'] = $this->category->name;
+            $array['user.name'] = $this->user->name;
+            $array['category.name'] = $this->category->name;
             $array['comments_count'] = count($this->comments);
             $array['comments_text'] = implode(',', $this->comments->map(function ($data) {
                 return $data['body'];

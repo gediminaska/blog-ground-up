@@ -133,6 +133,7 @@ class BrowserTest extends DuskTestCase
      */
     public function tests_if_filter_works()
     {
+
         $this->seed('LaratrustSeeder');
 
         create('App\Category');
@@ -168,6 +169,26 @@ class BrowserTest extends DuskTestCase
                 ->assertSee('2Lorem')
                 ->assertSee('new-tag2')
                 ->assertDontSee('1test title');
+        });
+    }
+
+    /**
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function tests_if_search_works()
+    {
+        create('App\User');
+        create('App\Category');
+        create('App\Post', ['title'=>'derp', 'body'=>'Dummy text. Dummy text. Dummy text. ']);
+        $this->browse(function (Browser $browser) {
+            $browser->visit(route('blog.index'))
+                ->pause(1000)
+                ->type('search', 'derp')
+                ->click('a.button.is-info')
+                ->assertRouteIs('blog.search')
+                ->assertSee('derp')
+                ->assertSee("Dummy text.");
         });
     }
 }

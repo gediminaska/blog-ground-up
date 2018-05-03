@@ -11,21 +11,20 @@
         >
             <div class="columns">
 
-
                 <div class="column">
                     <div class="title">Search results:</div>
                     <ais-results>
-                            <template scope="{ result }">
-                                <ul>
-                                    <li>
-                                        <a :href="result.slug">
-                                            <ais-highlight :result="result" attribute-name="title"></ais-highlight>
-                                        </a>
-                                        <span class="aa-suggestion" v-html='result._snippetResult.body.value'></span>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </template>
+                        <template scope="{ result }">
+                            <ul>
+                                <li>
+                                    <a :href="result.slug">
+                                        <ais-highlight :result="result" attribute-name="title"></ais-highlight>
+                                    </a>
+                                    <span class="aa-suggestion" v-html='result._snippetResult.body.value'></span>
+                                </li>
+                                <br>
+                            </ul>
+                        </template>
                     </ais-results>
                 </div>
 
