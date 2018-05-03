@@ -20,7 +20,6 @@
         <div class="column is-half">
             {{Form::label('tags', 'Tags:')}}
             {{ Form::select('tags[]', $tags, null, ['class' => 'select select2-multi is-fullwidth', 'multiple' => 'multiple']) }}
-
         </div>
         <div class="column is-one-third">
             {{ Form::label('tag', 'New tag:') }}

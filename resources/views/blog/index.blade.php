@@ -32,11 +32,13 @@
             @endforeach
         </ul>
     </div>
-    <div class="aa-input-container is-pulled-right" id="aa-input-container">
-        <input type="search" id="aa-search-input" class="aa-input-search" placeholder="Search for posts..." name="search" autocomplete="true" />
-    </div>
+        <div class="aa-input-container is-pulled-right" id="aa-input-container">
+            <input type="search" id="aa-search-input" class="aa-input-search" placeholder="Search for posts..." name="search" autocomplete="true" onkeyup.enter="searchBlog()"/>
+            <a class="button is-info is-outlined is-rounded" onclick="searchBlog()"><i class="fas fa-search"></i></a>
+        </div>
     <div id="app-4">
-        {{--<ais-index--}}
+
+    {{--<ais-index--}}
                 {{--app-id="{{ config('scout.algolia.id') }}"--}}
                 {{--api-key="{{ config('scout.algolia.key') }}"--}}
                 {{--index-name="posts"--}}
@@ -100,8 +102,13 @@
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
     <script>
+        var searchText = document.getElementById("aa-search-input");
         var client = algoliasearch('PI8U7T64NH', 'c7fc6f0970b13edfa72f6b6a3d09df3f');
         var index = client.initIndex('posts');
+
+        function searchBlog() {
+            window.location = 'blog/search?q=' + searchText.value;
+        }
         //initialize autocomplete on search input (ID selector must match)
         autocomplete('#aa-search-input',
             { hint: true, debug: true }, {

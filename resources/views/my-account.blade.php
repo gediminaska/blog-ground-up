@@ -23,7 +23,7 @@
                 <div class="field">
                     <label for="roles" class="label">Roles</label>
                     <ul>
-                        {{$user->roles->count() == 0 ? 'This user has no roles': ''}}
+                        {{$user->roles->count() == 0 ? 'You have no roles': ''}}
                         @foreach($user->roles as $role)
                             <li>{{$role->display_name}} ({{$role->description}})</li>
                             <template>
@@ -46,7 +46,7 @@
                 <div class="field">
                     <label for="permissions" class="label">Additional permissions</label>
                     <ul>
-                        {{$user->permissions->count() == 0 ? 'This user has no additional permissions': ''}}
+                        {{$user->permissions->count() == 0 ? 'You have no additional permissions': ''}}
                         @foreach($user->permissions as $permission)
                             <li>{{$permission->display_name}} ({{$permission->description}})</li>
                         @endforeach
@@ -54,7 +54,7 @@
                 </div>
                 <div class="field">
                     <label for="socialLinks" class="label">Social media links</label>
-                        {{$user->socialLinks->count() == 0 ? 'This user has no social media links': ''}}
+                        {{$user->socialLinks->count() == 0 ? 'You have no social media links': ''}}
                     <form action={{ route('delete.link') }} method="POST">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
@@ -75,6 +75,7 @@
                     <label for="socialLinks" class="label">Add links</label>
                     <form action="{{ route('my.account.update') }}" method="POST">
                         {{ csrf_field() }}
+
                         <select name="socialSite" id="">
                             @foreach($socialMediaSites as $socialMediaSite)
                                 <option value="{{ $socialMediaSite }}">{{ $socialMediaSite }}</option>

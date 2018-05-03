@@ -144,18 +144,7 @@ class BlogController extends Controller
      * @return mixed
      */
     public function search() {
-        $search = request('q');
 
-        $posts =  Post::search($search)->paginate(5);
-        $categories = Cache::remember('categories', 1440, function () {
-            return $categories = Category::all();
-        });
-
-        $tags = Tag::all()->pluck('name');
-
-        return view('blog.index')
-            ->withPosts($posts)
-            ->withCategories($categories)
-            ->withTags($tags);
+        return view('blog.search');
     }
 }

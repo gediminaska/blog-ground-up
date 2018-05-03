@@ -34,11 +34,11 @@
             <div class="column is-one-fifth left-panel">
                 @yield('panel-left')
             </div>
-            <div class="column page-content-middle" >
+            <div class="column page-content-middle">
                 @yield('content')
             </div>
             <div class="column is-one-fifth right-panel" style="padding: 20px">
-                    @yield('panel-right')
+                @yield('panel-right')
             </div>
 
         </div>

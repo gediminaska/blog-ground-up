@@ -129,7 +129,7 @@ class PostsController extends Controller
                 $image = $post->images()->where('id', $image_id);
                 $image->delete();
             }
-            Toaster::success("Image".count($request->image_id)==0 ? '' : 's'." deleted.");
+            Toaster::success("Images deleted.");
             return redirect()->back();
         } elseif ($request->input('slug') == $post->slug || !$request->input('slug')) {
             $this->validate($request, [
