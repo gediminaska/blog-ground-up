@@ -20,7 +20,7 @@
                                     <a :href="result.slug">
                                         <ais-highlight :result="result" attribute-name="title"></ais-highlight>
                                     </a>
-                                    <span class="aa-suggestion" v-html='result._snippetResult.body.value'></span>
+                                    <span class="aa-suggestion" v-html="result._snippetResult.body.value"></span>
                                 </li>
                                 <br>
                             </ul>
@@ -29,14 +29,59 @@
                 </div>
 
                 <div class="column is-one-quarter">
-                    <ais-input placeholder="Search for posts" :autofocus="true" class="aa-input-search" ></ais-input>
-                    <p>Categories</p>
-                    <ais-refinement-list attribute-name="category.name"></ais-refinement-list>
-                    <p>Tags</p>
-                    <ais-refinement-list attribute-name="tags"></ais-refinement-list>
-                    <p>User</p>
-                    <ais-refinement-list attribute-name="user.name"></ais-refinement-list>
-                </div>
+                    <nav class="panel">
+                        <p class="panel-heading">Refine search</p>
+                        <div class="panel-block">
+                            <ais-input placeholder="Search for posts" :autofocus="true" class="aa-input-search" ></ais-input>
+                        </div>
+                        <div class="panel-block">
+                            <div class="control">
+                                <div class="title is-5">Categories</div>
+                            </div>
+                        </div>
+                        <div class="panel-block">
+                            <div class="control">
+                                <ais-refinement-list attribute-name="category.name"></ais-refinement-list>
+                            </div>
+                        </div>
+
+                        <div class="panel-block">
+                            <div class="control">
+                                <div class="title is-5">Tags</div>
+                            </div>
+                        </div>
+                        <div class="panel-block">
+                            <div class="control">
+                                <ais-refinement-list attribute-name="tags.name"></ais-refinement-list>
+                            </div>
+                        </div>
+
+                        <div class="panel-block">
+                            <div class="control">
+                                <div class="title is-5">User</div>
+                            </div>
+                        </div>
+
+                        <div class="panel-block">
+                            <div class="control">
+                                <ais-refinement-list attribute-name="user.name"></ais-refinement-list>
+                            </div>
+                        </div>
+
+
+                        <div class="panel-block">
+                            <div class="control">
+                                <div class="title is-5">Text length</div>
+                            </div>
+                        </div>
+                        <div class="panel-block">
+                            <div class="control">
+                                <ais-refinement-list attribute-name="text_length"></ais-refinement-list>
+                            </div>
+                        </div>
+
+                    </nav>
+                 </div>
             </div>
 
         </ais-index>
@@ -48,7 +93,7 @@
 
 @section('scripts')
     <script>
-        var app = new Vue({
+        let app = new Vue({
             el: '#app',
             data: {},
             methods: {},

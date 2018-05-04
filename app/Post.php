@@ -36,11 +36,7 @@ class Post extends Model
         $array = $this->toArray();
 
         if($this->status != 3) {
-            $array['body'] = '';
-            $array['title'] = '';
-            $array['slug'] = '';
-            $array['published_at'] = '2000-01-01 00:00:00';
-
+            $array = [];
             return $array;
 
         } else {
@@ -50,9 +46,7 @@ class Post extends Model
             $array['comments_text'] = implode(',', $this->comments->map(function ($data) {
                 return $data['body'];
             })->toArray());
-            $array['tags'] = implode(',', $this->tags->map(function ($data) {
-                return $data['name'];
-            })->toArray());
+            $array['text_length'] = strlen($this->body) > 3000 ? 'Very long' : (strlen($this->body) > 1600 ? 'Long' : (strlen($this->body) > 800 ? 'Medium' : 'Short'));
 
             return $array;
         }
