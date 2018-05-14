@@ -23,13 +23,14 @@ class PostsController extends Controller
     public function index()
     {
         if (Auth::user()->hasPermission('publish-post')) {
-            $posts = Post::orderBy('updated_at', 'desc')->get();
+            $posts = Post::query()->orderBy('updated_at', 'desc')->get();
         } elseif (Auth::user()->hasPermission('read-post')) {
             $posts = Post::query()->where('user_id', Auth::user()->id)->get();
         } else {
-            return $this->rejectUnauthorized('read-post');
+            return $this->rejectUnauthorizedTo('read-post');
         }
-        return $this->viewSorted($posts);
+        return $this->sortedByStatus($posts);
+
     }
 
     /**
@@ -39,7 +40,7 @@ class PostsController extends Controller
     {
         $neededPermission = 'create-post';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
@@ -54,7 +55,7 @@ class PostsController extends Controller
     {
         $neededPermission = 'create-post';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         } elseif ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
@@ -63,17 +64,15 @@ class PostsController extends Controller
         }
         $this->validatePostData($request);
         $post = new Post;
+        $request->request->add(['post_id' => $post->id]);
         $post = $this->setPostStatus($request, $post);
         $this->collectPostData($request, $post);
         $post->slug = $request->slug;
-        $post->save();
-        $post->tags()->sync($request->tags, false);
-        if ($request->hasFile('images')) {
-            $this->uploadImages($request, $post);
-        }
+        $this->savePost($post, $request);
         Cache::forget('blog');
         return redirect()->route('posts.index');
     }
+
 
     /**
      * @param $id
@@ -85,7 +84,7 @@ class PostsController extends Controller
 
         $neededPermission = 'publish-post';
         if (!Auth::user()->hasPermission($neededPermission) && !$this->userIsAuthorOf($post)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         return view('manage.posts.show')->withPost($post);
     }
@@ -99,9 +98,9 @@ class PostsController extends Controller
         $post = Post::query()->find($id);
         $neededPermission = 'update-post';
         if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized('publish-post', 'edit that post');
+            return $this->rejectUnauthorizedTo('publish-post', 'edit that post');
         } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         return view('manage.posts.edit')->withPost($post)->withCategories(Category::all())->withTags($this->collectTags());
     }
@@ -117,9 +116,9 @@ class PostsController extends Controller
         $neededPermission = 'update-post';
 
         if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized('publish-post', 'edit that post');
+            return $this->rejectUnauthorizedTo('publish-post', 'edit that post');
         } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         } elseif ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
@@ -141,14 +140,10 @@ class PostsController extends Controller
             $this->validatePostData($request);
         }
         $request->user_id = $post->user_id;
-        $this->collectPostData($request, $post);
-        $this->setPostStatus($request, $post);
-        $post->save();
-        $post->tags()->sync($request->tags);
+        $this->collectPostData($request, $post)->setPostStatus($request, $post);
+        $this->savePost($post, $request);
         Cache::forget('blog');
-        if ($request->hasFile('images')) {
-            $this->uploadImages($request, $post);
-        }
+
         return redirect()->route('posts.index');
     }
 
@@ -165,9 +160,9 @@ class PostsController extends Controller
         $post = Post::find($id);
 
         if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized('publish-post', 'delete that post');
+            return $this->rejectUnauthorizedTo('publish-post', 'delete that post');
         } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $post->tags()->detach();
         foreach ($post->comments as $comment) {
@@ -184,7 +179,7 @@ class PostsController extends Controller
      * @param $posts
      * @return mixed
      */
-    public function viewSorted($posts)
+    private function sortedByStatus($posts)
     {
         $published = $posts->where('status', 3);
         $submitted = $posts->where('status', 2);
@@ -196,7 +191,7 @@ class PostsController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveTags(Request $request)
+    private function saveTags(Request $request)
     {
         $this->validate($request, [
             'tagSlug' => 'required|min:3|max:20|unique:tags,name'
@@ -211,7 +206,7 @@ class PostsController extends Controller
     /**
      * @param Request $request
      */
-    public function validatePostData(Request $request): void
+    private function validatePostData(Request $request): void
     {
         $this->validate($request, [
             'title' => 'required|min:3|max:60',
@@ -224,11 +219,10 @@ class PostsController extends Controller
 
     /**
      * @param Request $request
-     *
-     *
-     * @param $post
+     * @param Post $post
+     * @return $this
      */
-    public function collectPostData(Request $request, Post $post): void
+    private function collectPostData(Request $request, Post $post)
     {
         $post->title = $request->title;
         $post->body = $request->body;
@@ -237,6 +231,8 @@ class PostsController extends Controller
         }
         $post->category_id = $request->category_id;
         $post->user_id = $request->user_id;
+
+        return $this;
     }
 
     /**
@@ -244,7 +240,7 @@ class PostsController extends Controller
      * @param Post $post
      * @return Post
      */
-    public function setPostStatus(Request $request, $post)
+    private function setPostStatus(Request $request, $post)
     {
         if (($request->submit_type == 'Publish' || $request->submit_type == 'Publish again')  && Auth::user()->hasPermission('publish-post')) {
             $post->status = 3;
@@ -265,7 +261,7 @@ class PostsController extends Controller
     /**
      * @return array
      */
-    public function collectTags(): array
+    private function collectTags(): array
     {
         $tags2 = Tag::query()->orderBy('name', 'asc')->get();
         $tags = array();
@@ -276,19 +272,32 @@ class PostsController extends Controller
     }
 
     /**
-     * @param $post
+     * @param Post $post
      * @return bool
      */
-    public function userIsAuthorOf($post): bool
+    private function userIsAuthorOf(Post $post): bool
     {
         return Auth::user()->id == $post->user->id;
     }
 
     /**
-     * @param $request
-     * @param $post
+     * @param Post $post
+     * @param Request $request
      */
-    public function uploadImages(Request $request, $post)
+    public function savePost(Post $post, Request $request)
+    {
+        $post->save();
+        $post->tags()->sync($request->tags, false);
+        if ($request->hasFile('images')) {
+            $this->uploadImages($request, $post);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Post $post
+     */
+    private function uploadImages(Request $request, Post $post)
     {
         foreach ($request->file('images') as $image) {
             $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -302,7 +311,6 @@ class PostsController extends Controller
             $postImage->rank = 1;
             $postImage->post_id = $post->id;
             $postImage->save();
-
         }
     }
 

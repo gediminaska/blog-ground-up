@@ -20,7 +20,7 @@ class RoleController extends Controller
     {
         $neededPermission = 'read-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $roles = Role::all();
         return view('manage.roles.index')->withRoles($roles);
@@ -33,7 +33,7 @@ class RoleController extends Controller
     {
         $neededPermission = 'create-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $permissions = Permission::all();
         return view('manage.roles.create')->withPermissions($permissions);
@@ -47,7 +47,7 @@ class RoleController extends Controller
     {
         $neededPermission = 'create-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $this->validate($request, [
             'display_name' => 'required|max:255',
@@ -80,7 +80,7 @@ class RoleController extends Controller
     {
         $neededPermission = 'read-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $role = Role::where('id', $id)->first();
         return view('manage.roles.show')->withRole($role);
@@ -94,7 +94,7 @@ class RoleController extends Controller
     {
         $neededPermission = 'update-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $role = Role::where('id', $id)->with('permissions')->first();
         $permissions = Permission::all();
@@ -110,9 +110,9 @@ class RoleController extends Controller
     {
         $neededPermission = 'update-roles';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         } elseif ($id < 3 && !Auth::user()->hasRole('superadministrator')) {
-            return $this->rejectUnauthorized($neededPermission, 'update this role');
+            return $this->rejectUnauthorizedTo($neededPermission, 'update this role');
         }
         $this->validate($request, [
            'display_name' => 'required|max:255',

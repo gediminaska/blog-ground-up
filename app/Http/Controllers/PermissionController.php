@@ -20,7 +20,7 @@ class PermissionController extends Controller
     {
         $neededPermission = 'read-permission';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $permissions = Permission::all();
         return view('manage.permissions.index')->withPermissions($permissions);
@@ -33,7 +33,7 @@ class PermissionController extends Controller
     {
         $neededPermission = 'create-permission';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         return view('manage.permissions.create');
     }
@@ -46,7 +46,7 @@ class PermissionController extends Controller
     {
         $neededPermission = 'create-permission';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         if ($request->permission_type == 'basic') {
             $this->validate($request, [
@@ -98,7 +98,7 @@ class PermissionController extends Controller
     {
         $neededPermission = 'read-permission';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $permission = Permission::findOrFail($id);
         return view('manage.permissions.show')->withPermission($permission);
@@ -112,7 +112,7 @@ class PermissionController extends Controller
     {
         $neededPermission = 'update-permission';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $permission = Permission::findOrFail($id);
         return view('manage.permissions.edit')->withPermission($permission);
@@ -127,7 +127,7 @@ class PermissionController extends Controller
     {
         $neededPermission = 'update-permission';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $this->validate($request, [
             'display_name' => 'required|max:255',

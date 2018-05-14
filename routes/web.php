@@ -32,11 +32,8 @@ Route::delete('/my-account', 'Auth\MyAccountController@delete')->name('delete.li
 
 Auth::routes();
 
-
-
 Route::resource('tags', 'TagsController', ['only' => [
      'store', 'destroy']]);
-
 
 Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
 Route::delete('comments/{id}', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);
@@ -48,5 +45,3 @@ Route::get('blog/category/{category_id}/filter/{filter}', ['as' => 'blog.categor
 
 Route::get('blog', ['as' => 'blog.index', 'uses' => 'BlogController@index']);
 Route::get('blog/filtered/{filter}', ['as' => 'blog.index.filtered', 'uses' => 'BlogController@indexFiltered']);
-
-

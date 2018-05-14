@@ -18,7 +18,7 @@ class Controller extends BaseController
      * @param string $permissionText
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function rejectUnauthorized($neededPermission, $permissionText='')
+    protected function rejectUnauthorizedTo($neededPermission, $permissionText='')
     {
         $permissionError = strlen($permissionText) == 0 ? Permission::query()->where('name', $neededPermission)->first()->display_name : $permissionText;
         $toaster = new Toaster;

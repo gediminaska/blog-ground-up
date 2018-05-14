@@ -16,7 +16,7 @@ class CategoriesController extends Controller
     {
         $neededPermission = 'read-category';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $categories = Category::all();
         return view('manage.categories.index')->withCategories($categories);
@@ -30,7 +30,7 @@ class CategoriesController extends Controller
     {
         $neededPermission = 'create-category';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
@@ -56,7 +56,7 @@ class CategoriesController extends Controller
     {
         $neededPermission = 'read-category';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $category=Category::find($id);
         return view('manage.categories.show')->withCategory($category);
@@ -74,7 +74,7 @@ class CategoriesController extends Controller
         if (!Auth::user()->hasPermission($neededPermission)) {
 
 
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
 
         $this->validate($request, [
@@ -95,7 +95,7 @@ class CategoriesController extends Controller
     {
         $neededPermission = 'delete-category';
         if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorized($neededPermission);
+            return $this->rejectUnauthorizedTo($neededPermission);
         }
         $category = Category::find($id);
 

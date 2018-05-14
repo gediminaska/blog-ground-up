@@ -17,10 +17,7 @@
                         <template scope="{ result }">
                             <ul>
                                 <li>
-                                    <a :href="result.slug">
-                                        <ais-highlight :result="result" attribute-name="title"></ais-highlight>
-                                    </a>
-                                    <span class="aa-suggestion" v-html="result._snippetResult.body.value"></span>
+                                    <a class="aa-suggestion" v-html="'<strong>' + result._highlightResult.title.value + ' </strong>' + result._snippetResult.body.value + '...'" :href="result.slug" style="color: inherit"></a>
                                 </li>
                                 <br>
                             </ul>
