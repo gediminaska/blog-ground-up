@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\User;
-use Hash;
-use Session;
 use App\Role;
-use Toaster;
+use App\User;
 use Auth;
+use Hash;
+use Illuminate\Http\Request;
+use Toaster;
 
 class UserController extends Controller
 {
@@ -19,9 +18,12 @@ class UserController extends Controller
      */
     public function index()
     {
+        if ($this->userCannot('read-users')) {
+            return redirect()->route('blog.index');
+        }
         $users = User::query()->orderBy('id', 'desc')->paginate(10);
 
-        return view('manage.users.index')->with('users', $users);
+        return view('manage.users.index', compact('users'));
     }
 
     /**
@@ -31,87 +33,79 @@ class UserController extends Controller
      */
     public function create()
     {
+        if ($this->userCannot('create-users')) {
+            return redirect()->route('blog.index');
+        }
         $roles = Role::query()->where('id', '>', 2)->get();
-        return view('manage.users.create')->with('roles', $roles);
+        return view('manage.users.create', compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+        if ($this->userCannot('create-users')) {
+            return redirect()->route('blog.index');
+        }
         $this->validate($request, [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users'
         ]);
-        if (request()->has('password') && !empty($request->password)) {
-            $password = trim($request->password);
-        } else {
-            $length = 10;
-            $keyspace = '123456789abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMONPQRSTUVWXYZ';
-            $str = '';
-            $max = mb_strlen($keyspace, '8bit') - 1;
-            for($i = 0; $i < $length; $i++) {
-                $str .= $keyspace[random_int(0, $max)];
-            }
-            $password = $str;
-        }
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($password);
+        $password = $this->setPassword($request);
+        $this->saveUser($request, $password);
 
-
-        if($user->save()) {
-            if ($request->roles && !in_array(1, $request->roles)) {
-                $user->syncRoles(explode(',', $request->roles));
-            }
-            Session::flash('success', 'User has been saved successfully.');
-            return redirect()->route('users.create');
-        } else {
-            Session::flash('danger', "Sorry, a problem occurred when creating user.");
-            return redirect()->route('users.create');
-        }
+        Toaster::success('User has been saved successfully.');
+        return redirect()->route('users.create');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
+        if ($this->userCannot('read-users')) {
+            return redirect()->route('blog.index');
+        }
         $user = User::query()->where('id', $id)->with('roles')->first();
-        return view('manage.users.show')->with('user', $user);
+        return view('manage.users.show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
+        if ($this->userCannot('update-users')) {
+            return redirect()->route('blog.index');
+        }
         $roles = Role::query()->where('id', '>', 2)->get();
         $user = User::query()->where('id', $id)->with('roles')->first();
-        return view('manage.users.edit')->with('user', $user)->with('roles', $roles);
+        return view('manage.users.edit', compact('user', 'roles'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        if(($id == 1 || $id == 2) && !Auth::user()->hasRole('superadministrator')) {
+        if ($this->userCannot('update-users')) {
+            return redirect()->route('blog.index');
+        }
+        if (($id == 1 || $id == 2) && !Auth::user()->hasRole('superadministrator')) {
             Toaster::danger('You do not have permission to do that');
             return redirect()->back();
         }
@@ -120,31 +114,63 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $id
         ]);
 
-        $user = User::query()->findOrFail($id);
+        $password = $this->setPassword($request);
+
+        $user = $this->saveUser($request, $password, $id);
+
+        Toaster::success('Changes successfully saved.');
+        return redirect()->route('users.show', $user->id);
+
+    }
+
+    /**
+     * @return string
+     */
+    private function generatePassword(): string
+    {
+        $length = 10;
+        $keyspace = '123456789abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMONPQRSTUVWXYZ';
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; $i++) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
+    }
+
+    /**
+     * @param Request $request
+     * @param $password
+     * @param null $id
+     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    private function saveUser(Request $request, $password, $id = null)
+    {
+        isset($id) ?  $user = User::query()->findOrFail($id) : $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
-        if ($request->password_options == 'auto') {
-            $length = 10;
-            $keyspace = '123456789abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMONPQRSTUVWXYZ';
-            $str = '';
-            $max = mb_strlen($keyspace, '8bit') - 1;
-            for ($i = 0; $i < $length; $i++) {
-                $str .= $keyspace[random_int(0, $max)];
-            }
-            $user->password = Hash::make($str);
-        } elseif($request->password_options == 'manual') {
-            $user->password = Hash::make($request->password);
-        } elseif ($request->roles && !in_array(1, explode(',', $request->roles))){
+        !isset($password) ?: $user->password = Hash::make($password);
+        $user->save();
+
+        if ($request->roles && !in_array(1, explode(',', $request->roles))) {
             $user->syncRoles(explode(',', $request->roles));
-            }
-
-        if($user->save()) {
-            Session::flash('success', 'Changes successfully saved.');
-            return redirect()->route('users.show', $user->id);
-        } else {
-            Session::flash('error', 'There was a problem saving changes.');
-            return redirect()->route('users.show', $user->id);
         }
+        return $user;
+    }
 
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    public function setPassword(Request $request)
+    {
+        if ($request->password_options == 'manual' && request()->has('password') && !empty($request->password)) {
+            $password = trim($request->password);
+        } elseif ($request->password_options == 'auto') {
+            $password = $this->generatePassword();
+        } else {
+            $password = null;
+        }
+        return $password;
     }
 }
