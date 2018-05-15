@@ -172,6 +172,8 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Laratrust\LaratrustServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        TheoryThree\LaraToaster\LaraToasterServiceProvider::class,
+
 
 
 
@@ -238,6 +240,8 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
+        'Toaster' => TheoryThree\LaraToaster\LaraToasterFacade::class,
+
 
     ],
 

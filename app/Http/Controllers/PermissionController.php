@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Permission;
-use Illuminate\Support\Facades\Session;
-use Auth;
+use TheoryThree\LaraToaster\LaraToaster as Toaster;
 
 class PermissionController extends Controller
 {
@@ -18,12 +17,11 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $neededPermission = 'read-permission';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('read-permission')) {
+            return redirect()->route('blog.index');
         }
         $permissions = Permission::all();
-        return view('manage.permissions.index')->withPermissions($permissions);
+        return view('manage.permissions.index', compact('permissions'));
     }
 
     /**
@@ -31,9 +29,8 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        $neededPermission = 'create-permission';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('create-permission')) {
+            return redirect()->route('blog.index');
         }
         return view('manage.permissions.create');
     }
@@ -44,50 +41,27 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        $neededPermission = 'create-permission';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('create-permission')) {
+            return redirect()->route('blog.index');
         }
-        if ($request->permission_type == 'basic') {
+        if ($request->get('permission_type') == 'basic') {
             $this->validate($request, [
                 'display_name' => 'required|max:255',
                 'name' => 'required|max:255|alphadash|unique:permissions,name',
                 'description' => 'sometimes|max:255'
             ]);
-
-            $permission = new Permission();
-            $permission->name = $request->name;
-            $permission->display_name = $request->display_name;
-            $permission->description = $request->description;
-            $permission->save();
-
-            Session::flash('success', 'Permission has been successfully added');
-            return redirect()->route('permissions.index');
-        } elseif ($request->permission_type == 'crud') {
+            $this->saveSinglePermission($request);
+            $toaster = new Toaster;
+            $toaster->success('Permission has been successfully added');
+        } elseif ($request->get('permission_type') == 'crud') {
             $this->validate($request, [
                 'resource' => 'required|min:3|max:100|alpha'
             ]);
-
-
-            $crud = explode(',', $request->crud_selected);
-            if (count($crud) > 0) {
-                foreach ($crud as $action) {
-                    $slug = strtolower($action) . '-' . strtolower($request->resource);
-                    $display_name = ucwords($action . " " . $request->resource);
-                    $description = "Allows a user to " . strtoupper($action) . ucwords($request->resource);
-
-                    $permission = new Permission();
-                    $permission->name = $slug;
-                    $permission->display_name = $display_name;
-                    $permission->description = $description;
-                    $permission->save();
-                }
-                Session::flash('success', 'Permissions were all successfully added');
-                return redirect()->route('permissions.index');
-            }
-        } else {
-            return redirect()->route('permissions.create')->withInput();
+            $this->saveCrudPermissions($request);
+            $toaster = new Toaster;
+            $toaster->success('Permissions have all been successfully added');
         }
+        return redirect()->route('permissions.index');
     }
 
     /**
@@ -96,12 +70,11 @@ class PermissionController extends Controller
      */
     public function show($id)
     {
-        $neededPermission = 'read-permission';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('read-permission')) {
+            return redirect()->route('blog.index');
         }
-        $permission = Permission::findOrFail($id);
-        return view('manage.permissions.show')->withPermission($permission);
+        $permission = Permission::query()->findOrFail($id);
+        return view('manage.permissions.show', compact('permission'));
     }
 
     /**
@@ -110,12 +83,11 @@ class PermissionController extends Controller
      */
     public function edit($id)
     {
-        $neededPermission = 'update-permission';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('update-permission')) {
+            return redirect()->route('blog.index');
         }
-        $permission = Permission::findOrFail($id);
-        return view('manage.permissions.edit')->withPermission($permission);
+        $permission = Permission::query()->findOrFail($id);
+        return view('manage.permissions.edit', compact('permission'));
     }
 
     /**
@@ -125,20 +97,51 @@ class PermissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $neededPermission = 'update-permission';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('update-permission')) {
+            return redirect()->route('blog.index');
         }
         $this->validate($request, [
             'display_name' => 'required|max:255',
             'description' => 'sometimes|max:255'
         ]);
-        $permission = Permission::findOrFail($id);
-        $permission->display_name = $request->display_name;
-        $permission->description = $request->description;
-        $permission->save();
+        $permission = $this->saveSinglePermission($request, $id);
 
-        Session::flash('success', 'Updated the ' . $permission->display_name . ' permission.');
+        $toaster = new Toaster;
+        $toaster->success('Updated the ' . $permission->getAttribute('display_name') . ' permission.');
         return redirect()->route('permissions.show', $id);
+    }
+
+    /**
+     * @param Request $request
+     * @param null $id
+     * @return Permission|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    private function saveSinglePermission(Request $request, $id = null)
+    {
+        if(isset($id)) {
+            $permission = Permission::query()->findOrFail($id);
+        } else {
+            $permission = new Permission;
+            $permission->setAttribute('name', $request->get('name'));
+        }
+        $permission->setAttribute('display_name', $request->get('display_name'));
+        $permission->setAttribute('description', $request->get('description'));
+        $permission->save();
+        return $permission;
+    }
+
+    /**
+     * @param Request $request
+     */
+    private function saveCrudPermissions(Request $request): void
+    {
+        $crud = explode(',', $request->get('crud_selected'));
+        foreach ($crud as $action) {
+            $request->request->set('name', strtolower($action) . '-' . strtolower($request->get('resource')));
+            $request->request->set('display_name', ucwords($action . " " . $request->get('resource')));
+            $request->request->set('description', "Allows a user to " . strtoupper($action) . ' ' . ucwords($request->get('resource')));
+
+            $this->saveSinglePermission($request);
+        }
     }
 }

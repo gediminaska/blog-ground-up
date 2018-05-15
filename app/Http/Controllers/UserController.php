@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Role;
 use App\User;
-use Auth;
-use Hash;
 use Illuminate\Http\Request;
-use Toaster;
+use Illuminate\Support\Facades\Auth as Auth;
+use Illuminate\Support\Facades\Hash as Hash;
+use TheoryThree\LaraToaster\LaraToaster as Toaster;
 
 class UserController extends Controller
 {
@@ -58,8 +58,60 @@ class UserController extends Controller
         $password = $this->setPassword($request);
         $this->saveUser($request, $password);
 
-        Toaster::success('User has been saved successfully.');
+        $toaster = new Toaster;
+        $toaster->success('User has been saved successfully.');
         return redirect()->route('users.create');
+    }
+
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    public function setPassword(Request $request)
+    {
+        if ($request->get('password_options') == 'manual' && request()->has('password') && !empty($request->get('password'))) {
+            $password = trim($request->get('password'));
+        } elseif ($request->get('password_options') == 'auto') {
+            $password = $this->generatePassword();
+        } else {
+            $password = null;
+        }
+        return $password;
+    }
+
+    /**
+     * @return string
+     */
+    private function generatePassword(): string
+    {
+        $length = 10;
+        $keyspace = '123456789abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMONPQRSTUVWXYZ';
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; $i++) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
+    }
+
+    /**
+     * @param Request $request
+     * @param $password
+     * @param null $id
+     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    private function saveUser(Request $request, $password, $id = null)
+    {
+        isset($id) ? $user = User::query()->findOrFail($id) : $user = new User;
+        $user->setAttribute('name', $request->get('name'));
+        $user->setAttribute('email', $request->get('email'));
+        !isset($password) ?: $user->setAttribute('password', Hash::make($password));
+        $user->save();
+
+        if ($request->get('roles') && !in_array(1, explode(',', $request->get('roles')))) {
+            $user->syncRoles(explode(',', $request->get('roles')));
+        }
+        return $user;
     }
 
     /**
@@ -106,7 +158,8 @@ class UserController extends Controller
             return redirect()->route('blog.index');
         }
         if (($id == 1 || $id == 2) && !Auth::user()->hasRole('superadministrator')) {
-            Toaster::danger('You do not have permission to do that');
+            $toaster = new Toaster;
+            $toaster->danger('You do not have permission to do that');
             return redirect()->back();
         }
         $this->validate($request, [
@@ -118,59 +171,9 @@ class UserController extends Controller
 
         $user = $this->saveUser($request, $password, $id);
 
-        Toaster::success('Changes successfully saved.');
-        return redirect()->route('users.show', $user->id);
+        $toaster = new Toaster;
+        $toaster->success('Changes successfully saved.');
+        return redirect()->route('users.show', $user->get('id'));
 
-    }
-
-    /**
-     * @return string
-     */
-    private function generatePassword(): string
-    {
-        $length = 10;
-        $keyspace = '123456789abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMONPQRSTUVWXYZ';
-        $str = '';
-        $max = mb_strlen($keyspace, '8bit') - 1;
-        for ($i = 0; $i < $length; $i++) {
-            $str .= $keyspace[random_int(0, $max)];
-        }
-        return $str;
-    }
-
-    /**
-     * @param Request $request
-     * @param $password
-     * @param null $id
-     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
-     */
-    private function saveUser(Request $request, $password, $id = null)
-    {
-        isset($id) ?  $user = User::query()->findOrFail($id) : $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        !isset($password) ?: $user->password = Hash::make($password);
-        $user->save();
-
-        if ($request->roles && !in_array(1, explode(',', $request->roles))) {
-            $user->syncRoles(explode(',', $request->roles));
-        }
-        return $user;
-    }
-
-    /**
-     * @param Request $request
-     * @return null|string
-     */
-    public function setPassword(Request $request)
-    {
-        if ($request->password_options == 'manual' && request()->has('password') && !empty($request->password)) {
-            $password = trim($request->password);
-        } elseif ($request->password_options == 'auto') {
-            $password = $this->generatePassword();
-        } else {
-            $password = null;
-        }
-        return $password;
     }
 }
