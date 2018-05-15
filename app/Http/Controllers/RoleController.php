@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Role;
 use App\Permission;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Http\Request;
+use App\Role;
 use Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class RoleController extends Controller
 {
-    public function __construct(){
+    public function __construct()
+    {
     }
 
     /**
@@ -18,12 +19,13 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $neededPermission = 'read-roles';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('read-roles')) {
+            return redirect()->route('blog.index');
         }
         $roles = Role::all();
-        return view('manage.roles.index')->withRoles($roles);
+        return view('manage.roles.index', compact('roles'));
+
+
     }
 
     /**
@@ -31,12 +33,11 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $neededPermission = 'create-roles';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('create-roles')) {
+            return redirect()->route('blog.index');
         }
         $permissions = Permission::all();
-        return view('manage.roles.create')->withPermissions($permissions);
+        return view('manage.roles.create', compact('permissions'));
     }
 
     /**
@@ -45,27 +46,17 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $neededPermission = 'create-roles';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('create-roles')) {
+            return redirect()->route('blog.index');
         }
         $this->validate($request, [
             'display_name' => 'required|max:255',
             'name' => 'required|alphadash|max:50|unique:roles,name',
             'description' => 'sometimes|max:255'
         ]);
+        $role = Role::create($request->all());
 
-        $role = new Role;
-
-
-        $role->display_name = $request->display_name;
-        $role->name = $request->name;
-        $role->description = $request->description;
-
-        $role->save();
-
-
-        if($request->permissions) {
+        if ($request->permissions) {
             $role->syncPermissions(explode(',', $request->permissions));
         }
         Session::flash('success', 'Successfully created the ' . $role->display_name . ' role.');
@@ -78,12 +69,11 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        $neededPermission = 'read-roles';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('read-roles')) {
+            return redirect()->route('blog.index');
         }
-        $role = Role::where('id', $id)->first();
-        return view('manage.roles.show')->withRole($role);
+        $role = Role::query()->where('id', $id)->first();
+        return view('manage.roles.show', compact('role'));
     }
 
     /**
@@ -92,13 +82,12 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $neededPermission = 'update-roles';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('update-roles')) {
+            return redirect()->route('blog.index');
         }
-        $role = Role::where('id', $id)->with('permissions')->first();
+        $role = Role::query()->where('id', $id)->with('permissions')->first();
         $permissions = Permission::all();
-        return view('manage.roles.edit')->withRole($role)->withPermissions($permissions);
+        return view('manage.roles.edit', compact('role', 'permissions'));
     }
 
     /**
@@ -108,23 +97,22 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $neededPermission = 'update-roles';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
-        } elseif ($id < 3 && !Auth::user()->hasRole('superadministrator')) {
-            return $this->rejectUnauthorizedTo($neededPermission, 'update this role');
+        if ($this->userCannot('update-roles')) {
+            return redirect()->route('blog.index');
+        } elseif($id < 3 && !Auth::user()->hasRole('superadministrator')) {
+            $this->rejectUnauthorizedTo('update-roles', 'update this role');
+            return redirect()->route('blog.index');
         }
+
         $this->validate($request, [
-           'display_name' => 'required|max:255',
-           'description' => 'sometimes|max:255'
+            'display_name' => 'required|max:255',
+            'description' => 'sometimes|max:255',
         ]);
 
-        $role = Role::findOrFail($id);
-        $role->display_name = $request->display_name;
-        $role->description = $request->description;
-        $role->save();
+        $role = Role::query()->findOrFail($id);
+        $role->update($request->all());
 
-        if($request->permissions) {
+        if ($request->permissions) {
             $role->syncPermissions(explode(',', $request->permissions));
         }
         Session::flash('success', 'Successfully updated the ' . $role->display_name . ' role in the database.');

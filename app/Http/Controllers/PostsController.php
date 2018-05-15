@@ -70,6 +70,7 @@ class PostsController extends Controller
         $post->slug = $request->slug;
         $this->savePost($post, $request);
         Cache::forget('blog');
+        dd($request);
         return redirect()->route('posts.index');
     }
 

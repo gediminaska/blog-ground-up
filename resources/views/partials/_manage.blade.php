@@ -23,7 +23,7 @@
         </p>
         <ul class="menu-list">
             <li><a {{Laratrust::can('read-users') ? "href=" . route('users.index') : ''}}  class="{{Nav::isResource('users')}} {{Laratrust::can('read-users') ? '' : 'deactivated'}}">Manage users</a></li>
-            <li><a class="{{Laratrust::can('read-roles')||Laratrust::can('read-permission') ? 'has-submenu' : 'deactivated'}} {{Nav::hasSegment(['roles', 'permissions'], 2)}}">Roles and permissions</a>
+            <li><a class="{{(Laratrust::can('read-roles')||Laratrust::can('read-permission')) ? 'has-submenu' : 'deactivated'}} {{Nav::hasSegment(['roles', 'permissions'], 2)}}">Roles and permissions</a>
                 <ul class="submenu">
                     <li><a {{Laratrust::can('read-roles') ? "href=" . route('roles.index') : ''}} class="{{Nav::isResource('roles')}} second-lvl {{Laratrust::can('read-roles') ? '' : 'deactivated'}}">Roles</a></li>
                     <li><a {{Laratrust::can('read-permission') ? "href=" . route('permissions.index') : ''}} class="{{Nav::isResource('permissions')}} second-lvl {{Laratrust::can('read-permission') ? '' : 'deactivated'}}">Permissions</a></li>

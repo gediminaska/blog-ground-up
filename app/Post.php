@@ -10,6 +10,9 @@ class Post extends Model
 {
     use Searchable;
 
+    protected $dates = [
+        'published_at'];
+
     protected static function boot()
     {
         parent::boot();
@@ -36,8 +39,7 @@ class Post extends Model
         $array = $this->toArray();
 
         if($this->status != 3) {
-            $array = [];
-            return $array;
+            return [];
 
         } else {
             $array['user.name'] = $this->user->name;
@@ -52,8 +54,6 @@ class Post extends Model
         }
     }
 
-    protected $dates = [
-        'published_at'];
 
     public function category(){
         return $this->belongsTo('App\Category');
