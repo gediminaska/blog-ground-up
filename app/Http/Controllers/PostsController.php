@@ -8,7 +8,7 @@ use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Image;
-use Toaster;
+use TheoryThree\LaraToaster\LaraToaster as Toaster;
 use Cache;
 use App\Image as PostImage;
 
@@ -26,13 +26,11 @@ class PostsController extends Controller
         if ($this->userCannot('read-post')) {
             return redirect()->route('blog.index');
         }
-        if (Auth::user()->hasPermission('publish-post')) {
-            $posts = Post::query()->orderBy('updated_at', 'desc')->get();
-        } elseif (Auth::user()->hasPermission('read-post')) {
+        Auth::user()->hasPermission('publish-post') ?
+            $posts = Post::query()->orderBy('updated_at', 'desc')->get() :
             $posts = Post::query()->where('user_id', Auth::user()->id)->get();
-        }
-        return $this->sortedByStatus($posts);
 
+        return $this->sortedByStatus($posts);
     }
 
     /**
@@ -45,7 +43,7 @@ class PostsController extends Controller
         }
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
-        return view('manage.posts.create')->withCategories($categories)->withTags($tags);
+        return view('manage.posts.create', compact('tags', 'categories'));
     }
 
     /**
@@ -57,10 +55,12 @@ class PostsController extends Controller
 
         if ($this->userCannot('create-post')) {
             return redirect()->route('blog.index');
-        } elseif ($request->submit_type == 'New tag') {
+        }
+        if ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
-            Toaster::success("Draft deleted.");
+            $toaster = new Toaster;
+            $toaster->success("Draft deleted.");
             return redirect()->route('posts.index');
         }
         $this->validatePostData($request);
@@ -86,7 +86,7 @@ class PostsController extends Controller
         if ($this->userCannot('read-post')) {
             return redirect()->route('blog.index');
         }
-        return view('manage.posts.show')->withPost($post);
+        return view('manage.posts.show', compact('post'));
     }
 
     /**
@@ -95,14 +95,18 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::query()->find($id);
+
+        $post = Post::query()->find($id)->first();
+        $categories = Category::all();
+        $tags = $this->collectTags();
 
         if ($this->userCannot('update-post')) {
             return redirect()->route('blog.index');
-        } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        } elseif (!$this->userIsAuthorOf($post) && $this->userCannot('publish-post')) {
+            return redirect()->route('blog.index');
         }
-        return view('manage.posts.edit')->withPost($post)->withCategories(Category::all())->withTags($this->collectTags());
+
+        return view('manage.posts.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -112,24 +116,20 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::find($id);
-        $neededPermission = 'update-post';
 
-        if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorizedTo('publish-post', 'edit that post');
-        } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
-        } elseif ($request->submit_type == 'New tag') {
+        $post = Post::query()->find($id)->first();
+
+        if ($this->userCannot('update-post')) {
+            return redirect()->route('blog.index');
+        } elseif (!$this->userIsAuthorOf($post) && $this->userCannot('publish-post')) {
+            return redirect()->route('blog.index');
+        }
+        if ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
             return $this->destroy($post->id);
         } elseif ($request->submit_type == 'Delete selected images') {
-            foreach($request->image_id as $image_id){
-                $image = $post->images()->where('id', $image_id);
-                $image->delete();
-            }
-            Toaster::success("Images deleted.");
-            return redirect()->back();
+            return $this->deleteSelectedImages($request, $post);
         } elseif ($request->input('slug') == $post->slug || !$request->input('slug')) {
             $this->validate($request, [
                 'title' => 'required|min:3|max:60',
@@ -155,22 +155,19 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        $neededPermission = 'delete-post';
+        $post = Post::query()->find($id);
 
-        $post = Post::find($id);
-
-        if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorizedTo('publish-post', 'delete that post');
-        } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('update-post')) {
+            return redirect()->route('blog.index');
+        } elseif (!$this->userIsAuthorOf($post) && $this->userCannot('publish-post')) {
+            return redirect()->route('blog.index');
         }
         $post->tags()->detach();
-        foreach ($post->comments as $comment) {
-            $comment->delete();
-        }
+        foreach ($post->comments as $comment) {$comment->delete();}
         $post->delete();
 
-        Toaster::success('The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
+        $toaster = new Toaster;
+        $toaster->success('The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
         Cache::forget('blog');
         return redirect()->route('posts.index');
     }
@@ -184,7 +181,7 @@ class PostsController extends Controller
         $published = $posts->where('status', 3);
         $submitted = $posts->where('status', 2);
         $drafts = $posts->where('status', 1);
-        return view('manage.posts.index')->withPublished($published)->withSubmitted($submitted)->withDrafts($drafts);
+        return view('manage.posts.index', compact('published', 'submitted', 'drafts'));
     }
 
     /**
@@ -199,7 +196,8 @@ class PostsController extends Controller
         $tag = new Tag;
         $tag->name = $request->tagSlug;
         $tag->save();
-        Toaster::success("Tag was saved!");
+        $toaster = new Toaster;
+        $toaster->success("Tag was saved!");
         return redirect()->back();
     }
 
@@ -240,20 +238,23 @@ class PostsController extends Controller
      * @param Post $post
      * @return Post
      */
-    private function setPostStatus(Request $request, $post)
+    private function setPostStatus(Request $request, Post $post)
     {
         if (($request->submit_type == 'Publish' || $request->submit_type == 'Publish again')  && Auth::user()->hasPermission('publish-post')) {
             $post->status = 3;
             $post->published_at = now();
-            Toaster::success("Post '" . $request->title . "'' has been published!");
+            $toaster = new Toaster;
+            $toaster->success("Post '" . $request->title . "'' has been published!");
         }
         elseif ($request->submit_type == 'Submit') {
             $post->status = 2;
-            Toaster::success("Post '" . $request->title . "' has been submitted!");
+            $toaster = new Toaster;
+            $toaster->success("Post '" . $request->title . "'' has been submitted!");
         }
         else {
             $post->status = 1;
-            Toaster::success("Draft has been saved!");
+            $toaster = new Toaster;
+            $toaster->success("Draft has been saved!");
         }
         return $post;
     }
@@ -312,6 +313,22 @@ class PostsController extends Controller
             $postImage->post_id = $post->id;
             $postImage->save();
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param $post
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteSelectedImages(Request $request, Post $post): \Illuminate\Http\RedirectResponse
+    {
+        foreach ($request->image_id as $image_id) {
+            $image = $post->images()->where('id', $image_id);
+            $image->delete();
+        }
+        $toaster = new Toaster;
+        $toaster->success("Images deleted.");
+        return redirect()->back();
     }
 
 }
