@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Comment;
 use App\User;
-use Session;
+use TheoryThree\LaraToaster\LaraToaster as Toaster;
 use App\Post;
-use Auth;
 use App\Events\UserTyping;
 use App\Events\NewComment;
 use App\Events\NewCommentInBlog;
@@ -25,7 +24,7 @@ class CommentsController extends Controller
 
     public function latest()
     {
-        $comments = Comment::latest()->take(5)->with('post')->with('user')->get();
+        $comments = Comment::query()->latest()->take(5)->with('post')->with('user')->get();
         return response()->json($comments);
     }
 
@@ -35,16 +34,14 @@ class CommentsController extends Controller
      */
         public function typing($id, Request $request)
     {
-        $user = $request->user;
+        $user = $request->get('user');
         broadcast(new UserTyping($id, $user))->toOthers();
 
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return string
      */
     public function store(Request $request)
     {
@@ -54,56 +51,19 @@ class CommentsController extends Controller
         ]);
         $comment = new Comment;
 
-        $comment->post_id = $request->post_id;
-
+        $comment->setAttribute('post_id', $request->get('post_id'));
         /* Hard-coded Guest user_id in the next line */
-        $comment->user_id = $request->api_token ? User::where('api_token', $request->api_token)->first()->id : 2;
-
-        $comment->body = $request->body;
-
+        $comment->setAttribute('user_id', $request->get('api_token') ? User::query()->where('api_token', $request->get('api_token'))->first()->id : 2);
+        $comment->setAttribute('body', $request->get('body'));
         $comment->save();
 
-        $comment = Comment::where('id', $comment->id)->with('user')->first();
+        $comment = Comment::query()->find($comment->getAttribute('id'))->with('user')->first();
 
         broadcast(new NewComment($comment))->toOthers();
         broadcast(new NewCommentInBlog($comment))->toOthers();
 
         return $comment->toJson();
 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
@@ -114,9 +74,10 @@ class CommentsController extends Controller
      */
     public function destroy($id)
     {
-        Comment::find($id)->delete();
+        Comment::query()->find($id)->delete();
 
-        Session::flash('success', 'The comment has been deleted!');
+        $toaster = new Toaster;
+        $toaster->success('The comment has been deleted!');
         return redirect()->back();
 
     }

@@ -45,7 +45,6 @@ class PermissionsTest extends TestCase
         $this->signIn(null,[],['read-permission'])
             ->get(route('permissions.show', 1))
             ->assertStatus(200);
-
         $this->signIn(null,[],['create-permission'])
             ->get(route('permissions.create'))
             ->assertStatus(200);
@@ -54,7 +53,11 @@ class PermissionsTest extends TestCase
             ->assertStatus(200)
             ->assertViewIs('manage.permissions.index')
             ->assertSee('successfully added');
-
+        $this->signIn(null,[],['read-permission','create-permission'])->followingRedirects()
+            ->post(route('permissions.store'), ['permission_type' => 'crud', 'resource' => 'Resource', 'crud_selected' => 'create,read,update,delete'])
+            ->assertStatus(200)
+            ->assertViewIs('manage.permissions.index')
+            ->assertSee('successfully added');
         $this->signIn(null,[],['update-permission'])
             ->get(route('permissions.edit', 3))
             ->assertStatus(200);

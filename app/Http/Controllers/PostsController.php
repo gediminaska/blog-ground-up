@@ -22,12 +22,14 @@ class PostsController extends Controller
      */
     public function index()
     {
+
+        if ($this->userCannot('read-post')) {
+            return redirect()->route('blog.index');
+        }
         if (Auth::user()->hasPermission('publish-post')) {
             $posts = Post::query()->orderBy('updated_at', 'desc')->get();
         } elseif (Auth::user()->hasPermission('read-post')) {
             $posts = Post::query()->where('user_id', Auth::user()->id)->get();
-        } else {
-            return $this->rejectUnauthorizedTo('read-post');
         }
         return $this->sortedByStatus($posts);
 
@@ -38,9 +40,8 @@ class PostsController extends Controller
      */
     public function create()
     {
-        $neededPermission = 'create-post';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('create-post')) {
+            return redirect()->route('blog.index');
         }
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
@@ -53,9 +54,9 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        $neededPermission = 'create-post';
-        if (!Auth::user()->hasPermission($neededPermission)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+
+        if ($this->userCannot('create-post')) {
+            return redirect()->route('blog.index');
         } elseif ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
@@ -82,9 +83,8 @@ class PostsController extends Controller
     {
         $post = Post::query()->find($id);
 
-        $neededPermission = 'publish-post';
-        if (!Auth::user()->hasPermission($neededPermission) && !$this->userIsAuthorOf($post)) {
-            return $this->rejectUnauthorizedTo($neededPermission);
+        if ($this->userCannot('read-post')) {
+            return redirect()->route('blog.index');
         }
         return view('manage.posts.show')->withPost($post);
     }
@@ -96,9 +96,9 @@ class PostsController extends Controller
     public function edit($id)
     {
         $post = Post::query()->find($id);
-        $neededPermission = 'update-post';
-        if (!$this->userIsAuthorOf($post) && !Auth::user()->hasPermission('publish-post')) {
-            return $this->rejectUnauthorizedTo('publish-post', 'edit that post');
+
+        if ($this->userCannot('update-post')) {
+            return redirect()->route('blog.index');
         } elseif ($this->userIsAuthorOf($post) && !Auth::user()->hasPermission($neededPermission)) {
             return $this->rejectUnauthorizedTo($neededPermission);
         }

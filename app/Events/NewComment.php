@@ -15,10 +15,10 @@ class NewComment implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $comment;
+
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * NewComment constructor.
+     * @param Comment $comment
      */
     public function __construct(Comment $comment)
     {
