@@ -38,7 +38,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', [new Post, Auth::user()]);
+        $this->authorize('create', [Post::class, Auth::user()]);
 
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
@@ -52,22 +52,20 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', [new Post, Auth::user()]);
+        $post = new Post;
+        $this->authorize('create', [$post, Auth::user()]);
 
-        if ($request->submit_type == 'New tag') {
-            return $this->saveTags($request);
-        } elseif ($request->submit_type == 'Delete draft') {
-            $toaster = new Toaster;
-            $toaster->success("Draft deleted.");
-            return redirect()->route('posts.index');
+        if($this->submitIsSecondary($request)) {
+            return $this->processSecondarySubmits($request, $post);
         }
-        $this->validatePostData($request);
-        $request->request->add(['post_id' => $post->id]);
-        $post = $this->setPostStatus($request, $post);
-        $this->collectPostData($request, $post);
-        $post->slug = $request->slug;
-        $this->savePost($post, $request);
+
+        $this->validatePostData($request, $post)
+            ->collectPostData($request, $post)
+            ->setPostStatus($request, $post)
+            ->savePost($post, $request);
+
         Cache::forget('blog');
+
         return redirect()->route('posts.index');
     }
 
@@ -93,7 +91,7 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::query()->where('id', $id)->first();
+        $post = Post::query()->find($id);
 
         $this->authorize('update', [$post, Auth::user()]);
 
@@ -111,28 +109,19 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::query()->where('id', $id)->first();
+        $post = Post::query()->find($id);
 
         $this->authorize('update', [$post, Auth::user()]);
 
-        if ($request->submit_type == 'New tag') {
-            return $this->saveTags($request);
-        } elseif ($request->submit_type == 'Delete draft') {
-            return $this->destroy($post->id);
-        } elseif ($request->submit_type == 'Delete selected images') {
-            return $this->deleteSelectedImages($request, $post);
-        } elseif ($request->input('slug') == $post->slug || !$request->input('slug')) {
-            $this->validate($request, [
-                'title' => 'required|min:3|max:60',
-                'body' => 'required|min:5|max:4000',
-                'category_id' => 'required|numeric',
-            ]);
-        } else {
-            $this->validatePostData($request);
+        if($this->submitIsSecondary($request)) {
+            return $this->processSecondarySubmits($request, $post);
         }
-        $request->user_id = $post->user_id;
-        $this->collectPostData($request, $post)->setPostStatus($request, $post);
-        $this->savePost($post, $request);
+
+        $this->validatePostData($request, $post)
+            ->collectPostData($request, $post)
+            ->setPostStatus($request, $post)
+            ->savePost($post, $request);
+
         Cache::forget('blog');
 
         return redirect()->route('posts.index');
@@ -145,15 +134,10 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::query()->where('id', $id)->first();
+        $post = Post::query()->find($id);
 
         $this->authorize('update', [$post, Auth::user()]);
 
-        if ($this->userCannot('update-post')) {
-            return redirect()->route('blog.index');
-        } elseif (!$post->authorIsCurrentUser() && $this->userCannot('publish-post')) {
-            return redirect()->route('blog.index');
-        }
         $post->tags()->detach();
         foreach ($post->comments as $comment) {$comment->delete();}
         $post->delete();
@@ -195,16 +179,25 @@ class PostsController extends Controller
 
     /**
      * @param Request $request
+     * @param $post
+     * @return $this
      */
-    private function validatePostData(Request $request): void
+
+    private function validatePostData(Request $request, $post)
     {
         $this->validate($request, [
             'title' => 'required|min:3|max:60',
             'body' => 'required|min:5|max:4000',
-            'slug' => 'required|min:3|unique:posts,slug',
             'category_id' => 'required|numeric',
             'user_id' => 'required|numeric',
         ]);
+
+        if($request->input('slug') && $request->input('slug') ==! $post->slug || $request->input('slug') == '') {
+            $this->validate($request, [
+                'slug' => 'required|min:3|unique:posts,slug',
+            ]);
+        }
+        return $this;
     }
 
     /**
@@ -220,7 +213,7 @@ class PostsController extends Controller
             $post->slug = $request->slug;
         }
         $post->category_id = $request->category_id;
-        $post->user_id = $request->user_id;
+        $post->user_id = $request->user_id ?: $post->user_id;
 
         return $this;
     }
@@ -248,7 +241,7 @@ class PostsController extends Controller
             $toaster = new Toaster;
             $toaster->success("Draft has been saved!");
         }
-        return $post;
+        return $this;
     }
 
     /**
@@ -277,6 +270,24 @@ class PostsController extends Controller
         }
     }
 
+
+    /**
+     * @param Request $request
+     * @param $post
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function processSecondarySubmits(Request $request, $post)
+    {
+        if ($request->submit_type == 'New tag') {
+            return $this->saveTags($request);
+        } elseif ($request->submit_type == 'Delete draft') {
+            return $this->destroy($post->id);
+        } elseif ($request->submit_type == 'Delete selected images') {
+            return $this->deleteSelectedImages($request, $post);
+        }
+    }
+
     /**
      * @param Request $request
      * @param $post
@@ -297,7 +308,6 @@ class PostsController extends Controller
             $postImage->save();
         }
     }
-
     /**
      * @param Request $request
      * @param $post
@@ -313,4 +323,14 @@ class PostsController extends Controller
         $toaster->success("Images deleted.");
         return redirect()->back();
     }
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    public function submitIsSecondary(Request $request): bool
+    {
+        return in_array($request->submit_type, ['New tag', 'Delete draft', 'Delete selected images']);
+    }
+
 }

@@ -12,7 +12,6 @@ class PostsPolicy
 
     /**
      * @param User $user
-     * @param Post $post
      * @return bool
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */

@@ -99,12 +99,12 @@ class PostsTest extends TestCase
         $this->signIn()->followingRedirects()
             ->get(route('posts.edit', 1))
             ->assertStatus(200)
-            ->assertSee('do not have permission to Update')
+            ->assertSee('do not have permission to update')
             ->assertViewIs('blog.index');
         $this->signIn()->followingRedirects()
             ->put(route('posts.update', 1), make('App\Post', ['title' => 'changing']))
             ->assertStatus(200)
-            ->assertSee('do not have permission to Update')
+            ->assertSee('do not have permission to update')
             ->assertViewIs('blog.index');
 
         $this->assertTrue(Post::query()->first()->title == 'testing');
@@ -122,7 +122,7 @@ class PostsTest extends TestCase
         $this->signIn()->followingRedirects()
             ->delete(route('posts.destroy', 1))
             ->assertStatus(200)
-            ->assertSee('do not have permission to Update')
+            ->assertSee('do not have permission to update')
             ->assertViewIs('blog.index');
 
         $this->assertTrue(count(Post::all()) == 1);

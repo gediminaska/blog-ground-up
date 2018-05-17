@@ -19,7 +19,6 @@ return [
             'post' => 'c,r,u,d',
         ],
          'member' => [
-             'post' => 'r',
         ],
     ],
     'permission_structure' => [
