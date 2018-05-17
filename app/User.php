@@ -20,6 +20,8 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
+    const guestId = 2;
+
     /**
      * The attributes that should be hidden for arrays.
      *

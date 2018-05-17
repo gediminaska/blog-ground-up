@@ -18,29 +18,28 @@ class PostsController extends Controller
 {
 
     /**
-     * @return \Illuminate\Http\RedirectResponse|mixed
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
+        $this->authorize('index', [new Post, Auth::user()]);
 
-        if ($this->userCannot('read-post')) {
-            return redirect()->route('blog.index');
-        }
         Auth::user()->hasPermission('publish-post') ?
             $posts = Post::query()->orderBy('updated_at', 'desc')->get() :
             $posts = Post::query()->where('user_id', Auth::user()->id)->get();
 
-        return $this->sortedByStatus($posts);
+        return $this->viewSortedByStatus($posts);
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
-        if ($this->userCannot('create-post')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('create', [new Post, Auth::user()]);
+
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
         return view('manage.posts.create', compact('tags', 'categories'));
@@ -49,13 +48,12 @@ class PostsController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
+        $this->authorize('create', [new Post, Auth::user()]);
 
-        if ($this->userCannot('create-post')) {
-            return redirect()->route('blog.index');
-        }
         if ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
@@ -64,7 +62,6 @@ class PostsController extends Controller
             return redirect()->route('posts.index');
         }
         $this->validatePostData($request);
-        $post = new Post;
         $request->request->add(['post_id' => $post->id]);
         $post = $this->setPostStatus($request, $post);
         $this->collectPostData($request, $post);
@@ -77,34 +74,31 @@ class PostsController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
         $post = Post::query()->find($id);
 
-        if ($this->userCannot('read-post')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('show', [$post, Auth::user()]);
+
         return view('manage.posts.show', compact('post'));
     }
 
     /**
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit($id)
     {
+        $post = Post::query()->where('id', $id)->first();
 
-        $post = Post::query()->find($id)->first();
+        $this->authorize('update', [$post, Auth::user()]);
+
         $categories = Category::all();
         $tags = $this->collectTags();
-
-        if ($this->userCannot('update-post')) {
-            return redirect()->route('blog.index');
-        } elseif (!$this->userIsAuthorOf($post) && $this->userCannot('publish-post')) {
-            return redirect()->route('blog.index');
-        }
 
         return view('manage.posts.edit', compact('post', 'categories', 'tags'));
     }
@@ -113,17 +107,14 @@ class PostsController extends Controller
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, $id)
     {
+        $post = Post::query()->where('id', $id)->first();
 
-        $post = Post::query()->find($id)->first();
+        $this->authorize('update', [$post, Auth::user()]);
 
-        if ($this->userCannot('update-post')) {
-            return redirect()->route('blog.index');
-        } elseif (!$this->userIsAuthorOf($post) && $this->userCannot('publish-post')) {
-            return redirect()->route('blog.index');
-        }
         if ($request->submit_type == 'New tag') {
             return $this->saveTags($request);
         } elseif ($request->submit_type == 'Delete draft') {
@@ -148,18 +139,19 @@ class PostsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
+     * @param $id
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy($id)
     {
-        $post = Post::query()->find($id);
+        $post = Post::query()->where('id', $id)->first();
+
+        $this->authorize('update', [$post, Auth::user()]);
 
         if ($this->userCannot('update-post')) {
             return redirect()->route('blog.index');
-        } elseif (!$this->userIsAuthorOf($post) && $this->userCannot('publish-post')) {
+        } elseif (!$post->authorIsCurrentUser() && $this->userCannot('publish-post')) {
             return redirect()->route('blog.index');
         }
         $post->tags()->detach();
@@ -174,9 +166,9 @@ class PostsController extends Controller
 
     /**
      * @param $posts
-     * @return mixed
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    private function sortedByStatus($posts)
+    private function viewSortedByStatus($posts)
     {
         $published = $posts->where('status', 3);
         $submitted = $posts->where('status', 2);
@@ -217,10 +209,10 @@ class PostsController extends Controller
 
     /**
      * @param Request $request
-     * @param Post $post
+     * @param $post
      * @return $this
      */
-    private function collectPostData(Request $request, Post $post)
+    private function collectPostData(Request $request, $post)
     {
         $post->title = $request->title;
         $post->body = $request->body;
@@ -235,10 +227,10 @@ class PostsController extends Controller
 
     /**
      * @param Request $request
-     * @param Post $post
-     * @return Post
+     * @param $post
+     * @return mixed
      */
-    private function setPostStatus(Request $request, Post $post)
+    private function setPostStatus(Request $request, $post)
     {
         if (($request->submit_type == 'Publish' || $request->submit_type == 'Publish again')  && Auth::user()->hasPermission('publish-post')) {
             $post->status = 3;
@@ -246,7 +238,7 @@ class PostsController extends Controller
             $toaster = new Toaster;
             $toaster->success("Post '" . $request->title . "'' has been published!");
         }
-        elseif ($request->submit_type == 'Submit') {
+        elseif ($request->submit_type == 'Submit' || $request->submit_type == 'Submit again') {
             $post->status = 2;
             $toaster = new Toaster;
             $toaster->success("Post '" . $request->title . "'' has been submitted!");
@@ -273,19 +265,10 @@ class PostsController extends Controller
     }
 
     /**
-     * @param Post $post
-     * @return bool
-     */
-    private function userIsAuthorOf(Post $post): bool
-    {
-        return Auth::user()->id == $post->user->id;
-    }
-
-    /**
-     * @param Post $post
+     * @param $post
      * @param Request $request
      */
-    public function savePost(Post $post, Request $request)
+    public function savePost($post, Request $request)
     {
         $post->save();
         $post->tags()->sync($request->tags, false);
@@ -296,9 +279,9 @@ class PostsController extends Controller
 
     /**
      * @param Request $request
-     * @param Post $post
+     * @param $post
      */
-    private function uploadImages(Request $request, Post $post)
+    private function uploadImages(Request $request, $post)
     {
         foreach ($request->file('images') as $image) {
             $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -320,7 +303,7 @@ class PostsController extends Controller
      * @param $post
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteSelectedImages(Request $request, Post $post): \Illuminate\Http\RedirectResponse
+    public function deleteSelectedImages(Request $request, $post)
     {
         foreach ($request->image_id as $image_id) {
             $image = $post->images()->where('id', $image_id);
@@ -330,5 +313,4 @@ class PostsController extends Controller
         $toaster->success("Images deleted.");
         return redirect()->back();
     }
-
 }

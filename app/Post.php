@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Scout\Searchable;
 
 
@@ -34,6 +35,9 @@ class Post extends Model
         });
     }
 
+    /**
+     * @return array
+     */
     public function toSearchableArray()
     {
         $array = $this->toArray();
@@ -69,6 +73,15 @@ class Post extends Model
     }
     public function images(){
         return $this->hasMany('App\Image');
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function authorIsCurrentUser(): bool
+    {
+        return Auth::user()->id == $this->user->id;
     }
 
 }
