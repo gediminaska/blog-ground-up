@@ -13,7 +13,6 @@ use Cache;
 use App\Image as PostImage;
 
 
-
 class PostsController extends Controller
 {
 
@@ -269,7 +268,6 @@ class PostsController extends Controller
             $this->uploadImages($request, $post);
         }
     }
-
 
     /**
      * @param Request $request

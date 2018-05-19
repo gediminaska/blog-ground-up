@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 use App\Category;
 use Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use TheoryThree\LaraToaster\LaraToaster as Toaster;
 
 class CategoriesController extends Controller
 {
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
-        if ($this->userCannot('read-category')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('index', [new Category, Auth::user()]);
+
         $categories = Category::all();
         return view('manage.categories.index', compact('categories'));
     }
@@ -23,12 +24,12 @@ class CategoriesController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
-        if ($this->userCannot('create-category')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('create', [new Category, Auth::user()]);
+
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
             'icon' => 'max:30'
@@ -48,14 +49,15 @@ class CategoriesController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
-        if ($this->userCannot('read-category')) {
-            return redirect()->route('blog.index');
-        }
         $category=Category::query()->find($id);
+
+        $this->authorize('show', [$category, Auth::user()]);
+
         return view('manage.categories.show', compact('category'));
     }
 
@@ -63,19 +65,19 @@ class CategoriesController extends Controller
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
 
     public function update(Request $request, $id){
 
-        if ($this->userCannot('update-category')) {
-            return redirect()->route('blog.index');
-        }
+        $category=Category::query()->find($id);
+
+        $this->authorize('update', [$category, Auth::user()]);
 
         $this->validate($request, [
             'name' => 'required|min:3|max:30',
             'icon' => 'max:30'
         ]);
-        $category=Category::query()->find($id);
         $category->setAttribute('name', $request->get('name'));
         $category->setAttribute('icon', $request->get('icon'));
         $category->save();
@@ -88,13 +90,15 @@ class CategoriesController extends Controller
     /**
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy($id)
     {
-        if ($this->userCannot('delete-category')) {
-            return redirect()->route('blog.index');
-        }
-        Category::query()->find($id)->delete();
+        $category=Category::query()->find($id);
+
+        $this->authorize('destroy', [$category, Auth::user()]);
+
+        $category->delete();
 
         $toaster = new Toaster;
         $toaster->success('The category has been deleted!');

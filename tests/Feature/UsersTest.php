@@ -42,7 +42,7 @@ class UsersTest extends TestCase
         $this->signIn(null,[],['read-users'])
             ->get(route('users.index'))
             ->assertStatus(200);
-        $this->signIn(null,[],['read-users'])
+        $this->signIn(null,[],['read-users'])->followingRedirects()
             ->get(route('users.show', 1))
             ->assertStatus(200);
 

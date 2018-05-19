@@ -12,51 +12,47 @@ use TheoryThree\LaraToaster\LaraToaster as Toaster;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
-        if ($this->userCannot('read-users')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('index', [new User, Auth::user()]);
+
         $users = User::query()->orderBy('id', 'desc')->paginate(10);
 
         return view('manage.users.index', compact('users'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
-        if ($this->userCannot('create-users')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('create', [User::class, Auth::user()]);
+
         $roles = Role::query()->where('id', '>', 2)->get();
         return view('manage.users.create', compact('roles'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
-        if ($this->userCannot('create-users')) {
-            return redirect()->route('blog.index');
-        }
+        $user = new User;
+
+        $this->authorize('create', [$user, Auth::user()]);
+
         $this->validate($request, [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users'
         ]);
         $password = $this->setPassword($request);
-        $this->saveUser($request, $password);
+        $this->saveUser($request, $password, $user);
 
         $toaster = new Toaster;
         $toaster->success('User has been saved successfully.');
@@ -64,48 +60,47 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
-        if ($this->userCannot('read-users')) {
-            return redirect()->route('blog.index');
-        }
         $user = User::query()->where('id', $id)->with('roles')->first();
+
+        $this->authorize('show', [$user, Auth::user()]);
+
         return view('manage.users.show', compact('user'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit($id)
     {
-        if ($this->userCannot('update-users')) {
-            return redirect()->route('blog.index');
-        }
+        $user = User::query()->find($id);
+
+        $this->authorize('update', [$user, Auth::user()]);
+
         $roles = Role::query()->where('id', '>', 2)->get();
         $user = User::query()->where('id', $id)->with('roles')->first();
         return view('manage.users.edit', compact('user', 'roles'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, $id)
     {
-        if ($this->userCannot('update-users')) {
-            return redirect()->route('blog.index');
-        }
+        $user = User::findOrFail($id);
+
+        $this->authorize('update', [$user, Auth::user()]);
+
         if (($id == 1 || $id == 2) && !Auth::user()->hasRole('superadministrator')) {
             $toaster = new Toaster;
             $toaster->danger('You do not have permission to do that');
@@ -118,7 +113,7 @@ class UserController extends Controller
 
         $password = $this->setPassword($request);
 
-        $user = $this->saveUser($request, $password, $id);
+        $user = $this->saveUser($request, $password, $user);
 
         $toaster = new Toaster;
         $toaster->success('Changes successfully saved.');
@@ -161,12 +156,11 @@ class UserController extends Controller
     /**
      * @param Request $request
      * @param $password
-     * @param null $id
-     * @return User|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     * @param User $user
+     * @return User
      */
-    private function saveUser(Request $request, $password, $id = null)
+    private function saveUser(Request $request, $password, User $user)
     {
-        isset($id) ? $user = User::query()->findOrFail($id) : $user = new User;
         $user->setAttribute('name', $request->get('name'));
         $user->setAttribute('email', $request->get('email'));
         !isset($password) ?: $user->setAttribute('password', Hash::make($password));

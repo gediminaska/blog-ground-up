@@ -54,7 +54,6 @@ class RolesTest extends TestCase
             ->assertStatus(200)
             ->assertViewIs('manage.roles.index')
             ->assertSee('Successfully created');
-
         $this->signIn(null,[],['update-roles'])
             ->get(route('roles.edit', 3))
             ->assertStatus(200);

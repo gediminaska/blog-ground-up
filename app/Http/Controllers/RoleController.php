@@ -15,27 +15,25 @@ class RoleController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
-        if ($this->userCannot('read-roles')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('index', [new Role, Auth::user()]);
+
         $roles = Role::all();
         return view('manage.roles.index', compact('roles'));
-
-
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
-        if ($this->userCannot('create-roles')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('create', [Role::class, Auth::user()]);
+
         $permissions = Permission::all();
         return view('manage.roles.create', compact('permissions'));
     }
@@ -43,12 +41,12 @@ class RoleController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
-        if ($this->userCannot('create-roles')) {
-            return redirect()->route('blog.index');
-        }
+        $this->authorize('create', [new Role, Auth::user()]);
+
         $this->validate($request, [
             'display_name' => 'required|max:255',
             'name' => 'required|alphadash|max:50|unique:roles,name',
@@ -65,27 +63,29 @@ class RoleController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
-        if ($this->userCannot('read-roles')) {
-            return redirect()->route('blog.index');
-        }
         $role = Role::query()->where('id', $id)->first();
+
+        $this->authorize('show', [$role, Auth::user()]);
+
         return view('manage.roles.show', compact('role'));
     }
 
     /**
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit($id)
     {
-        if ($this->userCannot('update-roles')) {
-            return redirect()->route('blog.index');
-        }
         $role = Role::query()->where('id', $id)->with('permissions')->first();
+
+        $this->authorize('update', [$role, Auth::user()]);
+
         $permissions = Permission::all();
         return view('manage.roles.edit', compact('role', 'permissions'));
     }
@@ -94,22 +94,19 @@ class RoleController extends Controller
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, $id)
     {
-        if ($this->userCannot('update-roles')) {
-            return redirect()->route('blog.index');
-        } elseif($id < 3 && !Auth::user()->hasRole('superadministrator')) {
-            $this->rejectUnauthorizedTo('update-roles', 'update this role');
-            return redirect()->route('blog.index');
-        }
+        $role = Role::findOrFail($id);
+
+        $this->authorize('update', [$role, Auth::user()]);
 
         $this->validate($request, [
             'display_name' => 'required|max:255',
             'description' => 'sometimes|max:255',
         ]);
 
-        $role = Role::query()->findOrFail($id);
         $role->update($request->all());
 
         if ($request->permissions) {
