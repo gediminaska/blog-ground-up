@@ -33,7 +33,7 @@
             @endforeach
         </ul>
     </div>
-    <div class="aa-input-container is-pulled-right" id="aa-input-container">
+    <div class="aa-input-container is-pulled-right m-b-10" id="aa-input-container">
         <input type="search" id="aa-search-input" class="aa-input-search" placeholder="Search for posts..."
                name="search" autocomplete="true"/>
         <a class="button is-info is-outlined is-rounded" onclick="searchBlog()"><i class="fas fa-search"></i></a>
@@ -97,7 +97,7 @@
         var index = client.initIndex('posts');
 
         function searchBlog() {
-            window.location = 'blog/search?q=' + searchText.value;
+            window.location = '/blog/search?q=' + searchText.value;
         }
 
         document.getElementById("aa-search-input").addEventListener("keydown", function (e) {

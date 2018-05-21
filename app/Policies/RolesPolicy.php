@@ -6,48 +6,11 @@ use App\User;
 use App\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RolesPolicy
+class RolesPolicy extends ResourcesPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * @param User $user
-     * @return bool
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function index(User $user)
-    {
-        if (!$user->hasPermission('read-roles')) {
-            $this->deny('read role');
-        }
-        return true;
-    }
-
-    /**
-     * @param User $user
-     * @return bool
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function show(User $user)
-    {
-        if (!$user->hasPermission('read-roles')) {
-            $this->deny('read role');
-        }
-        return true;
-    }
-
-    /**
-     * @param User $user
-     * @return bool
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function create(User $user)
-    {
-        if (!$user->hasPermission('create-roles')) {
-            $this->deny('create role');
-        }
-        return true;
-    }
+    protected $resourceName = 'roles';
 
     /**
      * @param User $user
@@ -56,7 +19,7 @@ class RolesPolicy
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
 
-    public function update(User $user, $role)
+    public function update(User $user, Role $role)
     {
         if (!$user->hasPermission('update-roles')) {
             $this->deny('update role');

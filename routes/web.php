@@ -36,7 +36,7 @@ Route::resource('tags', 'TagsController', ['only' => [
      'store', 'destroy']]);
 
 Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
-Route::delete('comments/{id}', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);
+Route::delete('comments', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);
 
 Route::get('blog/search', ['as' => 'blog.search', 'uses' => 'BlogController@search']);
 Route::get('blog/{slug}', ['as' => 'blog.show', 'uses' => 'BlogController@show']);

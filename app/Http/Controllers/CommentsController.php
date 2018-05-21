@@ -66,17 +66,17 @@ class CommentsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        Comment::query()->find($id)->delete();
-
+        foreach ($request->comment_id as $comment_id) {
+            $comment = Comment::query()->where('id', $comment_id);
+            $comment->delete();
+        }
         $toaster = new Toaster;
-        $toaster->success('The comment has been deleted!');
+        $toaster->success("Comments deleted.");
         return redirect()->back();
 
     }

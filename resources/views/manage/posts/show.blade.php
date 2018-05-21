@@ -23,17 +23,18 @@
     @if($post->comments_count>0)
         <hr>
         <span class="far fa-comments fa-2x"></span><span class="title is-4"> Comments:</span><br>
+
+        @foreach($post->comments as $comment)
+            <strong>{{ $comment->user_name }}</strong>
+            <p>{{ $comment->body }}</p>
+            {{ Form::open(['route'=> ['comments.delete'], 'method'=>'DELETE'])}}
+            {{ Form::checkbox('comment_id[]', $comment->id, null) }}
+
+        @endforeach
+            {{ Form::submit('Delete comments', ['class'=>'button is-danger']) }}
+            {{ Form:: close() }}
     @endif
 
-
-    @foreach($post->comments as $comment)
-        <strong>{{ $comment->user_name }}</strong>
-        <p>{{ $comment->body }}</p>
-        {{ Form::open(['route'=> ['comments.delete', $comment->id], 'method'=>'DELETE'])}}
-        {{ Form::submit('Delete comment', ['class'=>'button is-danger']) }}
-        {{ Form:: close() }}
-        <br>
-    @endforeach
     <br>
     <a class="button is-info is-outlined" style="min-width: 200px" href="{{ route('posts.index') }}">
     <span class="icon">

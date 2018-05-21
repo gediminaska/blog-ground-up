@@ -155,7 +155,7 @@
                     Echo.channel('post.' + this.post.id)
                         .listen('NewComment', (comment) => {
                             this.comments.unshift(comment);
-                            this.whoIsTyping = false;
+                            app3.whoIsTyping = false;
                         })
                         .listen('UserTyping', (data) => {
                                 this.whoIsTyping = data.user;

@@ -6,22 +6,12 @@ use App\Post;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PostsPolicy
+class PostsPolicy extends ResourcesPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * @param User $user
-     * @return bool
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function index(User $user)
-    {
-        if (!$user->hasPermission('read-post')) {
-            $this->deny('read post');
-        }
-        return true;
-    }
+    protected $resourceName = 'post';
+
     /**
      * @param User $user
      * @param Post $post
@@ -38,18 +28,6 @@ class PostsPolicy
         return true;
     }
 
-    /**
-     * @param User $user
-     * @return bool
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    public function create(User $user)
-    {
-        if (!$user->hasPermission('create-post')) {
-            $this->deny('create post');
-        }
-        return true;
-    }
     /**
      * @param User $user
      * @param Post $post

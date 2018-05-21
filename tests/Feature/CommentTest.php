@@ -19,9 +19,9 @@ class CommentTest extends TestCase
         create('App\Comment');
 
         $this->followingRedirects()
-            ->delete(route('comments.delete', 1))
+            ->delete(route('comments.delete'), ['comment_id' => [1]])
             ->assertStatus(200)
-            ->assertSee('comment has been deleted');
+            ->assertSee('Comments deleted.');
 
         $this->assertTrue(count(Comment::all()) == 0);
     }

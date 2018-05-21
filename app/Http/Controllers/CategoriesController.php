@@ -67,7 +67,6 @@ class CategoriesController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-
     public function update(Request $request, $id){
 
         $category=Category::query()->find($id);
