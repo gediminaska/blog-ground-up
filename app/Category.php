@@ -8,6 +8,8 @@ class Category extends Model
 {
     protected $table = 'categories';
 
+    protected $fillable = ['name', 'icon'];
+
     public function posts(){
         return $this->hasMany('App\Post');
     }

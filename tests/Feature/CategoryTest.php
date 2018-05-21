@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Category;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Cache;
 
 class CategoryTest extends TestCase
 {
@@ -110,6 +111,8 @@ class CategoryTest extends TestCase
             ->assertStatus(200)
             ->assertViewIs('blog.index')
             ->assertDontSee('Kimono shorts');
+
+        Cache::forget('categories');
     }
 }
 

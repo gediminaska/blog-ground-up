@@ -62,4 +62,8 @@ class PagesController extends Controller
     public function contact(){
         return view('pages.contact');
     }
+
+    public function errors(){
+        return view('pages.errors');
+    }
 }

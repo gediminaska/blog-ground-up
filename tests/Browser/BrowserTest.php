@@ -187,7 +187,7 @@ class BrowserTest extends DuskTestCase
                 ->type('search', 'derp')
                 ->click('a.button.is-info')
                 ->assertRouteIs('blog.search')
-                ->assertSee('derp')
+                ->waitForText('derp')
                 ->assertSee("Dummy text.");
         });
     }

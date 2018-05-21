@@ -41,6 +41,7 @@ class PostsController extends Controller
 
         $categories = Category::all();
         $tags = Tag::query()->orderBy('name', 'asc')->get();
+
         return view('manage.posts.create', compact('tags', 'categories'));
     }
 
@@ -62,8 +63,6 @@ class PostsController extends Controller
             ->collectPostData($request, $post)
             ->setPostStatus($request, $post)
             ->savePost($post, $request);
-
-        Cache::forget('blog');
 
         return redirect()->route('posts.index');
     }
@@ -121,8 +120,6 @@ class PostsController extends Controller
             ->setPostStatus($request, $post)
             ->savePost($post, $request);
 
-        Cache::forget('blog');
-
         return redirect()->route('posts.index');
     }
 
@@ -143,7 +140,7 @@ class PostsController extends Controller
 
         $toaster = new Toaster;
         $toaster->success('The post ' . "'" . "$post->title" . "'" . ' has been deleted!');
-        Cache::forget('blog');
+
         return redirect()->route('posts.index');
     }
 

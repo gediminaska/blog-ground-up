@@ -2,9 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Category;
-use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache as Cache;
 use TheoryThree\LaraToaster\LaraToaster as Toaster;
 
 class CategoriesController extends Controller
@@ -35,11 +35,8 @@ class CategoriesController extends Controller
             'icon' => 'max:30'
         ]);
 
-        $category = new Category;
+        Category::query()->create($request->all());
 
-        $category->setAttribute('name', $request->get('name'));
-        $category->setAttribute('icon', $request->get('icon'));
-        $category->save();
         $toaster = new Toaster;
         $toaster->success('The category has been saved!');
         Cache::forget('categories');
@@ -77,9 +74,9 @@ class CategoriesController extends Controller
             'name' => 'required|min:3|max:30',
             'icon' => 'max:30'
         ]);
-        $category->setAttribute('name', $request->get('name'));
-        $category->setAttribute('icon', $request->get('icon'));
-        $category->save();
+
+        $category->update($request->all());
+
         $toaster = new Toaster;
         $toaster->success('The category has been updated!');
         Cache::forget('categories');
