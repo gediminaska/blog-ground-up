@@ -13,7 +13,7 @@
     @foreach($post->images as $image)
         <img src="{{ asset('images/' . $image->name) }}" style="display:block; margin: auto; width: 100%">
     @endforeach
-    <h4 style="margin:auto; font-size:larger; margin-top: 30px; text-align: justify; white-space: pre-line; max-width:700px">{{ $post->body }}</h4>
+    <div style="margin:auto; font-size:larger; margin-top: 30px; text-align: justify; white-space: pre-line; max-width:700px">{!! $post->body !!}</div>
     <br><span style="margin-top:20px"><strong>Tags:</strong></span>
     @foreach($post->tags as $tag)
         <span class="tag is-dark">{{ $tag->name }}</span>

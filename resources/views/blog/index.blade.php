@@ -74,7 +74,7 @@
             <br>
             <a href="{{ route('blog.show', $post->slug) }}"><img class="index-thumbnail"
                                                                  src="{{ $post->images->count()==0 ? asset('images/no-image-landscape.png') : asset('images/' . $post->images[0]->name) }}"></a>
-            <h4 style="text-align: justify; white-space: pre-line">{{substr($post->body,0, 700)}} {{strlen($post->body)>700 ? "..." : ""}}</h4>
+            <h4 style="text-align: justify; white-space: pre-line">{{substr(strip_tags($post->body),0, 700)}} {{strlen($post->body)>700 ? "..." : ""}}</h4>
             <br>
             {{Html::linkRoute('blog.show', 'Show post', $post->slug, ['class'=>'button is-info is-outlined'])}}
             <br>

@@ -15,7 +15,7 @@
                                 <div class="column is-two-thirds">
                                     <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
                                     <small> Has {{ $post->comments_count }} {{ str_plural('comment', $post->comments_count) }} </small>
-                                    <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
+                                    <h4>{{substr(strip_tags($post->body), 0, 300)}}{{ strlen(strip_tags($post->body))>300 ? "..." : ""}}</h4>
                                     <p><strong>Category: </strong> {{ $post->category->name }}</p>
                                 </div>
                                 <div class="column is-one-third">
@@ -45,7 +45,7 @@
                                 <div class="column is-two-thirds">
                                     <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
                                     <small> Has {{ $post->comments_count }} {{ str_plural('comment', $post->comments_count) }} </small>
-                                    <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
+                                    <h4>{{substr(strip_tags($post->body), 0, 300)}}{{ strlen(strip_tags($post->body))>300 ? "..." : ""}}</h4>
                                     <p><strong>Category: </strong> {{ $post->category->name }}</p>
                                 </div>
                                 <div class="column is-one-third">
@@ -70,7 +70,7 @@
                                 <div class="column is-two-thirds">
                                     <span class="title is-5"><a href="{{ route('posts.show', $post->id) }}" style="color: inherit">{{$post->title}}</a></span>
                                     <small> Has {{ $post->comments_count }} {{ str_plural('comment', $post->comments_count) }} </small>
-                                    <h4>{{substr($post->body, 0, 300)}}{{ strlen($post->body)>300 ? "..." : ""}}</h4>
+                                    <h4>{{substr(strip_tags($post->body), 0, 300)}}{{ strlen(strip_tags($post->body))>300 ? "..." : ""}}</h4>
                                     <p><strong>Category: </strong> {{ $post->category->name }}</p>
                                 </div>
                                 <div class="column is-one-third">

@@ -12,7 +12,7 @@
     <h2 class="title is-2">{{ $post->title }}</h2>
     <span>Category: </span><strong>{{ $post->category->name }}</strong>
     <img src="{{ count($post->images)>0 ? asset('images/' . $post->images[0]->name) : '' }}" class="blog-single-page-image">
-    <h4 style="margin:auto; font-size:larger; margin-top: 30px; text-align: justify; white-space: pre-line; max-width:700px">{{ $post->body }}</h4>
+    <div style="margin:auto; font-size:larger; margin-top: 30px; text-align: justify; white-space: pre-line; max-width:700px">{!! $post->body !!}</div>
     <br><span style="margin-top:20px"><strong>Tags:</strong></span>
     @foreach($post->tags as $tag)
         <span class="tag is-dark">{{ $tag->name }}</span>

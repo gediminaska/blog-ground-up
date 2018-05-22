@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Scout\Searchable;
+use Stevebauman\Purify\Facades\Purify;
 
 
 class Post extends Model
@@ -46,13 +47,14 @@ class Post extends Model
             return [];
 
         } else {
+            $array['body'] = strip_tags($this->body);
             $array['user.name'] = $this->user->name;
             $array['category.name'] = $this->category->name;
             $array['comments_count'] = count($this->comments);
             $array['comments_text'] = implode(',', $this->comments->map(function ($data) {
                 return $data['body'];
             })->toArray());
-            $array['text_length'] = strlen($this->body) > 3000 ? 'Very long' : (strlen($this->body) > 1600 ? 'Long' : (strlen($this->body) > 800 ? 'Medium' : 'Short'));
+            $array['text_length'] = strlen(strip_tags($this->body)) > 3000 ? 'Very long' : (strlen(strip_tags($this->body)) > 1600 ? 'Long' : (strlen(strip_tags($this->body)) > 800 ? 'Medium' : 'Short'));
 
             return $array;
         }
@@ -82,6 +84,11 @@ class Post extends Model
     public function authorIsCurrentUser(): bool
     {
         return Auth::user()->id == $this->user->id;
+    }
+
+    public function getBodyAttribute($body)
+    {
+        return Purify::clean($body);
     }
 
 }

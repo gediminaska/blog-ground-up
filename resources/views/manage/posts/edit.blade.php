@@ -31,26 +31,27 @@
             <input type="submit" name="submit_type" class="button is-primary is-fullwidth" value="New tag">
         </div>
     </div>
+
+    {{ Form::label('category_id', 'Category:') }}
+    <br>
+    <div class="select">
+        <select name="category_id" id="category_id" style="min-width: 300px">
+            @foreach($categories as $category)
+
+                <option {{ $category->id==$post->category_id ? "selected='selected'" : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
+
+            @endforeach
+        </select>
+    </div>
+    <br>
+    {{ Form::label('body','Post text:') }}
+    <wysiwyg name="body" value="{{ $post->body }}"></wysiwyg>
+
+    <span class="title is-6">Add images: </span>
+    {{ Form::file('images[]', ['multiple'=>'multiple']) }}
+    {{ Form::hidden('user_id', Auth::id() )}}
+    <br><br>
 </div>
-
-{{ Form::label('category_id', 'Category:') }}
-<br>
-<div class="select">
-    <select name="category_id" id="category_id" style="min-width: 300px">
-        @foreach($categories as $category)
-
-            <option {{ $category->id==$post->category_id ? "selected='selected'" : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
-
-        @endforeach
-    </select>
-</div>
-<br>
-{{ Form::label('body','Post text:') }}
-{{ Form::textarea('body', null, ['class'=>'input', 'style'=>'min-height: 400px' ]) }}
-<span class="title is-6">Add images: </span>
-{{ Form::file('images[]', ['multiple'=>'multiple']) }}
-{{ Form::hidden('user_id', Auth::id() )}}
-<br><br>
 
 @if(count($post->images) > 0)
     <p class="title is-6">Remove images:</p>
@@ -68,7 +69,8 @@
     <div class="card card-widget">
         <div class="author-widget widget-area">
             <div class="selected-author">
-                <img src="https://www.gravatar.com/avatar/{{md5($post->user->email)}}?d=mm" alt="" style="height: 50px; width:50px; border-radius: 50px">
+                <img src="https://www.gravatar.com/avatar/{{md5($post->user->email)}}?d=mm" alt=""
+                     style="height: 50px; width:50px; border-radius: 50px">
                 <div class="author">
                     <h4>{{$post->user->name}}</h4>
                     <p class="subtitle">
@@ -118,7 +120,7 @@
             el: '#app',
             data: {
                 title: '{!! $post->title !!}',
-                slug: '',
+                slug: '{!! $post->slug !!}',
                 tag: '',
                 tagSlug: '',
                 api_token: '{!! Auth::user()->api_token !!}',

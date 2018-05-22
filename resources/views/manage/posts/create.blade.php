@@ -50,7 +50,7 @@
         </div>
         <br>
         {{ Form::label('body','Post text:') }}
-        {{ Form::textarea('body', null, ['class'=>'input', 'style'=>'min-height: 400px' ]) }}
+        <wysiwyg name="body"></wysiwyg>
         {{ Form::file('images[]', ['multiple'=>'multiple']) }}
         {{ Form::hidden('user_id', Auth::id() )}}
     </div>

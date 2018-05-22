@@ -29,6 +29,7 @@
         "laravel-echo": "^1.3.5",
         "pusher-js": "^4.2.2",
         "slug": "^0.9.1",
+        "trix": "^0.11.2",
         "vue-instantsearch": "^1.5.2"
     }
 }

@@ -1,9 +1,12 @@
+
 window.Slug = require('slug');
 Slug.defaults.mode = 'rfc3986';
 import ActivityGraph from './components/activity-graph/ActivityGraph'
+
 Vue.component('activity-graph', ActivityGraph);
 Vue.component('slugWidget', require('./components/slugWidget.vue'));
 Vue.component('tagSlugWidget', require('./components/tagSlugWidget.vue'));
+Vue.component('wysiwyg', require('./components/Wysiwyg.vue'));
 
 
 const accordions = document.getElementsByClassName('has-submenu');

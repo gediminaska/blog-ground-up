@@ -8,6 +8,7 @@ use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Image;
+use Stevebauman\Purify\Facades\Purify;
 use TheoryThree\LaraToaster\LaraToaster as Toaster;
 use Cache;
 use App\Image as PostImage;
@@ -188,7 +189,7 @@ class PostsController extends Controller
             'user_id' => 'required|numeric',
         ]);
 
-        if($request->input('slug') && $request->input('slug') ==! $post->slug || $request->input('slug') == '') {
+        if($request->input('slug') && $request->input('slug') !== $post->slug || $request->slug == '') {
             $this->validate($request, [
                 'slug' => 'required|min:3|unique:posts,slug',
             ]);
@@ -204,7 +205,7 @@ class PostsController extends Controller
     private function collectPostData(Request $request, $post)
     {
         $post->title = $request->title;
-        $post->body = $request->body;
+        $post->body = Purify::clean($request->body);
         if($request->slug && $request->slug != $post->slug) {
             $post->slug = $request->slug;
         }
