@@ -34815,9 +34815,10 @@ var render = function() {
         domProps: { value: _vm.value }
       }),
       _vm._v(" "),
-      _c("trix-editor", { attrs: { input: "trix", value: _vm.value } }, [
-        _vm._v("Horray")
-      ])
+      _c("trix-editor", {
+        staticStyle: { "min-height": "10rem" },
+        attrs: { input: "trix", value: _vm.value, id: "wysiwyg-input" }
+      })
     ],
     1
   )

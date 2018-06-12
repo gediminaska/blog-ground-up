@@ -29,7 +29,6 @@
 <div id="app-2">
     @include('partials._messages')
     {!! Toaster::toast() !!}
-
 </div>
 
 
@@ -43,9 +42,7 @@
     <div class="column is-one-fifth right-panel" style="padding: 20px">
         @yield('panel-right')
     </div>
-
 </div>
-
 
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>
@@ -75,9 +72,7 @@
                 });
             });
         }
-
     });
-
 </script>
 
 </body>

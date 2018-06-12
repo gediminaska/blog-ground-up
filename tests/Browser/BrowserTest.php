@@ -68,8 +68,7 @@ class BrowserTest extends DuskTestCase
             $post = create('App\Post');
 
             $first->visit('/')
-                ->clickLink('Comments')
-                ->resize(1600, 1080);
+                ->clickLink('Comments');
             $third->loginAs(User::query()->find(2))
                 ->visit('/blog/' . $post->slug);
 
@@ -81,9 +80,10 @@ class BrowserTest extends DuskTestCase
 
             $second->click('.phpdebugbar-close-btn')
                 ->press('button')
-                ->pause(1000)
+                ->pause(500)
                 ->assertSee('Author');
 
+            $third->waitForText('test comment');
             $first->waitForText('test comment');
         });
     }
@@ -107,9 +107,8 @@ class BrowserTest extends DuskTestCase
                 ->click('.select2-selection__rendered')
                 ->click('.select2-results__option')
                 ->type('title', 'test title')
-                ->pause(300)
                 ->attach('images[]',  __DIR__.'/logo.png')
-                ->type('body', 'Lorem ipsum text. Lorem ipsum text.')
+                ->keys('#wysiwyg-input', 'Lorem ipsum text. Lorem ipsum text.')
                 ->press('Save Draft')
                 ->clickLink('Drafts (1)')
                 ->clickLink('Continue writing')
@@ -117,7 +116,6 @@ class BrowserTest extends DuskTestCase
                 ->press('Edit')
                 ->type('slug-edit', 'test title changed')
                 ->press('Save')
-                ->pause(200)
                 ->press('Publish')
                 ->visit('/blog/test-title-changed')
                 ->assertVisible('.blog-single-page-image')
@@ -149,7 +147,7 @@ class BrowserTest extends DuskTestCase
                         ->click('.select2-results__option:last-child')
                         ->type('title', $i . 'test title')
                         ->pause(500)
-                        ->type('body', $i . 'Lorem ipsum text Lorem ipsum text.')
+                        ->keys('#wysiwyg-input', $i . 'Lorem ipsum text Lorem ipsum text.')
                         ->press('Publish');
                 }
                 $browser->visit('/blog')
@@ -183,7 +181,7 @@ class BrowserTest extends DuskTestCase
         create('App\Post', ['title'=>'derp', 'body'=>'Dummy text. Dummy text. Dummy text. ']);
         $this->browse(function (Browser $browser) {
             $browser->visit(route('blog.index'))
-                ->pause(1000)
+                ->pause(3000)
                 ->type('search', 'derp')
                 ->click('a.button.is-info')
                 ->assertRouteIs('blog.search')

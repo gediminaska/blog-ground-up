@@ -261,14 +261,4 @@ class PostsTest extends TestCase
             ->assertSessionHasErrors('body');
     }
 
-    /** @test */
-    public function post_body_gets_sanitized()
-    {
-        $this->seed('LaratrustSeeder');
-
-        create('App\Category');
-        $this->signIn(null, [], ['create-post', 'read-post'])
-            ->post(route('posts.store'), make('App\Post', ['body' => '']))
-            ->assertSessionHasErrors('title');
-    }
 }
