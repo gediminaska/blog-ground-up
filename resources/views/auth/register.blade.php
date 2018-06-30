@@ -138,6 +138,9 @@
 
                         </div>
                     </form>
+                    <p class="control login">
+                        <a href="{{ route('login.facebook') }}"><button class="button is-info is-outlined is-fullwidth m-t-10" type="submit"><i class="fab fa-facebook m-r-5"></i>Login with facebook</button></a>
+                    </p>
                 </div>
             </div>
         </div>

@@ -14266,6 +14266,15 @@ html {
   transition: background-color 2s;
 }
 
+.freshComment {
+  background-color: #8eb4cb;
+  -webkit-transition: background-color 2s;
+  transition: background-color 2s;
+  -webkit-transition-timing-function: linear;
+          transition-timing-function: linear;
+  border-radius: 10px;
+}
+
 .author-widget.widget-area.freshComment {
   background-color: #8eb4cb;
   -webkit-transition: background-color 2s;

@@ -22,7 +22,6 @@
     @yield('stylesheets')
 </head>
 <body>
-<img src={{ asset('images/errors/screenshots/logo.png') }} alt="">
 
         @include('partials._navbar')
         <div id="app-2">

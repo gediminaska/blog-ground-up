@@ -32,9 +32,10 @@ Route::post('/my-account', 'Auth\MyAccountController@update')->name('my.account.
 Route::delete('/my-account', 'Auth\MyAccountController@delete')->name('delete.link');
 
 Auth::routes();
+Route::get('auth/facebook', 'Auth\LoginController@redirectToFacebook')->name('login.facebook');
+Route::get('auth/facebook/callback', 'Auth\LoginController@handleFacebookCallback');
 
-Route::resource('tags', 'TagsController', ['only' => [
-     'store', 'destroy']]);
+Route::resource('tags', 'TagsController', ['only' => ['store', 'destroy']]);
 
 Route::post('comments', ['as'=>'comments.store', 'uses' => 'CommentsController@store']);
 Route::delete('comments', ['as'=>'comments.delete', 'uses' => 'CommentsController@destroy']);

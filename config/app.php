@@ -173,6 +173,7 @@ return [
         Laratrust\LaratrustServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         TheoryThree\LaraToaster\LaraToasterServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
 
 
 
@@ -241,6 +242,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'Toaster' => TheoryThree\LaraToaster\LaraToasterFacade::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
 
 
     ],

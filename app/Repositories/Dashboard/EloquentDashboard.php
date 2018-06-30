@@ -22,8 +22,7 @@ class EloquentDashboard implements DashboardRepository
         $query->select($select);
         $query->where('created_at', '>=', Carbon::today()->subDays(365));
         $query->where('created_at', '<=', Carbon::today()->subDays(-1));
-        $query->groupBy('date');
-
+        $query->groupBy('date')->orderBy('date', 'DESC');
 
         return $query;
     }

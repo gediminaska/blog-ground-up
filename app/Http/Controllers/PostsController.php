@@ -91,7 +91,6 @@ class PostsController extends Controller
     public function edit($id)
     {
         $post = Post::query()->find($id);
-
         $this->authorize('update', [$post, Auth::user()]);
 
         $categories = Category::all();

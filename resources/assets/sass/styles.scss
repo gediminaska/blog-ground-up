@@ -47,6 +47,12 @@ html {
   transition: background-color 2s;
 }
 
+.freshComment {
+  background-color: #8eb4cb;
+  transition: background-color 2s;
+  transition-timing-function: linear;
+  border-radius: 10px;
+}
 .author-widget.widget-area.freshComment {
   background-color: #8eb4cb;
   transition: background-color 2s;
