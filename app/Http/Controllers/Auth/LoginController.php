@@ -7,6 +7,7 @@ use App\User;
 use Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Socialite;
+use TheoryThree\LaraToaster\LaraToaster as Toaster;
 
 class LoginController extends Controller
 {
@@ -56,6 +57,36 @@ class LoginController extends Controller
         $user = Socialite::driver('facebook')->user();
 
         $authUser = $this->findOrCreateUser($user);
+        if(!$authUser) {
+            $toaster = new Toaster;
+            $toaster->warning('You already have an account. Please use another login method.');
+            return redirect()->route('login');
+        }
+        Auth::login($authUser, true);
+        return redirect($this->redirectTo);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function redirectToGithub()
+    {
+        return Socialite::driver('github')->redirect();
+    }
+
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function handleGithubCallback()
+    {
+        $user = Socialite::driver('github')->user();
+
+        $authUser = $this->findOrCreateUser($user);
+        if(!$authUser) {
+            $toaster = new Toaster;
+            $toaster->warning('You already have an account. Please use another login method.');
+            return redirect()->route('login');
+        }
         Auth::login($authUser, true);
         return redirect($this->redirectTo);
     }
@@ -69,9 +100,11 @@ class LoginController extends Controller
         $authUser = User::query()->where('provider_id', $user->id)->first();
         if ($authUser) {
             return $authUser;
+        } elseif(count(User::where('email', $user->email)->get())>0) {
+            return null;
         }
         return User::create([
-            'name' => $user->name,
+            'name' => $user->name ?: $user->nickname,
             'email' => $user->email,
             'provider_id' => $user->id
         ]);

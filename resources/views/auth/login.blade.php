@@ -54,6 +54,12 @@
             <p class="control login">
                 <a href="{{ route('login.facebook') }}"><button class="button is-info is-outlined is-fullwidth m-t-10" type="submit"><i class="fab fa-facebook m-r-5"></i>Login with facebook</button></a>
             </p>
+            <p class="control login">
+                <a href="{{ route('login.github') }}"><button class="button is-info is-outlined is-fullwidth m-t-10" type="submit"><i class="fab fa-github m-r-5"></i>Login with github</button></a>
+            </p>
+            <p class="has-text-centered m-t-10">
+                <a class="btn btn-link" href="https://www.freeprivacypolicy.com/privacy/view/a9597fa5f9f4d4e64432b0eb676fbb35">Privacy policy</a>
+            </p>
             <p class="has-text-centered m-t-10">
                 <a class="btn btn-link" href="{{ route('password.request') }}">Forgot password</a>
             </p>

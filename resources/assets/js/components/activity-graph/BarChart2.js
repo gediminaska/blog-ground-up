@@ -5,7 +5,7 @@ export default {
     extends: Bar,
     mounted () {
         let vm = this
-        axios.get('http://' + window.location.hostname +'/api/dashboard/activity/comments', {
+        axios.get('https://' + window.location.hostname +'/api/dashboard/activity/comments', {
             params: {
                 api_token: vm.api_token
             }

@@ -34,6 +34,8 @@ Route::delete('/my-account', 'Auth\MyAccountController@delete')->name('delete.li
 Auth::routes();
 Route::get('auth/facebook', 'Auth\LoginController@redirectToFacebook')->name('login.facebook');
 Route::get('auth/facebook/callback', 'Auth\LoginController@handleFacebookCallback');
+Route::get('auth/github', 'Auth\LoginController@redirectToGithub')->name('login.github');
+Route::get('auth/github/callback', 'Auth\LoginController@handleGithubCallback');
 
 Route::resource('tags', 'TagsController', ['only' => ['store', 'destroy']]);
 

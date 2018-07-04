@@ -20387,7 +20387,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var _this = this;
 
         var vm = this;
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('http://' + window.location.hostname + '/api/dashboard/activity/posts', {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('https://' + window.location.hostname + '/api/dashboard/activity/posts', {
             params: {
                 api_token: vm.api_token
             }
@@ -33739,7 +33739,7 @@ window.Laravel = { csrfToken: '{{ csrf_token() }}' };
         var _this = this;
 
         var vm = this;
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('http://' + window.location.hostname + '/api/dashboard/activity/categories', {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('https://' + window.location.hostname + '/api/dashboard/activity/categories', {
             params: {
                 api_token: vm.api_token
             }
@@ -33787,7 +33787,7 @@ window.Laravel = { csrfToken: '{{ csrf_token() }}' };
         var _this = this;
 
         var vm = this;
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('http://' + window.location.hostname + '/api/dashboard/activity/users', {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('https://' + window.location.hostname + '/api/dashboard/activity/users', {
             params: {
                 api_token: vm.api_token
             }
@@ -33842,7 +33842,7 @@ window.Laravel = { csrfToken: '{{ csrf_token() }}' };
         var _this = this;
 
         var vm = this;
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('http://' + window.location.hostname + '/api/dashboard/activity/comments', {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('https://' + window.location.hostname + '/api/dashboard/activity/comments', {
             params: {
                 api_token: vm.api_token
             }

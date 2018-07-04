@@ -5,7 +5,7 @@ export default {
     extends: Line,
     mounted () {
         let vm = this
-        axios.get('http://' + window.location.hostname +'/api/dashboard/activity/posts', {
+        axios.get('https://' + window.location.hostname +'/api/dashboard/activity/posts', {
             params: {
                 api_token: vm.api_token
             }

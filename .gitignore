@@ -13,3 +13,5 @@ yarn-error.log
 .env
 .env.dusk.local
 .env.backup
+.certificate.pem
+.private.pem

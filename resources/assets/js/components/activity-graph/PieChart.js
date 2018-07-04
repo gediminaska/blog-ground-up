@@ -9,7 +9,7 @@ export default {
     extends: Doughnut,
     mounted () {
         let vm = this
-        axios.get('http://' + window.location.hostname +'/api/dashboard/activity/categories', {
+        axios.get('https://' + window.location.hostname +'/api/dashboard/activity/categories', {
             params: {
                 api_token: vm.api_token
             }
